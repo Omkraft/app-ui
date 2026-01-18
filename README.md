@@ -49,7 +49,9 @@ Configure the API URL via environment variables:
 VITE_API_BASE_URL=https://<backend-domain>/api
 ```
 
-### 📁 Project Structure (High-level)
+---
+
+## 📁 Project Structure (High-level)
 ```text
 src/
  ├── components/
@@ -59,21 +61,29 @@ src/
  └── styles/
 ```
 
-### 🧪 Testing
+---
+
+## 🧪 Testing
 ```bash
 npm test
 ```
 
-### 📦 Build for Production
+---
+
+## 📦 Build for Production
 ```bash
 npm run build
 ```
 
-### 🔮 Future Enhancements
+---
+
+## 🔮 Future Enhancements
 - Authentication & authorization
 - State management
 - Role-based UI
 - Performance optimizations
 
-### 📄 License
+---
+
+## 📄 License
 MIT
