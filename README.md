@@ -42,11 +42,11 @@ http://localhost:3000
 This UI connects to the backend API hosted separately.
 Base URL (example):
 ```arduino
-https://<backend-domain>/api
+https://app-api-h6wv.onrender.com/api
 ```
 Configure the API URL via environment variables:
 ```env
-VITE_API_BASE_URL=https://<backend-domain>/api
+VITE_API_BASE_URL=https://app-api-h6wv.onrender.com/api
 ```
 
 ---
