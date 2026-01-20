@@ -1,89 +1,73 @@
-# App UI
+# React + TypeScript + Vite
 
-Frontend web application for the App platform.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-This repository contains the user interface built with a modern JavaScript framework
-(React or Angular) and communicates with the backend API over HTTP.
+Currently, two official plugins are available:
 
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 🧱 Tech Stack
+## React Compiler
 
-- Framework: React / Angular (TBD)
-- Language: TypeScript
-- Styling: Angular Material / Bootstrap / Custom CSS
-- Build Tooling: Vite / Angular CLI
-- API Communication: REST (JSON)
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
----
+## Expanding the ESLint configuration
 
-## 🚀 Getting Started
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-### Prerequisites
-- Node.js (LTS)
-- npm or yarn
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-### Install dependencies
-```bash
-npm install
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-### Run locally
-```bash
-npm start
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-The app will be available at:
-```arduino
-http://localhost:3000
-```
-
-### Backend API
-This UI connects to the backend API hosted separately.
-Base URL (example):
-```arduino
-https://app-api-h6wv.onrender.com/api
-```
-Configure the API URL via environment variables:
-```env
-VITE_API_BASE_URL=https://app-api-h6wv.onrender.com/api
-```
-
----
-
-## 📁 Project Structure (High-level)
-```text
-src/
- ├── components/
- ├── pages/
- ├── services/        # API calls
- ├── models/
- └── styles/
-```
-
----
-
-## 🧪 Testing
-```bash
-npm test
-```
-
----
-
-## 📦 Build for Production
-```bash
-npm run build
-```
-
----
-
-## 🔮 Future Enhancements
-- Authentication & authorization
-- State management
-- Role-based UI
-- Performance optimizations
-
----
-
-## 📄 License
-MIT
