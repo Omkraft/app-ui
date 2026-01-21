@@ -142,7 +142,7 @@ In production:
 
 ---
 
-🏷️ License
+## 🏷️ License
 MIT
 
 ---
