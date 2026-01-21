@@ -1,73 +1,152 @@
-# React + TypeScript + Vite
+<p align="center">
+	<img src="https://raw.githubusercontent.com/Omkraft/.github/main/logo-primary.png" alt="Omkraft Logo" width="120" />
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<h1 align="center">app-ui</h1>
 
-Currently, two official plugins are available:
+<p align="center">
+	<strong>Frontend web application for the Omkraft platform</strong>
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<p align="center">
+	Systems, Crafted.
+</p>
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🧭 Overview
 
-## Expanding the ESLint configuration
+This repository contains the **frontend UI** for the Omkraft platform.  
+It is a modern React + TypeScript application designed to consume the `app-api` backend and provide secure, authenticated, and scalable user experiences.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Built with clarity, structure, and long-term maintainability in mind.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🧱 Tech Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Framework:** React
+- **Language:** TypeScript
+- **Build Tool:** Vite
+- **Routing:** React Router
+- **Authentication:** JWT (via `app-api`)
+- **Linting:** ESLint (Flat Config)
+- **Formatting:** Tabs-based indentation
+- **CI:** GitHub Actions (Lint Check on PRs)
+
+---
+
+## 📁 Project Structure
+
+```text
+app-ui/
+├── src/
+│   ├── api/              # API client & backend integration
+│   ├── auth/             # Auth context, guards, helpers
+│   ├── components/       # Reusable UI components
+│   ├── pages/            # Route-level pages (Login, Dashboard, etc.)
+│   ├── routes/           # Public & protected routes
+│   ├── styles/           # Global styles & theme tokens
+│   ├── App.tsx           # Root application component
+│   └── main.tsx          # Application entry point
+├── public/               # Static assets
+├── index.html
+├── eslint.config.cjs
+├── package.json
+├── vite.config.ts
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The structure is intentionally modular to support scaling, feature isolation, and future design-system extraction.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 🚀 Getting Started
+### Prerequisites
+- Node.js **18+**
+- npm (or pnpm)
+- Running instance of app-api (local or deployed)
+
+### Clone the repository
+```bash
+git clone https://github.com/Omkraft/app-ui.git
+cd app-ui
 ```
+
+### Install dependencies
+```bash
+npm install
+```
+
+### Environment variables
+Create a `.env` file in the project root:
+```env
+VITE_API_BASE_URL=http://localhost:3000
+```
+Replace with the deployed API URL for production.
+
+### Start the development server
+```bash
+npm run dev
+```
+The app will be available at:
+```arduino
+http://localhost:5173
+```
+
+---
+
+## 🔐 Authentication & Protected Routes
+- Authentication is handled using **JWT tokens** issued by `app-api`
+- Tokens are attached to API requests automatically
+- Protected routes are enforced at the router level
+- Unauthorized users are redirected to login
+The architecture mirrors production-ready auth flows and is designed to evolve (refresh tokens, RBAC, etc.).
+
+---
+
+## 🧪 Available Scripts
+| Script            | Description                    |
+| ----------------- | ------------------------------ |
+| `npm run dev`     | Start local development server |
+| `npm run build`   | Build production assets        |
+| `npm run preview` | Preview production build       |
+| `npm run lint`    | Run ESLint checks              |
+
+---
+
+## 🧹 Code Quality
+- ESLint enforced locally and in CI
+- Tabs preferred over spaces
+- CI lint checks run on every pull request
+- Pull requests cannot be merged unless lint passes (org-level ruleset)
+
+---
+
+## 🌐 Deployment
+The UI is designed for deployment on platforms such as:
+- **Vercel**
+- **Netlify**
+In production:
+- API base URL is injected via environment variables
+- The UI communicates securely with `app-api` over HTTPS
+
+---
+
+## 🔮 Roadmap
+- Omkraft design system integration
+- Token refresh handling
+- Role-based access control (RBAC)
+- Shared UI components package
+- End-to-end testing
+
+---
+
+## 🏷️ License
+MIT
+
+---
+
+<p align="center"> Built by <strong>Omkraft Inc.</strong><br/> Systems, Crafted. </p>
+
+---
