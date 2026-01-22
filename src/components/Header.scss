@@ -1,7 +1,7 @@
 @use "../styles/variables" as *;
 
 .header {
-	height: 64px;
+	height: auto;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -10,7 +10,7 @@
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
 	img {
-		height: 36px;
+		height: 72px;
 	}
 }
 

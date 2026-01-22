@@ -9,7 +9,7 @@ export function Header() {
 	return (
 		<header className="header">
 			<div className="header__left">
-				<img src={logo} alt="Omkraft Inc." />
+				<img src={logo} alt="Omkraft Inc." height="90" />
 			</div>
 
 			<div className="header__right">
