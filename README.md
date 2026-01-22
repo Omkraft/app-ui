@@ -148,5 +148,6 @@ MIT
 ---
 
 <p align="center"> Built by<br/><strong>Omkraft Inc.</strong><br/>Systems, Crafted.</p>
+<p align="center"><img src="https://raw.githubusercontent.com/Omkraft/.github/main/assets/logo-small.svg" alt="Omkraft Logo Small" width="60" height="60" /></p>
 
 ---
