@@ -12,3 +12,6 @@ permissions:
 jobs:
   release:
     uses: Omkraft/.github/.github/workflows/release.yml@main
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+
