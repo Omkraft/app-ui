@@ -1,0 +1,19 @@
+@use "./variables" as *;
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+:root {
+	font-family: $system-font;
+	color-scheme: light;
+}
+
+body {
+	background-color: $white;
+	color: $text-navy;
+}
