@@ -5,10 +5,11 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  pull-requests: read
-
 jobs:
   release:
+    permissions:
+      contents: write
+      pull-requests: read
     uses: Omkraft/.github/.github/workflows/release.yml@main
+    secrets:
+      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
