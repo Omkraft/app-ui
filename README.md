@@ -1,5 +1,5 @@
 <p align="center">
-	<img src="https://raw.githubusercontent.com/Omkraft/.github/main/assets/logo-primary-square.svg" alt="Omkraft Logo" width="120" />
+	<img src="https://raw.githubusercontent.com/Omkraft/.github/main/assets/logo-primary-square.svg" alt="Omkraft Logo" width="250" />
 </p>
 
 <h1 align="center">app-ui</h1>
@@ -148,6 +148,6 @@ MIT
 ---
 
 <p align="center"> Built by<br/><strong>Omkraft Inc.</strong><br/>Systems, Crafted.</p>
-<p align="center"><img src="https://raw.githubusercontent.com/Omkraft/.github/main/assets/logo-small.svg" alt="Omkraft Logo Small" width="60" height="60" /></p>
+<p align="center"><img src="https://raw.githubusercontent.com/Omkraft/.github/main/assets/logo-small.svg" alt="Omkraft Logo Small" width="300" height="300" /></p>
 
 ---
