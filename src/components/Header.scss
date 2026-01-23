@@ -1,17 +1,15 @@
 @use "../styles/variables" as *;
 
 .header {
-	height: auto;
+	background-color: $navy;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header__inner {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0 24px;
-	background-color: $navy;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-	img {
-		height: 72px;
-	}
+	min-height: 72px;
 }
 
 .header__right {
@@ -21,23 +19,19 @@
 }
 
 .header__user {
-	color: $white;
+	color: var(--omkraft-white);
 	font-size: 14px;
 	opacity: 0.85;
 }
 
-.header__login,
-.header__logout {
-	background: none;
-	border: 1px solid rgba(255, 255, 255, 0.4);
-	color: $white;
-	padding: 6px 12px;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 14px;
-	text-decoration: none;
+.header__logo {
+	height: 48px;
 
-	&:hover {
-		background-color: rgba(255, 255, 255, 0.08);
+	@media (min-width: 768px) {
+		height: 56px;
+	}
+
+	@media (min-width: 1280px) {
+		height: 64px;
 	}
 }
