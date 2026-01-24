@@ -1,4 +1,4 @@
-/* _variables.scss */
+/* styles/_variables.scss */
 
 $primary-blue: #3a98f1;
 $accent-mint: #4ef2c2;
@@ -10,7 +10,11 @@ $system-font: -apple-system, BlinkMacSystemFont, "SF Pro Display",
 	"SF Pro Text", "Helvetica Neue", Arial, sans-serif;
 
 :root {
-	/* Omkraft base tokens (already exist) */
+	/* Typography */
+	--font-sans: #{$system-font};
+	/* ========================= */
+	/* Omkraft base tokens */
+	/* ========================= */
 	--omkraft-primary: #3a98f1;
 	--omkraft-accent: #4ef2c2;
 	--omkraft-bg: #0b1c3d;
@@ -18,9 +22,8 @@ $system-font: -apple-system, BlinkMacSystemFont, "SF Pro Display",
 	--omkraft-white: #ffffff;
 
 	/* ========================= */
-	/* shadcn semantic tokens */
+	/* Semantic tokens (shadcn) */
 	/* ========================= */
-
 	--background: var(--omkraft-bg);
 	--foreground: var(--omkraft-white);
 
@@ -33,7 +36,12 @@ $system-font: -apple-system, BlinkMacSystemFont, "SF Pro Display",
 	--secondary: rgba(255, 255, 255, 0.08);
 	--secondary-foreground: var(--omkraft-white);
 
-	--border: rgba(255, 255, 255, 0.25);
-	--input: rgba(255, 255, 255, 0.25);
+	--muted: rgba(255, 255, 255, 0.06);
+	--muted-foreground: rgba(255, 255, 255, 0.6);
+
+	--border: rgba(255, 255, 255, 0.22);
+	--input: rgba(255, 255, 255, 0.04);
 	--ring: var(--omkraft-primary);
+
+	--radius-md: 10px;
 }

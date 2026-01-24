@@ -1,14 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+
 import App from './App';
 import { AuthProvider } from './auth/AuthContext';
-import './index.css';
-import './styles/global.scss';
+import './index.css';          // Tailwind
+import './styles/global.scss'; // Omkraft styles
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(
+	document.getElementById('root')!
+).render(
 	<React.StrictMode>
 		<AuthProvider>
-			<App />
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
 		</AuthProvider>
 	</React.StrictMode>
 );
