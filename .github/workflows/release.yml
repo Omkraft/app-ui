@@ -1,4 +1,4 @@
-name: Release
+name: Deploy and Release
 
 on:
   push:
@@ -6,7 +6,33 @@ on:
       - main
 
 jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # Vercel deployment
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25.1.0
+        with:
+          zeit-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: .
+
   release:
+    needs: deploy
     permissions:
       contents: write
       pull-requests: read
