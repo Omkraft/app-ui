@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+import loginIllustration from '@/assets/login-illustration.svg';
+
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -50,61 +52,21 @@ export default function Login() {
 							with a clean, scalable foundation.
 						</p>
 
-						{/* Lightweight inline SVG */}
-						<svg
-							viewBox="0 0 400 200"
-							className="w-full max-w-md text-primary/80"
-							fill="none"
-						>
-							{/* Door frame */}
-							<rect
-								x="140"
-								y="30"
-								width="120"
-								height="140"
-								rx="12"
-								stroke="currentColor"
-								strokeWidth="3"
-								opacity="0.6"
-							/>
-
-							{/* Arrow entering */}
-							<path
-								d="M80 100 H190"
-								stroke="currentColor"
-								strokeWidth="3"
-								strokeLinecap="round"
-							/>
-
-							<path
-								d="M175 85 L195 100 L175 115"
-								stroke="currentColor"
-								strokeWidth="3"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-
-							{/* Door knob */}
-							<circle
-								cx="245"
-								cy="100"
-								r="4"
-								fill="currentColor"
-								opacity="0.8"
-							/>
-						</svg>
+						<img
+							src={loginIllustration}
+							alt="Login illustration"
+							className="w-full max-w-md opacity-90"
+						/>
 
 					</div>
 				</div>
 
 				{/* Login card */}
-				<div className="flex justify-center">
+				<div className="flex justify-end">
 					<div className="w-full max-w-sm rounded-xl border border-border bg-background/95 backdrop-blur-sm p-8 shadow-xl">
 						<div className="mb-6 space-y-2">
-							<h2 className="text-2xl font-semibold text-foreground">
-								Sign in
-							</h2>
-							<p className="text-sm text-muted-foreground">
+							<h2 className="text-white">Sign in</h2>
+							<p className="text-body-sm text-white/70">
 								Access your Omkraft workspace
 							</p>
 						</div>
