@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/Header';
-
 import Login from './pages/Login';
 
 export default function App() {
@@ -9,26 +8,33 @@ export default function App() {
 			<Header />
 
 			<Routes>
-				{/* Default route */}
+				{/* Home */}
 				<Route path="/" element={<Navigate to="/login" replace />} />
 
 				{/* Auth */}
 				<Route path="/login" element={<Login />} />
 
-				{/* Placeholder dashboard */}
+				{/* Dashboard */}
 				<Route
 					path="/dashboard"
 					element={
 						<div className="app-container py-8">
-							<h1 className="text-2xl font-semibold">
-								Dashboard
-							</h1>
+							<h1 className="text-2xl font-semibold">Dashboard</h1>
 						</div>
 					}
 				/>
 
-				{/* Catch-all */}
-				<Route path="*" element={<Navigate to="/login" replace />} />
+				{/* 🚨 IMPORTANT: do NOT redirect everything */}
+				<Route
+					path="*"
+					element={
+						<div className="app-container py-8">
+							<h1 className="text-xl font-semibold">
+								404 – Page not found
+							</h1>
+						</div>
+					}
+				/>
 			</Routes>
 		</div>
 	);

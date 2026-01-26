@@ -8,7 +8,7 @@
       "continue": true
     },
     {
-      "src": "^/(.*)$",
+      "src": "^(?!/og/).*",
       "dest": "/index.html"
     }
   ]
