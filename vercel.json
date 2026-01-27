@@ -1,15 +1,20 @@
 {
-  "routes": [
-    {
-      "src": "^/og/(.*)$",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable"
-      },
-      "continue": true
-    },
-    {
-      "src": "^(?!/og/).*",
-      "dest": "/index.html"
-    }
-  ]
+	"rewrites": [
+		{
+			"source": "/assets/(.*)",
+			"destination": "/assets/$1"
+		},
+		{
+			"source": "/og/(.*)",
+			"destination": "/og/$1"
+		},
+		{
+			"source": "/favicon.ico",
+			"destination": "/favicon.ico"
+		},
+		{
+			"source": "/(.*)",
+			"destination": "/index.html"
+		}
+	]
 }
