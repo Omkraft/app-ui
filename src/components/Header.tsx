@@ -6,7 +6,7 @@ import './Header.scss';
 export function Header() {
 	const { user, isAuthenticated, logout } = useAuth();
 	const logo =
-		'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-secondary.svg';
+		'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-primary.svg';
 
 	return (
 		<header className="header">

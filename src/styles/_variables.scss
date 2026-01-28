@@ -1,10 +1,10 @@
 /* styles/_variables.scss */
 
-$primary-blue: #3a98f1;
-$accent-mint: #4ef2c2;
-$navy: #0b1c3d;
-$text-navy: #0e2a4d;
-$white: #ffffff;
+$primary-blue: var(--omkraft-primary);
+$accent-mint: var(--omkraft-accent);
+$navy: var(--omkraft-bg);
+$text-navy: var(--omkraft-text);
+$white: var(--omkraft-white);
 
 $system-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
 	'Segoe UI', Roboto, Arial, sans-serif;
@@ -15,36 +15,108 @@ $system-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
 	/* ========================= */
 	/* Omkraft base tokens */
 	/* ========================= */
-	--omkraft-primary: #3a98f1;
-	--omkraft-accent: #4ef2c2;
-	--omkraft-bg: #0b1c3d;
-	--omkraft-text: #0e2a4d;
-	--omkraft-white: #ffffff;
+	--omkraft-primary: var(--omkraft-blue-500, #305af3);
+	--omkraft-accent: var(--omkraft-mint-500, #00ad97);
+	--omkraft-bg: var(--omkraft-navy-500, #041459);
+	--omkraft-text: var(--omkraft-navy-500, #041459);
+	--omkraft-white: var(--omkraft-surface-0, #ffffff);
 
 	/* ========================= */
-	/* Semantic tokens (shadcn) */
+	/* Omkraft Core Brand Colors */
 	/* ========================= */
-	--background: var(--omkraft-bg);
-	--foreground: var(--omkraft-white);
 
-	--primary: var(--omkraft-primary);
-	--primary-foreground: var(--omkraft-white);
+	--omkraft-blue-50:  #eef2ff;
+	--omkraft-blue-100: #dfe6ff;
+	--omkraft-blue-200: #bcc9ff;
+	--omkraft-blue-300: #91a6ff;
+	--omkraft-blue-400: #5e7df8;
+	--omkraft-blue-500: #305af3; /* PRIMARY */
+	--omkraft-blue-600: #274bda;
+	--omkraft-blue-700: #203eb6;
+	--omkraft-blue-800: #1c348f;
+	--omkraft-blue-900: #16286b;
 
-	--accent: var(--omkraft-accent);
-	--accent-foreground: var(--omkraft-bg);
+	--omkraft-mint-50:  #e6fbf7;
+	--omkraft-mint-100: #c9f3eb;
+	--omkraft-mint-200: #9be6d8;
+	--omkraft-mint-300: #63d5c3;
+	--omkraft-mint-400: #2fc0ad;
+	--omkraft-mint-500: #00ad97; /* ACCENT */
+	--omkraft-mint-600: #00937f;
+	--omkraft-mint-700: #007768;
+	--omkraft-mint-800: #005c50;
+	--omkraft-mint-900: #00453c;
 
-	--secondary: rgba(255, 255, 255, 0.08);
-	--secondary-foreground: var(--omkraft-white);
+	--omkraft-navy-50:  #e9ecf5;
+	--omkraft-navy-100: #cfd6ea;
+	--omkraft-navy-200: #a3afd8;
+	--omkraft-navy-300: #7387c3;
+	--omkraft-navy-400: #4b63a8;
+	--omkraft-navy-500: #041459; /* BACKGROUND */
+	--omkraft-navy-600: #03124e;
+	--omkraft-navy-700: #020f41;
+	--omkraft-navy-800: #020c35;
+	--omkraft-navy-900: #010826;
 
-	--muted: rgba(255, 255, 255, 0.06);
+	/* ========================= */
+	/* Neutral / Surface Colors */
+	/* ========================= */
+
+	--omkraft-surface-0: #ffffff;
+	--omkraft-surface-1: rgba(255, 255, 255, 0.04);
+	--omkraft-surface-2: rgba(255, 255, 255, 0.06);
+	--omkraft-surface-3: rgba(255, 255, 255, 0.08);
+	--omkraft-surface-4: rgba(255, 255, 255, 0.12);
+
+	--omkraft-border-subtle: rgba(255, 255, 255, 0.16);
+	--omkraft-border-default: rgba(255, 255, 255, 0.22);
+	--omkraft-border-strong: rgba(255, 255, 255, 0.32);
+
+	/* ========================= */
+	/* Semantic Tokens (shadcn) */
+	/* ========================= */
+
+	--background: var(--omkraft-navy-500);
+	--foreground: var(--omkraft-surface-0);
+
+	--primary: var(--omkraft-blue-500);
+	--primary-foreground: var(--omkraft-surface-0);
+
+	--secondary: var(--omkraft-surface-3);
+	--secondary-foreground: var(--omkraft-surface-0);
+
+	--accent: var(--omkraft-mint-500);
+	--accent-foreground: var(--omkraft-navy-500);
+
+	--muted: var(--omkraft-surface-2);
 	--muted-foreground: rgba(255, 255, 255, 0.6);
 
-	--border: rgba(255, 255, 255, 0.22);
-	--input: rgba(255, 255, 255, 0.04);
-	--ring: var(--omkraft-primary);
+	--border: var(--omkraft-border-default);
+	--input: var(--omkraft-surface-1);
+	--ring: var(--omkraft-blue-400);
 
 	/* ========================= */
-	/* Omkraft Radius System */
+	/* Destructive Palette */
+	/* ========================= */
+
+	--omkraft-red-50:  #fdecec;
+	--omkraft-red-100: #f9d0d0;
+	--omkraft-red-200: #f1a3a3;
+	--omkraft-red-300: #e77676;
+	--omkraft-red-400: #df4c4c;
+	--omkraft-red-500: #dc2626;
+	--omkraft-red-600: #c41f1f;
+	--omkraft-red-700: #a01818;
+	--omkraft-red-800: #7d1212;
+	--omkraft-red-900: #5a0c0c;
+
+	--destructive: var(--omkraft-red-500);
+	--destructive-bg: rgba(220, 38, 38, 0.12);
+	--destructive-hover: rgba(220, 38, 38, 0.18);
+	--destructive-foreground: var(--omkraft-surface-0);
+
+	/* ========================= */
+	/* Radius System */
 	/* ========================= */
 
 	--radius-sm: 6px;
@@ -52,47 +124,39 @@ $system-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
 	--radius-lg: 10px;
 
 	/* ========================= */
-	/* Omkraft Typography Scale */
+	/* Typography Scale */
 	/* ========================= */
 
-	--font-h1-size: 2rem;       /* 32px */
+	--font-h1-size: 2rem;
 	--font-h1-weight: 600;
 	--font-h1-line: 1.25;
 
-	--font-h2-size: 1.5rem;     /* 24px */
+	--font-h2-size: 1.5rem;
 	--font-h2-weight: 600;
 	--font-h2-line: 1.3;
 
-	--font-h3-size: 1.25rem;    /* 20px */
+	--font-h3-size: 1.25rem;
 	--font-h3-weight: 600;
 	--font-h3-line: 1.35;
 
-	--font-h4-size: 1rem;       /* 16px */
+	--font-h4-size: 1rem;
 	--font-h4-weight: 600;
 	--font-h4-line: 1.4;
 
-	--font-body-lg-size: 1rem;  /* 16px */
-	--font-body-size: 0.875rem; /* 14px */
-	--font-body-sm-size: 0.8125rem; /* 13px */
-	--font-caption-size: 0.75rem;   /* 12px */
+	--font-body-lg-size: 1rem;
+	--font-body-size: 0.875rem;
+	--font-body-sm-size: 0.8125rem;
+	--font-caption-size: 0.75rem;
 
 	--font-body-weight: 400;
 	--font-line-normal: 1.6;
 
 	/* ========================= */
-	/* Omkraft Button Typography */
+	/* Button Typography */
 	/* ========================= */
 
-	--button-font-size: 0.8125rem; /* 13px */
+	--button-font-size: 0.875rem;
 	--button-font-weight: 500;
 	--button-line-height: 1.2;
 	--button-letter-spacing: 0.01em;
-
-	/* ========================= */
-	/* Omkraft Destructive Tokens */
-	/* ========================= */
-
-	--destructive: #dc2626; /* Calm red */
-	--destructive-bg: rgba(220, 38, 38, 0.12);
-	--destructive-hover: rgba(220, 38, 38, 0.18);
 }
