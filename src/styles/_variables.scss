@@ -12,14 +12,6 @@ $system-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
 :root {
 	/* Typography */
 	--font-sans: #{$system-font};
-	/* ========================= */
-	/* Omkraft base tokens */
-	/* ========================= */
-	--omkraft-primary: var(--omkraft-blue-500, #305af3);
-	--omkraft-accent: var(--omkraft-mint-500, #00ad97);
-	--omkraft-bg: var(--omkraft-navy-500, #041459);
-	--omkraft-text: var(--omkraft-navy-500, #041459);
-	--omkraft-white: var(--omkraft-surface-0, #ffffff);
 
 	/* ========================= */
 	/* Omkraft Core Brand Colors */
@@ -124,6 +116,15 @@ $system-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
 	--radius-lg: 10px;
 
 	/* ========================= */
+	/* Omkraft base tokens */
+	/* ========================= */
+	--omkraft-primary: var(--omkraft-blue-500, #305af3);
+	--omkraft-accent: var(--omkraft-mint-500, #00ad97);
+	--omkraft-bg: var(--omkraft-navy-500, #041459);
+	--omkraft-text: var(--omkraft-navy-500, #041459);
+	--omkraft-white: var(--omkraft-surface-0, #ffffff);
+
+	/* ========================= */
 	/* Typography Scale */
 	/* ========================= */
 
@@ -159,4 +160,7 @@ $system-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
 	--button-font-weight: 500;
 	--button-line-height: 1.2;
 	--button-letter-spacing: 0.01em;
+
+	--card: var(--background);
+  	--card-foreground: var(--foreground);
 }

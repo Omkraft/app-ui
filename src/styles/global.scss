@@ -1,6 +1,10 @@
 @use "./variables" as *;
 @use "./layout";
 
+/* Components */
+@use './components/inputs';
+@use './components/cards';
+
 /* Reset */
 *,
 *::before,

@@ -1,0 +1,21 @@
+.card {
+  @apply rounded-lg border border-border
+    bg-card text-card-foreground
+    shadow-sm;
+}
+
+.card-header {
+  @apply px-6 pt-6 pb-2;
+}
+
+.card-title {
+  @apply text-lg font-semibold;
+}
+
+.card-description {
+  @apply text-sm text-muted-foreground;
+}
+
+.card-content {
+  @apply px-6 pb-6;
+}
