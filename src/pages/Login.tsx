@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { login } from '../api/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 import loginIllustration from '@/assets/login-illustration.svg';
 
@@ -34,12 +35,9 @@ export default function Login() {
 
 	return (
 		<div className="min-h-[calc(100vh-72px)] bg-background text-foreground flex items-center">
-			<div className="app-container grid gap-12 lg:grid-cols-2 items-center">
+			<div className="app-container grid gap-12 lg:grid-cols-2 items-center justify-items-center">
 				{/* Left visual panel */}
 				<div className="hidden lg:block relative">
-					{/* Omkraft glow */}
-					<div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-primary/30 blur-3xl" />
-					<div className="absolute top-32 left-32 h-64 w-64 rounded-full bg-accent/25 blur-3xl" />
 
 					<div className="relative space-y-6">
 						<h1 className="text-4xl font-semibold text-foreground leading-tight">
@@ -48,8 +46,7 @@ export default function Login() {
 						</h1>
 
 						<p className="text-muted-foreground max-w-md">
-							Sign in to access your workspace and continue building
-							with a clean, scalable foundation.
+							Sign in to access your workspace and continue exploring a clean, scalable foundation.
 						</p>
 
 						<img
@@ -62,15 +59,16 @@ export default function Login() {
 				</div>
 
 				{/* Login card */}
-				<div className="flex justify-end">
-					<div className="w-full max-w-sm rounded-xl border border-border bg-background/95 backdrop-blur-sm p-8 shadow-xl">
-						<div className="mb-6 space-y-2">
-							<h2 className="text-white">Sign in</h2>
-							<p className="text-body-sm text-white/70">
-								Access your Omkraft workspace
-							</p>
-						</div>
-
+				<Card className="w-full max-w-md">
+					<CardHeader>
+						<CardTitle>
+							<h2>Sign in</h2>
+						</CardTitle>
+						<CardDescription>
+							Access your Omkraft workspace
+						</CardDescription>
+					</CardHeader>
+					<CardContent>
 						<form onSubmit={handleSubmit} className="space-y-4">
 							<div className="space-y-2">
 								<Label htmlFor="email">Email</Label>
@@ -80,6 +78,7 @@ export default function Login() {
 									placeholder="you@omkraft.io"
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
+									required
 								/>
 							</div>
 
@@ -107,9 +106,22 @@ export default function Login() {
 							>
 								{loading ? 'Signing in…' : 'Login'}
 							</Button>
+
+							<p className="text-sm text-center text-muted-foreground mt-4">
+								<Link to="/forgot-password" className="text-white underline">
+									Forgot Password?
+								</Link>
+							</p>
+
+							<p className="text-sm text-center text-muted-foreground mt-4">
+								Don't have an account?{' '}
+								<Link to="/register" className="text-white underline">
+									Sign up
+								</Link>
+							</p>
 						</form>
-					</div>
-				</div>
+					</CardContent>
+				</Card>
 			</div>
 		</div>
 	);

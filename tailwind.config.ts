@@ -9,32 +9,46 @@ const config: Config = {
 	theme: {
 		extend: {
 			colors: {
-				/* Core surfaces */
 				background: 'var(--background)',
 				foreground: 'var(--foreground)',
 
-				/* Brand */
-				primary: 'var(--primary)',
-				'primary-foreground': 'var(--primary-foreground)',
+				card: 'var(--card)',
+				'card-foreground': 'var(--card-foreground)',
 
-				secondary: 'var(--secondary)',
-				'secondary-foreground': 'var(--secondary-foreground)',
+				popover: 'var(--popover, var(--background))',
+				'popover-foreground': 'var(--popover-foreground, var(--foreground))',
 
-				accent: 'var(--accent)',
-				'accent-foreground': 'var(--accent-foreground)',
+				primary: {
+					DEFAULT: 'var(--primary)',
+					foreground: 'var(--primary-foreground)',
+				},
 
-				/* UI states */
-				muted: 'var(--muted)',
-				'muted-foreground': 'var(--muted-foreground)',
+				secondary: {
+					DEFAULT: 'var(--secondary)',
+					foreground: 'var(--secondary-foreground)',
+				},
 
-				destructive: 'var(--destructive)',
-				'destructive-foreground': 'var(--destructive-foreground)',
+				muted: {
+					DEFAULT: 'var(--muted)',
+					foreground: 'var(--muted-foreground)',
+				},
 
-				/* Borders & focus */
+				accent: {
+					DEFAULT: 'var(--accent)',
+					foreground: 'var(--accent-foreground)',
+				},
+
+				destructive: {
+					DEFAULT: 'var(--destructive)',
+					foreground: 'var(--foreground)',
+				},
+
 				border: 'var(--border)',
 				input: 'var(--input)',
 				ring: 'var(--ring)',
 			},
+
+
 
 			borderRadius: {
 				sm: 'var(--radius-sm)',
