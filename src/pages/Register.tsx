@@ -17,6 +17,7 @@ export default function Register() {
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [email, setEmail] = useState('');
+	const [phone, setPhone] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
@@ -27,8 +28,13 @@ export default function Register() {
 		e.preventDefault();
 		setError(null);
 
-		if (!firstName.trim() || !lastName.trim()) {
-			setError('First and last name are required');
+		if (
+			!firstName.trim() ||
+			!lastName.trim() ||
+			!email.trim() ||
+			!phone.trim()
+		) {
+			setError('All fields are required');
 			return;
 		}
 
@@ -109,6 +115,22 @@ export default function Register() {
 											This will be your login email
 										</p>
 									</div>
+
+									<div className="space-y-2">
+										<Label htmlFor="phone">Phone number</Label>
+										<Input
+											id="phone"
+											type="tel"
+											placeholder="+91 98765 43210"
+											value={phone}
+											onChange={(e) => setPhone(e.target.value)}
+											required
+										/>
+										<p className="text-xs text-muted-foreground">
+											Used for account recovery and verification
+										</p>
+									</div>
+
 
 									<div className="space-y-2">
 										<Label htmlFor="password">Password</Label>
