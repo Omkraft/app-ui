@@ -9,6 +9,9 @@ import {
 } from '@/components/ui/card';
 
 import forgotIllustration from '@/assets/forgot-password-illustration.svg';
+import resetIllustration from '@/assets/reset-password-illustration.svg';
+
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -26,36 +29,53 @@ export default function ForgotPassword() {
 				{/* Left visual panel */}
 				<div className="hidden lg:block relative">
 					<div className="relative space-y-6">
-						<h1 className="text-4xl font-semibold text-foreground leading-tight">
-							Reset your<br />
-							<span className="text-primary">password</span>
-						</h1>
+						{!sent ? (
+							<>
+								<h1 className="text-4xl font-semibold text-foreground leading-tight">
+									Forgot<br />
+									<span className="text-primary">password</span>
+								</h1>
 
-						<p className="text-muted-foreground max-w-md">
-							Enter your email address and we’ll help you securely regain access to your workspace.
-						</p>
+								<p className="text-muted-foreground max-w-md">
+									Enter your email address and we'll help you securely regain access to your workspace.
+								</p>
+								<img
+									src={forgotIllustration}
+									alt="Forgot password illustration"
+									className="w-full max-w-md opacity-90"
+								/>
+							</>
+						) : (
+							<>
+								<h1 className="text-4xl font-semibold text-foreground leading-tight">
+									Set a new<br />
+									<span className="text-primary">password</span>
+								</h1>
 
-
-
-						<img
-							src={forgotIllustration}
-							alt="Forgot password illustration"
-							className="w-full max-w-md opacity-90"
-						/>
-
+								<p className="text-muted-foreground max-w-md">
+									Enter the one-time code we sent to your email and choose a new password to secure your account.
+								</p>
+								<img
+									src={resetIllustration}
+									alt="Reset password illustration"
+									className="w-full max-w-md opacity-90"
+								/>
+							</>
+						)}
 					</div>
 				</div>
 				<Card className="w-full max-w-md">
 					<CardHeader>
-						<CardTitle><h2>Reset password</h2></CardTitle>
 						{!sent ? (
 							<>
+								<CardTitle><h2>Forgot password</h2></CardTitle>
 								<CardDescription>
 									We'll send you a one-time code
 								</CardDescription>
 							</>
 						) : (
 							<>
+								<CardTitle><h2>Reset password</h2></CardTitle>
 								<CardDescription>
 									Please check your email for the OTP to reset your password.
 								</CardDescription>
@@ -76,11 +96,12 @@ export default function ForgotPassword() {
 											required
 										/>
 									</div>
-									<button
-										className="btn-primary w-full"
+									<Button
+										type="submit"
+										className="w-full"
 									>
 										Send OTP
-									</button>
+									</Button>
 								</form>
 							</>
 						) : (
