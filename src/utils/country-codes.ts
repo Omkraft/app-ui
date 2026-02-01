@@ -1,1 +1,0 @@
-export const COUNTRY_CODES = Array.from({ length: 300 }, (_, i) => `+${i + 1}`);
