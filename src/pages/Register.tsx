@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
 	Card,
@@ -12,17 +12,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 import registerIllustration from '@/assets/register-illustration.svg';
+import { register } from '@/api/auth';
+import { COUNTRY_CODES } from '@/utils/country-codes';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Register() {
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [email, setEmail] = useState('');
-	const [phone, setPhone] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
+	const [countryCode, setCountryCode] = useState<string | undefined>(undefined);
+	const [phoneNumber, setPhoneNumber] = useState('');
+
 
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -32,9 +37,14 @@ export default function Register() {
 			!firstName.trim() ||
 			!lastName.trim() ||
 			!email.trim() ||
-			!phone.trim()
+			!phoneNumber.trim()
 		) {
 			setError('All fields are required');
+			return;
+		}
+
+		if (phoneNumber.length != 10) {
+			setError('Phone number must be 10 digits');
 			return;
 		}
 
@@ -50,9 +60,14 @@ export default function Register() {
 
 		try {
 			setLoading(true);
-			// call register API
-		} catch {
-			setError('Registration failed. Please try again.');
+			const phone = `${countryCode}${phoneNumber}`;
+			await register(firstName, lastName, email, phone, password);
+		} catch (err) {
+			setError(
+				err instanceof Error
+					? err.message
+					: 'Registration failed. Please try again.'
+			);
 		} finally {
 			setLoading(false);
 			setSubmitted(true);
@@ -118,14 +133,35 @@ export default function Register() {
 
 									<div className="space-y-2">
 										<Label htmlFor="phone">Phone number</Label>
-										<Input
-											id="phone"
-											type="tel"
-											placeholder="+91 98765 43210"
-											value={phone}
-											onChange={(e) => setPhone(e.target.value)}
-											required
-										/>
+										<div className="flex gap-2">
+											{/* Country code dropdown */}
+											<Select
+												value={countryCode}
+												onValueChange={setCountryCode}
+											>
+												<SelectTrigger className="flex h-9 items-center justify-between rounded-md border border-input bg-input text-foreground px-3">
+													<SelectValue placeholder="+91" />
+												</SelectTrigger>
+												<SelectContent>
+													{COUNTRY_CODES.map((code) => (
+														<SelectItem key={code} value={code}>
+															{code}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+
+											{/* Phone number input */}
+											<Input
+												type="tel"
+												placeholder="9876543210"
+												value={phoneNumber}
+												onChange={(e) =>
+													setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))
+												}
+												required
+											/>
+										</div>
 										<p className="text-xs text-muted-foreground">
 											Used for account recovery and verification
 										</p>
@@ -187,7 +223,7 @@ export default function Register() {
 							<CardHeader className='text-center'>
 								<CardTitle><h2 className="text-accent">Registration successful</h2></CardTitle>
 								<CardDescription>
-									Please verify your email to continue
+									Please verify your email to continue.
 								</CardDescription>
 							</CardHeader>
 

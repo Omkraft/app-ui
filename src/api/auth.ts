@@ -11,10 +11,10 @@ export function login(email: string, password: string): Promise<AuthResponse> {
 	});
 }
 
-export function register(email: string, password: string) {
+export function register(firstName: string, lastName: string, email: string, phone: string, password: string) {
 	return apiRequest('/api/auth/register', {
 		method: 'POST',
-		body: JSON.stringify({ email, password }),
+		body: JSON.stringify({ firstName, lastName, email, phone, password }),
 	});
 }
 

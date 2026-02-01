@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/Header';
+import Loading from './pages/Loading';
 
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -13,11 +14,7 @@ export default function App() {
 
 			<Suspense
 				fallback={
-					<div className="app-container py-8">
-						<p className="text-sm text-muted-foreground">
-							Loading…
-						</p>
-					</div>
+					<Loading />
 				}
 			>
 				<Routes>
