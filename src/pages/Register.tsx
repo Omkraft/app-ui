@@ -13,20 +13,23 @@ import { Label } from '@/components/ui/label';
 
 import registerIllustration from '@/assets/register-illustration.svg';
 import { register } from '@/api/auth';
-import { COUNTRY_CODES } from '@/utils/country-codes';
+import { COUNTRIES } from '@/utils/countries';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 
 export default function Register() {
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [email, setEmail] = useState('');
+	const [phone, setPhone] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
-	const [countryCode, setCountryCode] = useState<string | undefined>(undefined);
-	const [phoneNumber, setPhoneNumber] = useState('');
+	const [countryCode, setCountryCode] = useState('+91');
+
+	const selectedCountry =
+  COUNTRIES.find((c) => c.code === countryCode) ?? COUNTRIES[0];
 
 
 	const handleRegister = async (e: React.FormEvent) => {
@@ -37,13 +40,13 @@ export default function Register() {
 			!firstName.trim() ||
 			!lastName.trim() ||
 			!email.trim() ||
-			!phoneNumber.trim()
+			!phone.trim()
 		) {
 			setError('All fields are required');
 			return;
 		}
 
-		if (phoneNumber.length != 10) {
+		if (phone.length != 10) {
 			setError('Phone number must be 10 digits');
 			return;
 		}
@@ -60,8 +63,8 @@ export default function Register() {
 
 		try {
 			setLoading(true);
-			const phone = `${countryCode}${phoneNumber}`;
-			await register(firstName, lastName, email, phone, password);
+			const phoneNumber = `${countryCode}${phone}`;
+			await register(firstName, lastName, email, phoneNumber, password);
 		} catch (err) {
 			setError(
 				err instanceof Error
@@ -140,12 +143,27 @@ export default function Register() {
 												onValueChange={setCountryCode}
 											>
 												<SelectTrigger className="flex h-9 items-center justify-between rounded-md border border-input bg-input text-foreground px-3">
-													<SelectValue placeholder="+91" />
+													<SelectValue>
+														<span className="flex items-center gap-2">
+															<span
+																className={`fi fi-${selectedCountry.iso} leading-none`}
+															></span>
+															<span className="text-sm">{selectedCountry.code}</span>
+														</span>
+													</SelectValue>
 												</SelectTrigger>
 												<SelectContent>
-													{COUNTRY_CODES.map((code) => (
-														<SelectItem key={code} value={code}>
-															{code}
+													{COUNTRIES.map((country) => (
+														<SelectItem key={country.code} value={country.code}>
+															<span className="flex items-center gap-3">
+																<span
+																	className={`fi fi-${country.iso} leading-none`}
+																></span>
+																<span className="flex-1">{country.label}</span>
+																<span className="text-muted-foreground text-sm">
+																	{country.code}
+																</span>
+															</span>
 														</SelectItem>
 													))}
 												</SelectContent>
@@ -155,10 +173,8 @@ export default function Register() {
 											<Input
 												type="tel"
 												placeholder="9876543210"
-												value={phoneNumber}
-												onChange={(e) =>
-													setPhoneNumber(e.target.value.replace(/\D/g, '').slice(0, 10))
-												}
+												value={phone}
+												onChange={(e) => setPhone(e.target.value)}
 												required
 											/>
 										</div>
