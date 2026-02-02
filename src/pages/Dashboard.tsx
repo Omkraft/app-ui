@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getMe } from '../api/user';
-import { logout } from '../api/auth';
+import { getMe } from '@/api/user';
+import { useAuth } from '@/auth/AuthContext';
 
 interface MeResponse {
 	message: string;
@@ -15,6 +15,7 @@ interface MeResponse {
 export default function Dashboard() {
 	const [data, setData] = useState<MeResponse | null>(null);
 	const navigate = useNavigate();
+	const { logout } = useAuth();
 
 	useEffect(() => {
 		getMe().then(setData).catch(console.error);
