@@ -26,10 +26,10 @@ export default function Register() {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
-	const [countryCode, setCountryCode] = useState('+91');
+	const [countryIso, setCountryIso] = useState('in'); // default India
 
-	const selectedCountry =
-  COUNTRIES.find((c) => c.code === countryCode) ?? COUNTRIES[0];
+	const selectedCountry = COUNTRIES.find((c) => c.iso === countryIso)!;
+
 
 
 	const handleRegister = async (e: React.FormEvent) => {
@@ -63,7 +63,7 @@ export default function Register() {
 
 		try {
 			setLoading(true);
-			const phoneNumber = `${countryCode}${phone}`;
+			const phoneNumber = `${selectedCountry.code}${phone}`;
 			await register(firstName, lastName, email, phoneNumber, password);
 		} catch (err) {
 			setError(
@@ -139,8 +139,8 @@ export default function Register() {
 										<div className="flex gap-2">
 											{/* Country code dropdown */}
 											<Select
-												value={countryCode}
-												onValueChange={setCountryCode}
+												value={countryIso}
+												onValueChange={setCountryIso}
 											>
 												<SelectTrigger className="flex h-9 items-center justify-between rounded-md border border-input bg-input text-foreground px-3">
 													<SelectValue>
@@ -154,7 +154,7 @@ export default function Register() {
 												</SelectTrigger>
 												<SelectContent>
 													{COUNTRIES.map((country) => (
-														<SelectItem key={country.code} value={country.code}>
+														<SelectItem key={country.code} value={country.iso}>
 															<span className="flex items-center gap-3">
 																<span
 																	className={`fi fi-${country.iso} leading-none`}
