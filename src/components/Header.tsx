@@ -1,5 +1,5 @@
 import { useAuth } from '@/auth/AuthContext';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import './Header.scss';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,12 @@ export function Header() {
 	const { user, isAuthenticated, logout } = useAuth();
 	const pathname = location.pathname;
 	const logo =
-		'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-primary.svg';
+		'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-secondary.svg';
+	const navigate = useNavigate();
+	function logoutUser() {
+		logout();
+		navigate('/login', { replace: true });
+	}
 
 	return (
 		<header className="header">
@@ -42,7 +47,7 @@ export function Header() {
 							</span>
 							<Button
 								className="w-full"
-								onClick={logout}
+								onClick={logoutUser}
 							>
 								Logout
 							</Button>
