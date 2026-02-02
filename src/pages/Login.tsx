@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { login } from '../api/auth';
+import { useAuth } from '@/auth/AuthContext';
+import { login as loginApi } from '@/api/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +16,7 @@ export default function Login() {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
+	const { login } = useAuth();
 	const navigate = useNavigate();
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -23,15 +25,16 @@ export default function Login() {
 		setLoading(true);
 
 		try {
-			const data = await login(email, password);
-			localStorage.setItem('token', data.token);
-			navigate('/dashboard');
-		} catch (err) {
-			setError((err as Error).message || 'Login failed');
+			const { token, user } = await loginApi(email, password);
+			login(token, user);
+			navigate('/dashboard', { replace: true });
+		} catch {
+			setError('Invalid email or password');
 		} finally {
 			setLoading(false);
 		}
 	};
+
 
 	return (
 		<div className="min-h-[calc(100vh-72px)] bg-background text-foreground flex items-center">
