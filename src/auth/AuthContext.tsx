@@ -7,7 +7,10 @@ import {
 import type { ReactNode } from 'react';
 
 type User = {
+	firstName: string;
+	lastName: string;
 	email: string;
+	phone: string;
 };
 
 type AuthContextType = {
@@ -23,9 +26,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
 
 	useEffect(() => {
-		const stored = localStorage.getItem('auth');
-		if (stored) {
-			setUser(JSON.parse(stored));
+		const token = localStorage.getItem('token');
+		const storedUser = localStorage.getItem('auth');
+
+		if (token && storedUser) {
+			setUser(JSON.parse(storedUser));
 		}
 	}, []);
 

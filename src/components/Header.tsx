@@ -2,6 +2,7 @@ import { useAuth } from '@/auth/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 
 import './Header.scss';
+import { Button } from '@/components/ui/button';
 
 export function Header() {
 	const location = useLocation();
@@ -39,9 +40,12 @@ export function Header() {
 							<span className="text-sm text-muted-foreground">
 								{user?.email}
 							</span>
-							<button onClick={logout} className="btn-primary">
+							<Button
+								className="w-full"
+								onClick={logout}
+							>
 								Logout
-							</button>
+							</Button>
 						</>
 					)}
 				</div>
