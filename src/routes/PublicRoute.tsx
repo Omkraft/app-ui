@@ -5,9 +5,9 @@ type Props = {
 	children: React.ReactNode;
 };
 
-export default function ProtectedRoute({ children }: Props) {
-	if (!isAuthenticated()) {
-		return <Navigate to="/login" replace />;
+export default function PublicRoute({ children }: Props) {
+	if (isAuthenticated()) {
+		return <Navigate to="/dashboard" replace />;
 	}
 
 	return <>{children}</>;
