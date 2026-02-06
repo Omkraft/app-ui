@@ -28,8 +28,12 @@ export default function Login() {
 			const { token, user } = await loginApi(email, password);
 			login(token, user);
 			navigate('/dashboard', { replace: true });
-		} catch {
-			setError('Invalid email or password');
+		} catch (err) {
+			setError(
+				err instanceof Error
+					? err.message
+					: 'Login failed. Please try again.'
+			);
 		} finally {
 			setLoading(false);
 		}
