@@ -6,6 +6,7 @@ import Loading from './pages/Loading';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PublicRoute from './routes/PublicRoute';
 import { isAuthenticated } from './utils/auth';
+import Dashboard from './pages/Dashboard';
 
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -61,11 +62,7 @@ export default function App() {
 						path="/dashboard"
 						element={
 							<ProtectedRoute>
-								<div className="app-container py-8">
-									<h1 className="text-2xl font-semibold">
-										Dashboard
-									</h1>
-								</div>
+								<Dashboard />
 							</ProtectedRoute>
 						}
 					/>
