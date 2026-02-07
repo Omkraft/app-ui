@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 
 export default function App() {
 	return (
@@ -66,6 +67,12 @@ export default function App() {
 							</ProtectedRoute>
 						}
 					/>
+
+					<Route path="/verify-email" element={
+						<ProtectedRoute>
+							<VerifyEmail />
+						</ProtectedRoute>
+					} />
 
 					{/* 404 */}
 					<Route
