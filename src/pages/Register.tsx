@@ -135,7 +135,7 @@ export default function Register() {
 													required
 												/>
 												<p className="text-xs text-muted-foreground">
-													This will be your login email
+													This will be used to sign in and account recovery purposes.
 												</p>
 											</div>
 
@@ -184,7 +184,7 @@ export default function Register() {
 													/>
 												</div>
 												<p className="text-xs text-muted-foreground">
-													Used for account recovery and verification
+													Stored for account records. Not used for login or verification.
 												</p>
 											</div>
 

@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import emailVerifiedIllustration from '@/assets/email-verified-illustration.svg';
+import emailVerifyFailedIllustration from '@/assets/email-verify-failed-illustration.svg';
+import Loading from './Loading';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -33,7 +35,7 @@ export default function VerifyEmail() {
 	}, [token]);
 
 	if (status === 'loading') {
-		return <p>Verifying your email…</p>;
+		return <Loading />;
 	}
 
 	return (
@@ -46,19 +48,28 @@ export default function VerifyEmail() {
 							<h1 className="text-4xl font-semibold leading-tight text-primary">{status === 'success' ? 'Email Verified' : 'Verification Failed'}</h1>
 						</CardTitle>
 						<CardDescription>
-							{message}
-							<Link to="/login" className="btn-primary">
-								Go to Login
-							</Link>
+							<p>{message}</p>
 						</CardDescription>
-						<CardContent>
+					</CardHeader>
+					<CardContent className='space-y-3'>
+						<Link to="/login" className="btn-primary">
+							Go to Login
+						</Link>
+						{status === 'error' ? (
+							<img
+								src={emailVerifyFailedIllustration}
+								alt="Email verified illustration"
+								className="w-full max-w-md mx-auto opacity-90"
+							/>
+						) : (
 							<img
 								src={emailVerifiedIllustration}
 								alt="Email verified illustration"
 								className="w-full max-w-md mx-auto opacity-90"
 							/>
-						</CardContent>
-					</CardHeader>
+						)}
+						
+					</CardContent>
 				</Card>
 			</div>
 		</div>

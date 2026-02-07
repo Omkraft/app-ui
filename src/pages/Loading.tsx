@@ -13,14 +13,14 @@ export default function Loading() {
 						<CardDescription>
 							Please wait while we load the content for you.
 						</CardDescription>
-						<CardContent>
-							<img
-								src={loadingIllustration}
-								alt="Loading illustration"
-								className="w-full max-w-md mx-auto opacity-90"
-							/>
-						</CardContent>
 					</CardHeader>
+					<CardContent>
+						<img
+							src={loadingIllustration}
+							alt="Loading illustration"
+							className="w-full max-w-md mx-auto opacity-90"
+						/>
+					</CardContent>
 				</Card>
 			</div>
 		</div>
