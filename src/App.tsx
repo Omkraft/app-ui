@@ -68,11 +68,7 @@ export default function App() {
 						}
 					/>
 
-					<Route path="/verify-email" element={
-						<ProtectedRoute>
-							<VerifyEmail />
-						</ProtectedRoute>
-					} />
+					<Route path="/verify-email" element={<VerifyEmail />} />
 
 					{/* 404 */}
 					<Route
