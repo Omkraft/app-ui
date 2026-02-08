@@ -244,18 +244,30 @@ export default function Register() {
 								</>
 							) : (
 								<>
-									<CardHeader className='text-center'>
-										<CardTitle><h2 className="text-accent">Registration successful</h2></CardTitle>
-										<CardDescription>
-											Please verify your email to continue.
+									<CardHeader className="text-center sapce-y-2">
+										<CardTitle>
+											<h2 className="text-accent">Welcome to Omkraft 🎉</h2>
+										</CardTitle>
+										<CardDescription className="mt-2">
+											Your account has been created successfully.
 										</CardDescription>
 									</CardHeader>
 
-									<CardContent className="text-center">
+									<CardContent className="text-center space-y-3">
+										<p className="text-sm text-muted-foreground">
+											We’ve sent a verification email to your registered address.
+											Please confirm your email to activate your account.
+										</p>
+
+										<p className="text-xs text-muted-foreground">
+											Didn’t receive the email? Be sure to check your <strong>Spam</strong> or <strong>Junk</strong> folder.
+										</p>
+
 										<Link to="/login" className="btn-primary inline-block mt-4">
 											Go to Login
 										</Link>
 									</CardContent>
+
 								</>
 							)}
 						</Card>
