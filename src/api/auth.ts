@@ -31,3 +31,22 @@ export function register(
 		body: JSON.stringify({ firstName, lastName, email, phone, password }),
 	});
 }
+
+export function forgotPassword(
+	email: string
+) {
+	return apiRequest('/api/auth/forgot-password', {
+		method: 'POST',
+		body: JSON.stringify({ email }),
+	});
+}
+
+export function resetPassword(
+	otp: string,
+	newPassword: string
+) {
+	return apiRequest('/api/auth/reset-password', {
+		method: 'POST',
+		body: JSON.stringify({ otp, newPassword }),
+	});
+}

@@ -28,10 +28,8 @@ export default function Register() {
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
 	const [countryIso, setCountryIso] = useState('in'); // default India
-
 	const selectedCountry = COUNTRIES.find((c) => c.iso === countryIso)!;
-
-
+	const isPositiveNumeric = (value: string) => typeof value === 'number' && isFinite(value) && value > 0;
 
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -51,14 +49,15 @@ export default function Register() {
 		if (phone.length != 10) {
 			setError('Phone number must be 10 digits');
 			return;
+		} else if (!isPositiveNumeric(phone)) {
+			setError('Phone number is not valid');
+			return;
 		}
 
 		if (password !== confirmPassword) {
 			setError('Passwords do not match');
 			return;
-		}
-
-		if (password.length < 8) {
+		} else if (password.length < 8) {
 			setError('Password must be at least 8 characters');
 			return;
 		}
@@ -135,7 +134,7 @@ export default function Register() {
 													required
 												/>
 												<p className="text-xs text-muted-foreground">
-													This will be your login email
+													This will be used to sign in and account recovery purposes.
 												</p>
 											</div>
 
@@ -184,7 +183,7 @@ export default function Register() {
 													/>
 												</div>
 												<p className="text-xs text-muted-foreground">
-													Used for account recovery and verification
+													Stored for account records. Not used for login or verification.
 												</p>
 											</div>
 
