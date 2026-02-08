@@ -28,10 +28,8 @@ export default function Register() {
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
 	const [countryIso, setCountryIso] = useState('in'); // default India
-
 	const selectedCountry = COUNTRIES.find((c) => c.iso === countryIso)!;
-
-
+	const isPositiveNumeric = (value: string) => typeof value === 'number' && isFinite(value) && value > 0;
 
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -51,14 +49,15 @@ export default function Register() {
 		if (phone.length != 10) {
 			setError('Phone number must be 10 digits');
 			return;
+		} else if (!isPositiveNumeric(phone)) {
+			setError('Phone number is not valid');
+			return;
 		}
 
 		if (password !== confirmPassword) {
 			setError('Passwords do not match');
 			return;
-		}
-
-		if (password.length < 8) {
+		} else if (password.length < 8) {
 			setError('Password must be at least 8 characters');
 			return;
 		}
