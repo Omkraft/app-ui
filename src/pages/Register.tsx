@@ -15,7 +15,7 @@ import registerIllustration from '@/assets/register-illustration.svg';
 import { register } from '@/api/auth';
 import { COUNTRIES } from '@/utils/countries';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
-import Loading from './Loading';
+import Loading from '../components/Loading';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
 
@@ -147,7 +147,7 @@ export default function Register() {
 														value={countryIso}
 														onValueChange={setCountryIso}
 													>
-														<SelectTrigger className="flex h-9 items-center justify-between rounded-md border border-input bg-input text-foreground px-3">
+														<SelectTrigger className="text-foreground px-3">
 															<SelectValue>
 																<span className="flex items-center gap-2">
 																	<span

@@ -16,7 +16,7 @@ import { forgotPassword, resetPassword } from '@/api/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import Loading from './Loading';
+import Loading from '../components/Loading';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
 
@@ -70,7 +70,7 @@ export default function ForgotPassword() {
 		}
 		try {
 			setLoading(true);
-			await resetPassword(otp, password);
+			await resetPassword(email, otp, password);
 		} catch (err) {
 			error = err instanceof Error
 				? err.message
@@ -199,8 +199,7 @@ export default function ForgotPassword() {
 													<Label htmlFor="otp">One-Time Code</Label>
 													<Input
 														id="otp"
-														type="number"
-														placeholder="you@omkraft.io"
+														type="password"
 														value={otp}
 														onChange={(e) => setOtp(e.target.value)}
 														required
@@ -244,7 +243,7 @@ export default function ForgotPassword() {
 													type="submit"
 													className="w-full"
 												>
-													Send OTP
+													Submit
 												</Button>
 											</form>
 										) : (
@@ -253,15 +252,11 @@ export default function ForgotPassword() {
 													You can now sign in using your new password and continue where you left off.
 												</p>
 
-												<p className="text-xs text-muted-foreground">
+												<p className="text-xs text-muted-foreground mt-4">
 													For your security, never share your password with anyone.
 												</p>
-
-												<Link to="/login" className="btn-primary inline-block mt-4">
-													Go to Login
-												</Link>
 											</>
-										)};
+										)}
 									</>
 								)}
 
