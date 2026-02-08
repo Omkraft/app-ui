@@ -1,12 +1,9 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
-/**
- * Refresh access token using httpOnly refresh cookie
- */
 async function refreshAccessToken(): Promise<string> {
 	const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
 		method: 'POST',
-		credentials: 'include', // IMPORTANT: send refresh cookie
+		credentials: 'include',
 	});
 
 	if (!response.ok) {
@@ -18,12 +15,10 @@ async function refreshAccessToken(): Promise<string> {
 	return data.token;
 }
 
-/**
- * Central API request helper
- */
 export async function apiRequest<T>(
 	endpoint: string,
-	options: RequestInit = {}
+	options: RequestInit = {},
+	config?: { skipAuthRefresh?: boolean }
 ): Promise<T> {
 	const token = localStorage.getItem('token');
 
@@ -36,27 +31,22 @@ export async function apiRequest<T>(
 	const response = await fetch(`${API_BASE_URL}${endpoint}`, {
 		...options,
 		headers,
-		credentials: 'include', // allow refresh cookie
+		credentials: 'include',
 	});
 
-	// If token expired, try refresh ONCE
-	if (response.status === 401) {
+	// 🔒 ONLY retry refresh for protected APIs
+	if (response.status === 401 && !config?.skipAuthRefresh) {
 		try {
 			const newToken = await refreshAccessToken();
 
-			const retryHeaders: HeadersInit = {
-				...headers,
-				Authorization: `Bearer ${newToken}`,
-			};
-
-			const retryResponse = await fetch(
-				`${API_BASE_URL}${endpoint}`,
-				{
-					...options,
-					headers: retryHeaders,
-					credentials: 'include',
-				}
-			);
+			const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
+				...options,
+				headers: {
+					...headers,
+					Authorization: `Bearer ${newToken}`,
+				},
+				credentials: 'include',
+			});
 
 			if (!retryResponse.ok) {
 				const error = await retryResponse.json();
@@ -65,7 +55,6 @@ export async function apiRequest<T>(
 
 			return retryResponse.json();
 		} catch {
-			// Refresh failed → logout hard
 			localStorage.removeItem('token');
 			throw new Error('Session expired. Please login again.');
 		}
