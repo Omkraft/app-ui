@@ -129,7 +129,7 @@ export default function ForgotPassword() {
 											{error && (
 												<Alert variant="destructive" className="max-w-md">
 													<AlertCircleIcon />
-													<AlertTitle>Login failed</AlertTitle>
+													<AlertTitle>Password reset failed</AlertTitle>
 													<AlertDescription className="text-sm">
 														{error}
 													</AlertDescription>

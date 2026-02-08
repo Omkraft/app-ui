@@ -31,7 +31,7 @@ export default function Register() {
 	const [submitted, setSubmitted] = useState(false);
 	const [countryIso, setCountryIso] = useState('in'); // default India
 	const selectedCountry = COUNTRIES.find((c) => c.iso === countryIso)!;
-	const isPositiveNumeric = (value: string) => typeof value === 'number' && isFinite(value) && value > 0;
+	const isPositiveNumeric = (value: number) => !isNaN(value) && isFinite(value) && value > 0;
 
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -51,7 +51,7 @@ export default function Register() {
 		if (phone.length != 10) {
 			setError('Phone number must be 10 digits');
 			return;
-		} else if (!isPositiveNumeric(phone)) {
+		} else if (!isPositiveNumeric(Number(phone))) {
 			setError('Phone number is not valid');
 			return;
 		}
@@ -80,7 +80,6 @@ export default function Register() {
 			}
 		}
 	};
-
 
 	return (
 		<>
@@ -219,7 +218,7 @@ export default function Register() {
 											{error && (
 												<Alert variant="destructive" className="max-w-md">
 													<AlertCircleIcon />
-													<AlertTitle>Login failed</AlertTitle>
+													<AlertTitle>Registration failed</AlertTitle>
 													<AlertDescription className="text-sm">
 														{error}
 													</AlertDescription>
