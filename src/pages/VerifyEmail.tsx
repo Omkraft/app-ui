@@ -45,7 +45,13 @@ export default function VerifyEmail() {
 				<Card className="w-full text-center">
 					<CardHeader>
 						<CardTitle>
-							<h1 className="text-4xl font-semibold leading-tight text-primary">{status === 'success' ? 'Email Verified' : 'Verification Failed'}</h1>
+							<h1
+								className={`text-4xl font-semibold leading-tight ${
+									status === 'success' ? 'text-accent' : 'text-destructive'
+								}`}
+							>
+								{status === 'success' ? 'Email Verified' : 'Verification Failed'}
+							</h1>
 						</CardTitle>
 						<CardDescription>
 							<p>{message}</p>
