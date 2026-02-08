@@ -103,8 +103,8 @@ $system-font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont,
 	--omkraft-red-900: #5a0c0c;
 
 	--destructive: var(--omkraft-red-500);
-	--destructive-bg: rgba(220, 38, 38, 0.12);
-	--destructive-hover: rgba(220, 38, 38, 0.18);
+	--destructive-bg: var(--omkraft-red-500);
+	--destructive-hover: var(--omkraft-red-600);
 	--destructive-foreground: var(--omkraft-surface-0);
 
 	/* ========================= */

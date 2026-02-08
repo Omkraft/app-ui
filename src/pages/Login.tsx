@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 
 import loginIllustration from '@/assets/login-illustration.svg';
 import Loading from './Loading';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircleIcon } from 'lucide-react';
 
 export default function Login() {
 	const [email, setEmail] = useState('');
@@ -114,9 +116,13 @@ export default function Login() {
 									</div>
 
 									{error && (
-										<p className="text-sm text-destructive">
-											{error}
-										</p>
+										<Alert variant="destructive" className="max-w-md">
+											<AlertCircleIcon />
+											<AlertTitle>Login failed</AlertTitle>
+											<AlertDescription className="text-sm">
+												{error}
+											</AlertDescription>
+										</Alert>
 									)}
 
 									<Button
