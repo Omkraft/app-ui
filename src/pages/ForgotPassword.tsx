@@ -11,7 +11,7 @@ import {
 import forgotIllustration from '@/assets/forgot-password-illustration.svg';
 import resetIllustration from '@/assets/reset-password-illustration.svg';
 
-import { forgotPassword } from '@/api/auth';
+import { forgotPassword, resetPassword } from '@/api/auth';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,11 @@ import { AlertCircleIcon } from 'lucide-react';
 
 export default function ForgotPassword() {
 	const [sent, setSent] = useState(false);
+	const [reset, setReset] = useState(false);
 	const [email, setEmail] = useState('');
+	const [otp, setOtp] = useState('');
+	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const handleForgotPassword = async (e: React.FormEvent) => {
@@ -42,10 +46,41 @@ export default function ForgotPassword() {
 				: 'Failed to send OTP. Please try again.';
 			setError(error);
 		} finally {
-			setLoading(false);
 			if (!error) {
 				setSent(true);
 			}
+			setLoading(false);
+		}
+	};
+
+	const handleResetPassword = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setError(null);
+		let error = null;
+		if (!otp.trim()) {
+			setError('OTP is required');
+			return;
+		}
+		if (password !== confirmPassword) {
+			setError('Passwords do not match');
+			return;
+		} else if (password.length < 8) {
+			setError('Password must be at least 8 characters');
+			return;
+		}
+		try {
+			setLoading(true);
+			await resetPassword(otp, password);
+		} catch (err) {
+			error = err instanceof Error
+				? err.message
+				: 'Failed to reset password. Please try again.';
+			setError(error);
+		} finally {
+			if (!error) {
+				setReset(true);
+			}
+			setLoading(false);
 		}
 	};
 
@@ -103,10 +138,23 @@ export default function ForgotPassword() {
 									</>
 								) : (
 									<>
-										<CardTitle><h2>Reset password</h2></CardTitle>
-										<CardDescription>
-											Please check your email for the OTP to reset your password.
-										</CardDescription>
+										{!reset ? (
+											<>
+												<CardTitle><h2>Reset password</h2></CardTitle>
+												<CardDescription>
+													Please check your email for the OTP to reset your password.
+												</CardDescription>
+											</>
+										) : (
+											<>
+												<CardTitle>
+													<h2 className="text-accent">Password Updated Successfully</h2>
+												</CardTitle>
+												<CardDescription className="mt-2">
+													Your password has been reset.
+												</CardDescription>
+											</>
+										)}
 									</>
 								)}
 							</CardHeader>
@@ -144,9 +192,77 @@ export default function ForgotPassword() {
 										</form>
 									</>
 								) : (
-									<p className="text-accent">
-										If the email exists, an OTP has been sent.
-									</p>
+									<>
+										{!reset ? (
+											<form onSubmit={handleResetPassword} className="space-y-4">
+												<div className="space-y-2">
+													<Label htmlFor="otp">One-Time Code</Label>
+													<Input
+														id="otp"
+														type="number"
+														placeholder="you@omkraft.io"
+														value={otp}
+														onChange={(e) => setOtp(e.target.value)}
+														required
+													/>
+												</div>
+												<div className="space-y-2">
+													<Label htmlFor="password">Password</Label>
+													<Input
+														id="password"
+														type="password"
+														value={password}
+														onChange={(e) => setPassword(e.target.value)}
+														required
+														minLength={8}
+													/>
+													<p className="text-xs text-muted-foreground">
+														Minimum 8 characters
+													</p>
+												</div>
+
+												<div className="space-y-2">
+													<Label htmlFor="confirmPassword">Confirm password</Label>
+													<Input
+														id="confirmPassword"
+														type="password"
+														value={confirmPassword}
+														onChange={(e) => setConfirmPassword(e.target.value)}
+														required
+													/>
+												</div>
+												{error && (
+													<Alert variant="destructive" className="max-w-md">
+														<AlertCircleIcon />
+														<AlertTitle>Password reset failed</AlertTitle>
+														<AlertDescription className="text-sm">
+															{error}
+														</AlertDescription>
+													</Alert>
+												)}
+												<Button
+													type="submit"
+													className="w-full"
+												>
+													Send OTP
+												</Button>
+											</form>
+										) : (
+											<>
+												<p className="text-sm text-muted-foreground">
+													You can now sign in using your new password and continue where you left off.
+												</p>
+
+												<p className="text-xs text-muted-foreground">
+													For your security, never share your password with anyone.
+												</p>
+
+												<Link to="/login" className="btn-primary inline-block mt-4">
+													Go to Login
+												</Link>
+											</>
+										)};
+									</>
 								)}
 
 								<Link
