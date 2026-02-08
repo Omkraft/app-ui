@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Loading from './Loading';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { AlertCircleIcon } from 'lucide-react';
 
 export default function ForgotPassword() {
 	const [sent, setSent] = useState(false);
@@ -27,9 +29,7 @@ export default function ForgotPassword() {
 		e.preventDefault();
 		setError(null);
 		let error = null;
-		if (
-			!email.trim()
-		) {
+		if (!email.trim()) {
 			setError('Email is required');
 			return;
 		}
@@ -127,9 +127,13 @@ export default function ForgotPassword() {
 												/>
 											</div>
 											{error && (
-												<p className="text-sm text-destructive">
-													{error}
-												</p>
+												<Alert variant="destructive" className="max-w-md">
+													<AlertCircleIcon />
+													<AlertTitle>Login failed</AlertTitle>
+													<AlertDescription className="text-sm">
+														{error}
+													</AlertDescription>
+												</Alert>
 											)}
 											<Button
 												type="submit"

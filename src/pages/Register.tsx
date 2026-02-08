@@ -16,6 +16,8 @@ import { register } from '@/api/auth';
 import { COUNTRIES } from '@/utils/countries';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import Loading from './Loading';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { AlertCircleIcon } from 'lucide-react';
 
 export default function Register() {
 	const [firstName, setFirstName] = useState('');
@@ -215,9 +217,13 @@ export default function Register() {
 											</div>
 
 											{error && (
-												<p className="text-sm text-destructive">
-													{error}
-												</p>
+												<Alert variant="destructive" className="max-w-md">
+													<AlertCircleIcon />
+													<AlertTitle>Login failed</AlertTitle>
+													<AlertDescription className="text-sm">
+														{error}
+													</AlertDescription>
+												</Alert>
 											)}
 
 											<Button
