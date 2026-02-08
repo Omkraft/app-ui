@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import emailVerifiedIllustration from '@/assets/email-verified-illustration.svg';
 import emailVerifyFailedIllustration from '@/assets/email-verify-failed-illustration.svg';
-import Loading from './Loading';
+import Loading from '../components/Loading';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

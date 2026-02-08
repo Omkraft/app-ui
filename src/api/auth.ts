@@ -42,11 +42,12 @@ export function forgotPassword(
 }
 
 export function resetPassword(
+	email: string,
 	otp: string,
-	newPassword: string
+	password: string
 ) {
 	return apiRequest('/api/auth/reset-password', {
 		method: 'POST',
-		body: JSON.stringify({ otp, newPassword }),
+		body: JSON.stringify({ email, otp, password }),
 	});
 }
