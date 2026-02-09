@@ -42,7 +42,7 @@ export function Header() {
 
 					{isAuthenticated && (
 						<>
-							<span className="text-sm text-muted-foreground">
+							<span className="hidden md:inline text-sm text-muted-foreground">
 								{user?.email}
 							</span>
 							<Button
