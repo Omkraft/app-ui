@@ -4,9 +4,9 @@ import welcomeIllustration from '@/assets/welcome-illustration.svg';
 
 export default function Welcome() {
 	return (
-		<div className="min-h-[calc(100vh-72px)] bg-background text-foreground flex items-center">
-			<div className="app-container max-w-4xl py-12 grid gap-12 lg:grid-cols-2">
-				<div className="space-y-8">
+		<div className="min-h-[calc(100vh-145px)] bg-background text-foreground flex items-center">
+			<div className="app-container max-w-4xl py-6 grid gap-12 lg:grid-cols-2 items-center">
+				<div className="space-y-8 text-center lg:text-left">
 					{/* Heading */}
 					<h1 className="text-4xl font-semibold leading-tight">
 						Welcome to <span className="text-primary">Omkraft</span>

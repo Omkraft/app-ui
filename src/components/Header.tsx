@@ -17,7 +17,7 @@ export function Header() {
 	}
 
 	return (
-		<header className="header">
+		<header className="header border-b border-border">
 			<div className="app-container header__inner">
 				<img src={logo} alt="Omkraft Inc." className="header__logo" />
 
