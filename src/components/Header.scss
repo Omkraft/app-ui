@@ -1,9 +1,5 @@
 @use "../styles/variables" as *;
 
-.header {
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 .header__inner {
 	display: flex;
 	align-items: center;

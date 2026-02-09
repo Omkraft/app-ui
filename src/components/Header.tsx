@@ -13,11 +13,11 @@ export function Header() {
 	const navigate = useNavigate();
 	function logoutUser() {
 		logout();
-		navigate('/login', { replace: true });
+		navigate('/welcome', { replace: true });
 	}
 
 	return (
-		<header className="header">
+		<header className="header border-b border-border">
 			<div className="app-container header__inner">
 				<img src={logo} alt="Omkraft Inc." className="header__logo" />
 

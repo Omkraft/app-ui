@@ -16,6 +16,9 @@ const buttonVariants = cva(
 				secondary:
           'bg-secondary text-secondary-foreground hover:bg-secondary/80',
 
+				accent:
+          'bg-accent text-accent-foreground hover:bg-[var(--omkraft-mint-600)]',
+
 				outline:
           'border border-primary bg-transparent hover:bg-white/5',
 
