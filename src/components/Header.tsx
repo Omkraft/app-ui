@@ -13,7 +13,7 @@ export function Header() {
 	const navigate = useNavigate();
 	function logoutUser() {
 		logout();
-		navigate('/login', { replace: true });
+		navigate('/welcome', { replace: true });
 	}
 
 	return (

@@ -8,6 +8,7 @@ import PublicRoute from './routes/PublicRoute';
 import { isAuthenticated } from './utils/auth';
 import Dashboard from './pages/Dashboard';
 
+const Welcome = lazy(() => import('./pages/Welcome'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
@@ -26,11 +27,20 @@ export default function App() {
 						element={
 							isAuthenticated()
 								? <Navigate to="/dashboard" replace />
-								: <Navigate to="/login" replace />
+								: <Navigate to="/welcome" replace />
 						}
 					/>
 
 					{/* Public auth routes */}
+					<Route
+						path="/welcome"
+						element={
+							<PublicRoute>
+								<Welcome />
+							</PublicRoute>
+						}
+					/>
+					
 					<Route
 						path="/login"
 						element={
