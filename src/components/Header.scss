@@ -1,18 +1,5 @@
 @use "../styles/variables" as *;
 
-.header__inner {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	min-height: 72px;
-}
-
-.header__user {
-	color: var(--omkraft-white);
-	font-size: 14px;
-	opacity: 0.85;
-}
-
 .header__logo {
 	height: 48px;
 

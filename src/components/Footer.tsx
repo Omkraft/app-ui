@@ -4,11 +4,11 @@ export function Footer() {
 	const year = new Date().getFullYear();
 
 	return (
-		<footer className="border-t border-border">
-			<div className="app-container py-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+		<footer className="border-t border-border bg-background text-foreground">
+			<div className="app-container py-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 				{/* Left */}
 				<p className="text-sm text-muted-foreground">
-					© {year} Omkraft Inc. All rights reserved.
+					&copy; {year} Omkraft Inc. All rights reserved.
 				</p>
 
 				{/* Center */}

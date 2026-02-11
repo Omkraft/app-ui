@@ -13,14 +13,14 @@ export default function Welcome() {
 					</h1>
 
 					{/* Intro */}
-					<p className="text-muted-foreground text-lg max-w-3xl">
+					<p className="text-muted-foreground text-lg">
 						Omkraft is a simple, evolving platform designed to make everyday
 						things easier — all in one place. It's currently in an early
 						preview phase, and your feedback will help shape what it becomes.
 					</p>
 
 					{/* What to expect */}
-					<div className="space-y-3 max-w-3xl">
+					<div className="space-y-3">
 						<p className="text-muted-foreground">
 							You can sign up, explore the experience, and try out the current
 							features freely. Over time, Omkraft will grow into a practical
@@ -36,7 +36,7 @@ export default function Welcome() {
 					</div>
 
 					{/* Reassurance */}
-					<div className="rounded-lg border border-border bg-muted/30 p-4 max-w-3xl">
+					<div className="rounded-lg border border-border bg-muted/30 p-4">
 						<p className="text-sm text-muted-foreground">
 							🔒 Your login information is stored securely and will never be
 							misused. If you notice anything odd or have suggestions, you’re
@@ -45,15 +45,15 @@ export default function Welcome() {
 					</div>
 
 					{/* CTA */}
-					<div className="flex flex-col sm:flex-row gap-4 pt-4">
+					<div className="flex flex-col lg:flex-row gap-4 pt-4">
 						<Link to="/login">
-							<Button className="w-full sm:w-auto">
+							<Button className="w-full lg:w-auto">
 								Login
 							</Button>
 						</Link>
 
 						<Link to="/register">
-							<Button variant="accent" className="w-full sm:w-auto">
+							<Button variant="accent" className="w-full lg:w-auto">
 								Create Account
 							</Button>
 						</Link>
