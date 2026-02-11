@@ -6,7 +6,9 @@ import Loading from './components/Loading';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PublicRoute from './routes/PublicRoute';
 import { isAuthenticated } from './utils/auth';
-import { Footer } from './components/Footer';
+import { FooterPublic } from './components/FooterPublic';
+import { FooterApp } from './components/FooterApp';
+
 
 const Welcome = lazy(() => import('./pages/Welcome'));
 const Login = lazy(() => import('./pages/Login'));
@@ -97,7 +99,7 @@ export default function App() {
 				</Suspense>
 			</div>
 
-			<Footer />
+			{isAuthenticated() ? <FooterApp /> : <FooterPublic />}
 		</div>
 	);
 }
