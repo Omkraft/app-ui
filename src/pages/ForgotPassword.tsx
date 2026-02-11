@@ -88,7 +88,7 @@ export default function ForgotPassword() {
 		<>
 			{!loading ? (
 				<div className="min-h-[calc(100vh-145px)] flex items-center justify-center bg-background">
-					<div className="app-container grid gap-12 lg:grid-cols-2 items-center justify-items-center">
+					<div className="app-container grid gap-12 lg:grid-cols-2 py-6 items-center justify-items-center">
 						{/* Left visual panel */}
 						<div className="hidden lg:block relative">
 							<div className="relative space-y-6">

@@ -6,7 +6,6 @@ import Loading from './components/Loading';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PublicRoute from './routes/PublicRoute';
 import { isAuthenticated } from './utils/auth';
-import Dashboard from './pages/Dashboard';
 import { Footer } from './components/Footer';
 
 const Welcome = lazy(() => import('./pages/Welcome'));
@@ -14,10 +13,11 @@ const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 
 export default function App() {
 	return (
-		<div className="bg-background text-foreground flex flex-col">
+		<div className="flex flex-col">
 			<Header />
 
 			<div className="flex-1">
