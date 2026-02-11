@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-export function Footer() {
+export function FooterPublic() {
 	const year = new Date().getFullYear();
 
 	return (
