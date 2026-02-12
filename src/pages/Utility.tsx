@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { formatDate } from '@/utils/format';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { OpenMeteoWeather } from '@/types/weather';
-import { NewsBadge } from '@/components/news/NewsBadge';
+import { NewsSourceLogo } from '@/components/news/NewsSourceLogo';
 
 interface NewsArticle {
 	title: string;
@@ -82,7 +82,6 @@ export default function Utility() {
 			const data = await apiRequest<NewsArticle[]>(
 				`/api/utility/news?category=${category}`
 			);
-			console.log(data);
 			setNews({
 				articles: data
 			});
@@ -182,19 +181,19 @@ export default function Utility() {
 											className="bg-[var(--omkraft-blue-800)] transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
 										>
 											<CardHeader>
-												<div className="flex items-center justify-between gap-3">
-													<CardTitle className="text-lg leading-snug">
-														<a
-															href={item.url}
-															target="_blank"
-															rel="noopener noreferrer"
-															className="hover:text-muted-foreground transition-colors"
-														>
+												<a
+													href={item.url}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="hover:text-muted-foreground transition-colors"
+												>
+													<div className="flex items-center justify-between gap-3">
+														<CardTitle className="text-lg leading-snug">
 															{item.title}
-														</a>
-													</CardTitle>
-													<NewsBadge source={item.source} />
-												</div>
+														</CardTitle>
+														<NewsSourceLogo source={item.source} />
+													</div>
+												</a>
 
 												<CardDescription className="flex justify-between text-xs mt-1">
 													<span className="text-muted-foreground">
