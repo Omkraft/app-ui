@@ -42,7 +42,7 @@ export default function Dashboard() {
 				</div>
 			) : (
 				<main className="min-h-[calc(100vh-135px)] bg-background">
-					<section className="bg-background text-foreground flex items-center py-6">
+					<section className="text-foreground flex items-center py-6">
 						<div className="app-container grid gap-6 items-center">
 							{/* ========================= */}
 							{/* Page Header */}
@@ -147,7 +147,7 @@ export default function Dashboard() {
 										<span className="text-[var(--omkraft-bg)]">Tracker</span>
 									</h2>
 									<p>
-										Know what you’re paying for — always.
+										Know what you're paying for — always.
 									</p>
 
 									<p>
@@ -156,7 +156,7 @@ export default function Dashboard() {
 									</p>
 
 									<p>
-										Subscription Tracker gives you a clear view of every service you’re
+										Subscription Tracker gives you a clear view of every service you're
 										paying for, how often you’re billed, and what it actually costs you
 										over time.
 									</p>
@@ -170,7 +170,7 @@ export default function Dashboard() {
 									<ul className="list-disc pl-5 space-y-2 lg:justify-items-start">
 										<li>Track all active subscriptions</li>
 										<li>Monthly and yearly cost breakdown</li>
-										<li>Renewal reminders before you’re charged</li>
+										<li>Renewal reminders before you're charged</li>
 										<li>Spot unused or forgotten services easily</li>
 									</ul>
 
@@ -183,6 +183,15 @@ export default function Dashboard() {
 							</div>
 						</div>
 					</section>
+					{/* ========================= */}
+					{/* Footer Hint */}
+					{/* ========================= */}
+					<footer className="py-6 border-t border-border bg-muted text-sm text-muted-foreground">
+						<div className="app-container grid gap-6 items-center">
+							More tools will be added here over time — all accessible through the same
+							Omkraft account.
+						</div>
+					</footer>
 				</main>
 			)}
 		</>

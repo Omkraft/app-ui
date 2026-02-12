@@ -16,6 +16,7 @@ const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Utility = lazy(() => import('./pages/Utility'));
 
 export default function App() {
 	return (
@@ -81,6 +82,15 @@ export default function App() {
 								</ProtectedRoute>
 							}
 						/>
+
+						<Route path="/utility"
+							element={
+								<ProtectedRoute>
+									<Utility />
+								</ProtectedRoute>
+							}
+						/>
+
 
 						<Route path="/verify-email" element={<VerifyEmail />} />
 
