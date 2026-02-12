@@ -4,13 +4,7 @@ import { apiRequest } from '@/api/client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { formatDate } from '@/utils/format';
 import { Skeleton } from '@/components/ui/skeleton';
-
-interface WeatherState {
-	temperature: number;
-	windspeed: number;
-	city: string;
-	country: string;
-}
+import type { OpenMeteoWeather } from '@/types/weather';
 
 interface NewsArticle {
 	title: string;
@@ -30,7 +24,7 @@ interface QuoteResponse {
 }
 
 export default function Utility() {
-	const [weather, setWeather] = useState<WeatherState | null>(null);
+	const [weather, setWeather] = useState<OpenMeteoWeather | null>(null);
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
 	const [news, setNews] = useState<NewsResponse | null>(null);
 	const [loadingNews, setLoadingNews] = useState(true);
@@ -39,11 +33,22 @@ export default function Utility() {
 
 	const fetchWeather = useCallback(async () => {
 		try {
-			const current = await apiRequest<WeatherState>('/api/utility/weather');
-			setWeather(current);
+			navigator.geolocation.getCurrentPosition(
+				async position => {
+					const { latitude, longitude } = position.coords;
 
-		} catch (err) {
-			console.error(err);
+					const weather = await apiRequest<OpenMeteoWeather>(
+						`/api/utility/weather?lat=${latitude}&lon=${longitude}&city=Local`
+					);
+
+					setWeather(weather);
+				},
+				error => {
+					console.error(error);
+					setError('Location permission denied');
+				}
+			);
+		} catch (_err) {
 			setError('Failed to fetch weather');
 		}
 	}, []);
@@ -105,7 +110,7 @@ export default function Utility() {
 					{weather ? (
 						<div className="space-y-2">
 							<p className="text-lg">
-								{weather.city}, {weather.country}
+								{weather.city}
 							</p>
 							<p className="text-2xl font-semibold">
 								{weather.temperature}°C
