@@ -1,6 +1,6 @@
 import toi from '@/assets/media/toi.svg';
 import ie from '@/assets/media/indian-express.svg';
-import th from '@/assets/media/the-hindu.svg';
+import ht from '@/assets/media/hindustan-times.svg';
 import bbc from '@/assets/media/bbc.svg';
 import nyt from '@/assets/media/nyt.svg';
 
@@ -11,7 +11,7 @@ interface Props {
 const logoMap: Record<string, string> = {
 	'Times of India': toi,
 	'Indian Express': ie,
-	'The Hindu': th,
+	'Hindustan Times': ht,
 	'BBC News': bbc,
 	'New York Times': nyt,
 };

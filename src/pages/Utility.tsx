@@ -147,7 +147,7 @@ export default function Utility() {
 						defaultValue="local"
 						onValueChange={(value) => fetchNews(value)}
 					>
-						<TabsList className='bg-[var(--omkraft-blue-800)]'>
+						<TabsList className='bg-primary text-foreground'>
 							<TabsTrigger value="local">Local</TabsTrigger>
 							<TabsTrigger value="india">India</TabsTrigger>
 							<TabsTrigger value="global">Global</TabsTrigger>
@@ -159,16 +159,16 @@ export default function Utility() {
 
 						<div className="pt-4 space-y-4">
 							{loadingNews ? (
-								<div className="space-y-4">
+								<div className="grid gap-8 lg:grid-cols-2">
 									{Array.from({ length: 4 }).map((_, i) => (
-										<Card key={i}>
+										<Card key={i} className='bg-foreground border border-muted-foreground'>
 											<CardHeader>
-												<Skeleton className="h-5 w-3/4" />
-												<Skeleton className="h-4 w-1/3 mt-2" />
+												<Skeleton className="h-5 w-3/4 bg-background" />
+												<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
 											</CardHeader>
 											<CardContent>
-												<Skeleton className="h-4 w-full mb-2" />
-												<Skeleton className="h-4 w-5/6" />
+												<Skeleton className="h-4 w-full mb-2 bg-background" />
+												<Skeleton className="h-4 w-5/6 bg-background" />
 											</CardContent>
 										</Card>
 									))}
@@ -178,14 +178,14 @@ export default function Utility() {
 									{news?.articles.map((item, index) => (
 										<Card
 											key={index}
-											className="bg-[var(--omkraft-blue-800)] transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
+											className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
 										>
 											<CardHeader>
 												<a
 													href={item.url}
 													target="_blank"
 													rel="noopener noreferrer"
-													className="hover:text-muted-foreground transition-colors"
+													className="hover:text-primary transition-colors"
 												>
 													<div className="flex items-center justify-between gap-3">
 														<CardTitle className="text-lg leading-snug">
@@ -195,18 +195,18 @@ export default function Utility() {
 													</div>
 												</a>
 
-												<CardDescription className="flex justify-between text-xs mt-1">
-													<span className="text-muted-foreground">
+												<CardDescription className="text-background flex justify-between text-xs mt-1">
+													<span>
 														{item.source}
 													</span>
-													<span className="text-muted-foreground">
+													<span>
 														{formatDate(item.publishedAt)}
 													</span>
 												</CardDescription>
 											</CardHeader>
 
 											<CardContent>
-												<p className="text-sm text-muted-foreground line-clamp-3">
+												<p className="text-sm line-clamp-3">
 													{item.description}
 												</p>
 											</CardContent>
