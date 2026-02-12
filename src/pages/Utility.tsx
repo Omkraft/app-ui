@@ -16,7 +16,7 @@ interface NewsArticle {
 	title: string;
 	url: string;
 	description: string;
-	source: { name: string };
+	source: string;
 	publishedAt: string;
 }
 
@@ -34,7 +34,7 @@ export default function Utility() {
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
 	const [news, setNews] = useState<NewsResponse | null>(null);
 	const [loadingNews, setLoadingNews] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [, setError] = useState<string | null>(null);
 
 
 	const fetchWeather = useCallback(async () => {
