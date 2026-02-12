@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { formatDate } from '@/utils/format';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { OpenMeteoWeather } from '@/types/weather';
+import { NewsBadge } from '@/components/news/NewsBadge';
 
 interface NewsArticle {
 	title: string;
@@ -37,8 +38,21 @@ export default function Utility() {
 				async position => {
 					const { latitude, longitude } = position.coords;
 
+					// 🔹 Reverse geocode to get city name
+					const geoRes = await fetch(
+						`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+					);
+
+					const geoData = await geoRes.json();
+
+					const city =
+					geoData.city ||
+					geoData.locality ||
+					geoData.principalSubdivision ||
+					'Unknown';
+
 					const weather = await apiRequest<OpenMeteoWeather>(
-						`/api/utility/weather?lat=${latitude}&lon=${longitude}&city=Local`
+						`/api/utility/weather?lat=${latitude}&lon=${longitude}&city=${encodeURIComponent(city)}`
 					);
 
 					setWeather(weather);
@@ -168,16 +182,19 @@ export default function Utility() {
 											className="bg-[var(--omkraft-blue-800)] transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
 										>
 											<CardHeader>
-												<CardTitle className="text-lg leading-snug">
-													<a
-														href={item.url}
-														target="_blank"
-														rel="noopener noreferrer"
-														className="hover:text-muted-foreground transition-colors"
-													>
-														{item.title}
-													</a>
-												</CardTitle>
+												<div className="flex items-center justify-between gap-3">
+													<CardTitle className="text-lg leading-snug">
+														<a
+															href={item.url}
+															target="_blank"
+															rel="noopener noreferrer"
+															className="hover:text-muted-foreground transition-colors"
+														>
+															{item.title}
+														</a>
+													</CardTitle>
+													<NewsBadge source={item.source} />
+												</div>
 
 												<CardDescription className="flex justify-between text-xs mt-1">
 													<span className="text-muted-foreground">
