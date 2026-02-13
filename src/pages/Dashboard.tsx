@@ -9,7 +9,7 @@ export default function Dashboard() {
 
 	return (
 		<>
-			{user?.email !== 'omkardesai@outlook.in' ? (
+			{user?.email !== 'omkardesai@outlook.in' && user?.email !== 'ashwinidesai001@outlook.com' ? (
 				<div className="min-h-[calc(100vh-135px)] bg-background text-foreground flex items-center">
 					<main className="app-container grid gap-6 text-center py-6 items-center justify-items-center">
 						<h1 className="text-3xl font-semibold">
