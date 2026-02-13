@@ -314,11 +314,11 @@ export default function Utility() {
 													rel="noopener noreferrer"
 													className="hover:text-primary transition-colors"
 												>
-													<div className="flex items-center justify-between gap-3">
+													<div className="flex flex-col-reverse lg:flex-row items-start lg:items-center gap-3">
 														<CardTitle className="text-lg leading-snug">
 															{item.title}
 														</CardTitle>
-														<NewsSourceLogo source={item.source} className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}hidden sm:block`} />
+														<NewsSourceLogo source={item.source} className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}`} />
 													</div>
 												</a>
 
