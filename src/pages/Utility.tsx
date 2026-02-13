@@ -6,6 +6,8 @@ import { formatDate } from '@/utils/format';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { OpenMeteoWeather } from '@/types/weather';
 import { NewsSourceLogo } from '@/components/news/NewsSourceLogo';
+import { getWeatherIcon } from '@/utils/weatherIcons';
+import { Spinner } from '@/components/ui/spinner';
 
 interface NewsArticle {
 	title: string;
@@ -29,6 +31,7 @@ export default function Utility() {
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
 	const [news, setNews] = useState<NewsResponse | null>(null);
 	const [loadingNews, setLoadingNews] = useState(true);
+	const [locationLabel, setLocationLabel] = useState<string | null>(null);
 	const [, setError] = useState<string | null>(null);
 
 
@@ -45,16 +48,31 @@ export default function Utility() {
 
 					const geoData = await geoRes.json();
 
-					const city =
-					geoData.city ||
-					geoData.locality ||
-					geoData.principalSubdivision ||
-					'Unknown';
+					const cityName =
+						geoData.city ||
+						geoData.locality ||
+						null;
+
+					const state =
+						geoData.principalSubdivision ||
+						null;
+
+					const countryCode =
+						geoData.countryCode ||
+						null;
+
+					// Build formatted location string
+					const locationParts = [cityName, state, countryCode].filter(Boolean);
+					const formattedLocation =
+						locationParts.length > 0
+							? locationParts.join(', ')
+							: 'Unknown';
+
 
 					const weather = await apiRequest<OpenMeteoWeather>(
-						`/api/utility/weather?lat=${latitude}&lon=${longitude}&city=${encodeURIComponent(city)}`
+						`/api/utility/weather?lat=${latitude}&lon=${longitude}`
 					);
-
+					setLocationLabel(formattedLocation);
 					setWeather(weather);
 				},
 				error => {
@@ -95,7 +113,7 @@ export default function Utility() {
 	useEffect(() => {
 		fetchWeather();
 		fetchQuote();
-		fetchNews('local');
+		fetchNews('india');
 	}, [fetchWeather, fetchNews]);
 
 	return (
@@ -115,25 +133,69 @@ export default function Utility() {
 					</header>
 				</div>
 			</section>
+			
 			{/* ================= Weather ================= */}
-			<section className="bg-[var(--omkraft-navy-300)] text-navy-foreground flex items-center py-6">
-				<div className="app-container grid gap-6 items-center">
-					<h2 className='text-3xl'>Weather</h2>
+			<section className="bg-gradient-to-br from-[var(--omkraft-primary)] to-background text-foreground py-8">
+				<div className="app-container space-y-8">
+
+					<h2 className="text-3xl font-semibold">Weather</h2>
 
 					{weather ? (
-						<div className="space-y-2">
-							<p className="text-lg">
-								{weather.city}
-							</p>
-							<p className="text-2xl font-semibold">
-								{weather.temperature}°C
-							</p>
-							<p>
-									Wind: {weather.windspeed} km/h
-							</p>
-						</div>
+						<>
+							{/* Current */}
+							<div className="flex items-center justify-between bg-white/10 backdrop-blur-md p-6 rounded-xl">
+								<div>
+									<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
+									<p className="text-sm opacity-60">
+										{locationLabel?.split(',').slice(1).join(',')}
+									</p>
+
+									<p className="text-5xl font-bold">
+										{weather.current.temperature}°C
+									</p>
+									<p>
+										Feels like {weather.hourly.apparent_temperature[0]}°C
+									</p>
+								</div>
+
+								<div className="text-6xl">
+									{getWeatherIcon(weather.current.weathercode)}
+								</div>
+							</div>
+
+							{/* Stats */}
+							<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+								<div className="bg-white/10 p-4 rounded-lg">
+									<p>Humidity</p>
+									<p className="text-xl font-semibold">
+										{weather.hourly.relativehumidity_2m[0]}%
+									</p>
+								</div>
+
+								<div className="bg-white/10 p-4 rounded-lg">
+									<p>Wind</p>
+									<p className="text-xl font-semibold">
+										{weather.current.windspeed} km/h
+									</p>
+								</div>
+
+								<div className="bg-white/10 p-4 rounded-lg">
+									<p>Cloud Cover</p>
+									<p className="text-xl font-semibold">
+										{weather.hourly.cloudcover[0]}%
+									</p>
+								</div>
+
+								<div className="bg-white/10 p-4 rounded-lg">
+									<p>Precipitation</p>
+									<p className="text-xl font-semibold">
+										{weather.hourly.precipitation[0]} mm
+									</p>
+								</div>
+							</div>
+						</>
 					) : (
-						<p>Loading weather...</p>
+						<p><Spinner className='inline size-6' /> Loading weather...</p>
 					)}
 				</div>
 			</section>
@@ -144,16 +206,14 @@ export default function Utility() {
 					<h2 className='text-3xl text-foreground'>News</h2>
 
 					<Tabs
-						defaultValue="local"
+						defaultValue="india"
 						onValueChange={(value) => fetchNews(value)}
 					>
 						<TabsList className='bg-primary text-foreground'>
-							<TabsTrigger value="local">Local</TabsTrigger>
 							<TabsTrigger value="india">India</TabsTrigger>
 							<TabsTrigger value="global">Global</TabsTrigger>
 						</TabsList>
 
-						<TabsContent value="local" />
 						<TabsContent value="india" />
 						<TabsContent value="global" />
 
@@ -220,17 +280,19 @@ export default function Utility() {
 			</section>
 
 			{/* ================= Quote ================= */}
-			<section className="card p-6 space-y-4">
-				<h2>Daily Insight</h2>
+			<section className="bg-gradient-to-br from-accent to-primary flex items-center py-6">
+				<div className="app-container grid gap-6 items-center">
+					<h2 className='text-3xl'>Daily Quote</h2>
 
-				{quote ? (
-					<>
-						<p className="italic">“{quote.q}”</p>
-						<p className="text-muted-foreground">— {quote.a}</p>
-					</>
-				) : (
-					<p className="text-muted-foreground">Loading quote...</p>
-				)}
+					{quote ? (
+						<>
+							<p className="italic">“{quote.q}”</p>
+							<p>— {quote.a}</p>
+						</>
+					) : (
+						<p>Loading quote...</p>
+					)}
+				</div>
 			</section>
 		</main>
 	);
