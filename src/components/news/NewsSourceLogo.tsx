@@ -4,8 +4,11 @@ import ht from '@/assets/media/hindustan-times.svg';
 import bbc from '@/assets/media/bbc.svg';
 import cnn from '@/assets/media/cnn.svg';
 
+import { cn } from '@/lib/utils';
+
 interface Props {
   source: string;
+  className?: string;
 }
 
 const logoMap: Record<string, string> = {
@@ -16,7 +19,7 @@ const logoMap: Record<string, string> = {
 	'CNN': cnn,
 };
 
-export function NewsSourceLogo({ source }: Props) {
+export function NewsSourceLogo({ source, className }: Props) {
 	const logo = logoMap[source];
 
 	if (!logo) return null;
@@ -25,7 +28,10 @@ export function NewsSourceLogo({ source }: Props) {
 		<img
 			src={logo}
 			alt={source}
-			className="h-3 w-auto object-contain transition-all duration-200"
+			className={cn(
+				'h-3 w-auto object-contain transition-all duration-200',
+				className
+			)}
 		/>
 	);
 }

@@ -1,26 +1,27 @@
-export interface OpenMeteoWeather {
-	city: string;
+export interface WeatherData {
+  city?: string;
 
-	current: {
-		temperature: number;
-		windspeed: number;
-		winddirection: number;
-		weathercode: number;
-		is_day: number;
-		humidity: number;
-	};
+  current: {
+	temperature: string,
+    temperature_2m: number;
+    windspeed: number;
+    weathercode: number;
+    apparent_temperature: number;
+  };
 
-	daily: {
-		time: string[];
-		temperature_2m_max: number[];
-		temperature_2m_min: number[];
-	};
+  hourly: {
+    relativehumidity_2m: number[];
+    cloudcover: number[];
+    precipitation: number[];
+	apparent_temperature: number[];
+  };
 
-	hourly: {
-		time: string[];
-		relativehumidity_2m: number[];
-		apparent_temperature: number[];
-		cloudcover: number[];
-		precipitation: number[];
-	};
+  daily: {
+    time: string[];
+    sunrise: string[];
+    sunset: string[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    uv_index_max: number[];
+  };
 }
