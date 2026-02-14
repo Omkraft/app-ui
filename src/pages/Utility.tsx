@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { apiRequest } from '@/api/client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { formatDate, formatTimeLocal, round } from '@/utils/format';
+import { getCurrentLocation } from '@/utils/location';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
 	Accordion,
@@ -55,68 +56,38 @@ export default function Utility() {
 	const fetchWeather = useCallback(async () => {
 		setWeather(null);
 		setWeatherError(null);
+
 		try {
-			navigator.geolocation.getCurrentPosition(
-				async position => {
-					try {
-						const { latitude, longitude } = position.coords;
+			const {
+				latitude,
+				longitude,
+				cityName,
+				state,
+				countryCode,
+			} = await getCurrentLocation();
 
-						// 🔹 Reverse geocode to get city name
-						const geoRes = await fetch(
-							`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-						);
+			const locationParts = [cityName, state, countryCode].filter(Boolean);
+			const formattedLocation =
+			locationParts.length > 0
+				? locationParts.join(', ')
+				: 'Unknown';
 
-						const geoData = await geoRes.json();
-
-						const cityName =
-							geoData.city ||
-							geoData.locality ||
-							null;
-
-						const state =
-							geoData.principalSubdivision ||
-							null;
-
-						const countryCode =
-							geoData.countryCode ||
-							null;
-
-						// Build formatted location string
-						const locationParts = [cityName, state, countryCode].filter(Boolean);
-						const formattedLocation =
-							locationParts.length > 0
-								? locationParts.join(', ')
-								: 'Unknown';
-
-
-						const weather = await apiRequest<WeatherData>(
-							`/api/utility/weather?lat=${latitude}&lon=${longitude}`
-						);
-						setLocationLabel(formattedLocation);
-						setWeather(weather);
-					} catch (error) {
-						console.error(error);
-						setWeatherError(error instanceof Error
-							? error.message
-							: 'Failed to fetch weather.');
-					}
-				},
-				error => {
-					console.error(error);
-					setWeatherError(error instanceof GeolocationPositionError
-						? error.message
-						: 'Location permission denied.');
-				}, {
-					enableHighAccuracy: true,
-  					timeout: 5000,
-				}
+			const weather = await apiRequest<WeatherData>(
+				`/api/utility/weather?lat=${latitude}&lon=${longitude}`
 			);
-		} catch (err) {
-			setWeatherError(err instanceof Error
-				? err.message
-				: 'Failed to fetch weather.');
+
+			setLocationLabel(formattedLocation);
+			setWeather(weather);
+		} catch (error) {
+			console.error(error);
+			setWeatherError(
+				error instanceof Error
+					? error.message
+					: 'Failed to fetch weather.'
+			);
 		}
 	}, []);
+
 
 	async function fetchQuote() {
 		setQuote(null);
@@ -171,9 +142,9 @@ export default function Utility() {
 				<div className="app-container space-y-8 align-items-center">
 					{weather ? (
 						<>
-							<h2 className={`text-3xl font-semibold${!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code) ? ' text-background' : ' text-foreground'}`}>Weather</h2>
+							<h2 className={`text-3xl font-semibold${(!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code)) && weather.current.is_day ? ' text-background' : ' text-foreground'}`}>Weather</h2>
 							{/* Current */}
-							<div className={`flex items-center justify-between${!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code) ? ' bg-[var(--omkraft-blue-700)] ' : ' bg-muted '}p-6 rounded-xl`}>
+							<div className={`flex items-center justify-between${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)] ' : ' bg-muted '}p-6 rounded-xl`}>
 								<div className='flex flex-col gap-2'>
 									<div>
 										<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
@@ -197,7 +168,7 @@ export default function Utility() {
 
 							<Accordion
 								type="multiple"
-								className={`rounded-xl border ${weather.current.weather_code === 0 && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)]' : 'bg-muted'}`}
+								className={`rounded-xl border${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
 							>
 								<AccordionItem value="metrix" className="border-b px-4 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Weather Details</AccordionTrigger>
