@@ -1,20 +1,16 @@
 export interface WeatherData {
-	city?: string;
-
 	current: {
-		temperature: string,
 		temperature_2m: number;
-		windspeed: number;
-		weathercode: number;
-		apparent_temperature: number;
+		wind_speed_10m: number;
+		weather_code: number;
+		relative_humidity_2m: number;
 		is_day: number;
+		cloud_cover: string;
+		apparent_temperature: number;
 	};
 
 	hourly: {
-		relativehumidity_2m: number[];
-		cloudcover: number[];
-		precipitation: number[];
-		apparent_temperature: number[];
+		uv_index: number[];
 	};
 
 	daily: {
@@ -23,7 +19,6 @@ export interface WeatherData {
 		sunset: string[];
 		temperature_2m_max: number[];
 		temperature_2m_min: number[];
-		uv_index_max: number[];
-		weathercode: number[];
+		weather_code: number[];
 	};
 }

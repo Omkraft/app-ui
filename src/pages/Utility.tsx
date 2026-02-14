@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { apiRequest } from '@/api/client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { formatDate } from '@/utils/format';
+import { formatDate, formatTimeLocal, round } from '@/utils/format';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
 	Accordion,
@@ -22,10 +22,11 @@ import {
 	Moon,
 	Sunrise,
 	Sunset,
-	Gauge
+	Gauge,
+	AlertCircleIcon
 } from 'lucide-react';
-import RainOverlay from '@/components/weather/RainOverlay';
 import { getWeatherTheme } from '@/utils/weatherTheme';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 interface NewsArticle {
 	title: string;
@@ -48,58 +49,70 @@ export default function Utility() {
 	const [weather, setWeather] = useState<WeatherData | null>(null);
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
 	const [news, setNews] = useState<NewsResponse | null>(null);
-	const [loadingNews, setLoadingNews] = useState(true);
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
-	const [, setError] = useState<string | null>(null);
-
+	const [weatherError, setWeatherError] = useState<string | null>(null);
 
 	const fetchWeather = useCallback(async () => {
 		try {
 			navigator.geolocation.getCurrentPosition(
 				async position => {
-					const { latitude, longitude } = position.coords;
+					try {
+						const { latitude, longitude } = position.coords;
 
-					// 🔹 Reverse geocode to get city name
-					const geoRes = await fetch(
-						`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-					);
+						// 🔹 Reverse geocode to get city name
+						const geoRes = await fetch(
+							`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+						);
 
-					const geoData = await geoRes.json();
+						const geoData = await geoRes.json();
 
-					const cityName =
-						geoData.city ||
-						geoData.locality ||
-						null;
+						const cityName =
+							geoData.city ||
+							geoData.locality ||
+							null;
 
-					const state =
-						geoData.principalSubdivision ||
-						null;
+						const state =
+							geoData.principalSubdivision ||
+							null;
 
-					const countryCode =
-						geoData.countryCode ||
-						null;
+						const countryCode =
+							geoData.countryCode ||
+							null;
 
-					// Build formatted location string
-					const locationParts = [cityName, state, countryCode].filter(Boolean);
-					const formattedLocation =
-						locationParts.length > 0
-							? locationParts.join(', ')
-							: 'Unknown';
+						// Build formatted location string
+						const locationParts = [cityName, state, countryCode].filter(Boolean);
+						const formattedLocation =
+							locationParts.length > 0
+								? locationParts.join(', ')
+								: 'Unknown';
 
 
-					const weather = await apiRequest<WeatherData>(
-						`/api/utility/weather?lat=${latitude}&lon=${longitude}`
-					);
-					setLocationLabel(formattedLocation);
-					setWeather(weather);
+						const weather = await apiRequest<WeatherData>(
+							`/api/utility/weather?lat=${latitude}&lon=${longitude}`
+						);
+						setLocationLabel(formattedLocation);
+						setWeather(weather);
+					} catch (error) {
+						console.error(error);
+						setWeatherError(error instanceof Error
+							? error.message
+							: 'Failed to fetch weather.');
+					}
 				},
 				error => {
 					console.error(error);
-					setError('Location permission denied');
+					setWeatherError(error instanceof GeolocationPositionError
+						? error.message
+						: 'Location permission denied.');
+				}, {
+					enableHighAccuracy: true,
+  					timeout: 5000,
 				}
 			);
-		} catch (_err) {
-			setError('Failed to fetch weather');
+		} catch (err) {
+			setWeatherError(err instanceof Error
+				? err.message
+				: 'Failed to fetch weather.');
 		}
 	}, []);
 
@@ -114,7 +127,6 @@ export default function Utility() {
 
 	const fetchNews = useCallback(async (category: string) => {
 		try {
-			setLoadingNews(true);
 			const data = await apiRequest<NewsArticle[]>(
 				`/api/utility/news?category=${category}`
 			);
@@ -123,8 +135,6 @@ export default function Utility() {
 			});
 		} catch (error) {
 			console.error(error);
-		} finally {
-			setLoadingNews(false);
 		}
 	}, []);
 
@@ -153,56 +163,48 @@ export default function Utility() {
 			</section>
 			
 			{/* ================= Weather ================= */}
-			<section className={`relative overflow-hidden text-foreground py-10 transition-all duration-700 ${getWeatherTheme(
-				weather?.current?.weathercode,
-				weather?.current?.is_day
-			)}`}>
-				{weather?.current?.weathercode && [51,53,55,61,63,65].includes(weather.current.weathercode) && (
-					<RainOverlay />
-				)}
-				<div className="app-container space-y-8">
-
-					<h2 className="text-3xl font-semibold">Weather</h2>
-
+			<section className={`relative overflow-hidden text-foreground py-6 transition-all duration-700 ${getWeatherTheme(weather?.current?.weather_code, weather?.current?.is_day)}`}>
+				<div className="app-container space-y-8 align-items-center">
 					{weather ? (
 						<>
+							<h2 className={`text-3xl font-semibold${!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code) ? ' text-background' : ' text-foreground'}`}>Weather</h2>
 							{/* Current */}
-							<div className="flex items-center justify-between bg-muted backdrop-blur-md p-6 rounded-xl">
+							<div className={`flex items-center justify-between${!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code) ? ' bg-[var(--omkraft-blue-700)] ' : ' bg-muted '}p-6 rounded-xl`}>
 								<div className='flex flex-col gap-2'>
 									<div>
 										<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
-										<p className="text-sm opacity-60">
+										<p className="text-sm opacity-70">
 											{locationLabel?.split(',').slice(1).join(',')}
 										</p>
 									</div>
 
 									<p className="text-5xl font-bold">
-										{weather.current.temperature}°C
+										{round(weather.current.temperature_2m)}°C
 									</p>
 									<p>
-										Feels like {weather.hourly.apparent_temperature[0]}°C
+										Feels like {round(weather.current.apparent_temperature)}°C
 									</p>
 								</div>
 
 								<div className="text-6xl">
-									{getWeatherIcon(weather.current.weathercode)}
+									{getWeatherIcon(weather.current.weather_code)}
 								</div>
 							</div>
 
 							<Accordion
 								type="multiple"
-								className="rounded-xl border bg-muted"
+								className={`rounded-xl border ${weather.current.weather_code === 0 && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)]' : 'bg-muted'}`}
 							>
 								<AccordionItem value="metrix" className="border-b px-4 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Weather Details</AccordionTrigger>
 									<AccordionContent>
-										<div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+										<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted rounded-xl">
 												<Droplets className="w-7 h-7 text-accent" />
 												<div>
 													<p className="text-sm opacity-70">Humidity</p>
 													<p className="text-xl font-semibold">
-														{weather.hourly.relativehumidity_2m?.[0]}%
+														{weather.current.relative_humidity_2m}%
 													</p>
 												</div>
 											</Card>
@@ -212,7 +214,7 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">Cloud Cover</p>
 													<p className="text-xl font-semibold">
-														{weather.hourly.cloudcover[0]}%
+														{weather.current.cloud_cover}%
 													</p>
 												</div>
 											</Card>
@@ -222,7 +224,7 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">Wind</p>
 													<p className="text-xl font-semibold">
-														{weather.current.windspeed} km/h
+														{round(weather.current.wind_speed_10m)} km/h
 													</p>
 												</div>
 											</Card>
@@ -232,7 +234,7 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">UV Index</p>
 													<p className="text-lg font-semibold">
-														{weather?.daily?.uv_index_max?.[0]}
+														{round(weather?.hourly?.uv_index?.[0], 0)}
 													</p>
 												</div>
 											</Card>
@@ -243,13 +245,13 @@ export default function Utility() {
 								<AccordionItem value="sunriseset" className="border-b px-4 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Sunrise &amp; Sunset</AccordionTrigger>
 									<AccordionContent>
-										<div className='grid grid-cols-2 gap-4'>
+										<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted rounded-xl">
 												<Sunrise className="w-7 h-7 text-yellow-400" />
 												<div>
 													<p className="text-sm opacity-70">Sunrise</p>
 													<p className="text-lg font-semibold">
-														{weather?.daily?.sunrise?.[0] && new Date(weather.daily.sunrise[0]).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+														{weather.daily.sunrise[0] && formatTimeLocal(weather.daily.sunrise[0])}
 													</p>
 												</div>
 											</Card>
@@ -259,7 +261,7 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">Sunset</p>
 													<p className="text-lg font-semibold">
-														{weather?.daily?.sunset?.[0] && new Date(weather.daily.sunset[0]).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+														{weather.daily.sunset[0] && formatTimeLocal(weather.daily.sunset[0])}
 													</p>
 												</div>
 											</Card>
@@ -270,21 +272,21 @@ export default function Utility() {
 								<AccordionItem value="forecast" className="border-b px-4 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">5-Day Forecast</AccordionTrigger>
 									<AccordionContent>
-										<div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+										<div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
 											{weather?.daily?.time?.slice(1, 6).map((day: string, index: number) => (
-												<Card key={day} className="p-4 text-center bg-muted rounded-xl">
+												<Card key={day} className="flex justify-around lg:block p-4 text-center bg-muted rounded-xl">
 													<p className="text-lg font-semibold">
 														{new Date(day).toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })}
 													</p>
 													<p className="font-semibold flex items-center justify-center gap-1">
-														<Sun className="w-4 h-4 text-yellow-400" />{weather.daily.temperature_2m_max[index]}°
+														<Sun className="w-4 h-4 text-yellow-400" />{round(weather.daily.temperature_2m_max[index])}°
 													</p>
 													<p className="opacity-70 flex items-center justify-center gap-1">
 														<Moon className="w-4 h-4 text-blue-300" />
-														{weather.daily.temperature_2m_min[index]}°
+														{round(weather.daily.temperature_2m_min[index])}°
 													</p>
 													<p className="text-lg flex items-center justify-center gap-1">
-														{getWeatherIcon(weather.daily.weathercode[index])}
+														{getWeatherIcon(weather.daily.weather_code[index])}
 													</p>
 												</Card>
 											))}
@@ -294,7 +296,20 @@ export default function Utility() {
 							</Accordion>
 						</>
 					) : (
-						<p><Spinner className='inline size-6' /> Loading weather...</p>
+						<>
+							<h2 className="text-3xl font-semibold">Weather</h2>
+							{!weatherError ? (
+								<p><Spinner className='inline size-6' /> Loading weather...</p>
+							) : (
+								<Alert variant="destructive">
+									<AlertCircleIcon />
+									<AlertTitle>Weather service failed</AlertTitle>
+									<AlertDescription className="text-sm">
+										{weatherError}
+									</AlertDescription>
+								</Alert>
+							)}
+						</>
 					)}
 				</div>
 			</section>
@@ -317,7 +332,7 @@ export default function Utility() {
 						<TabsContent value="global" />
 
 						<div className="pt-4 space-y-4">
-							{loadingNews ? (
+							{!news ? (
 								<div className="grid gap-8 lg:grid-cols-2">
 									{Array.from({ length: 4 }).map((_, i) => (
 										<Card key={i} className='bg-foreground border border-muted-foreground'>
