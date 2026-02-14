@@ -56,7 +56,6 @@ export default function Utility() {
 	const fetchWeather = useCallback(async () => {
 		setWeather(null);
 		setWeatherError(null);
-
 		try {
 			const {
 				latitude,
