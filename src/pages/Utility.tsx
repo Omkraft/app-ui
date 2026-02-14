@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { apiRequest } from '@/api/client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { formatDate, formatTimeLocal, round } from '@/utils/format';
+import { getCurrentLocation } from '@/utils/location';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
 	Accordion,
@@ -27,6 +28,7 @@ import {
 } from 'lucide-react';
 import { getWeatherTheme } from '@/utils/weatherTheme';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 
 interface NewsArticle {
 	title: string;
@@ -51,72 +53,43 @@ export default function Utility() {
 	const [news, setNews] = useState<NewsResponse | null>(null);
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
 	const [weatherError, setWeatherError] = useState<string | null>(null);
+	const [visibleCount, setVisibleCount] = useState(10);
+	const newsSectionRef = useRef<HTMLDivElement | null>(null);
 
 	const fetchWeather = useCallback(async () => {
 		setWeather(null);
 		setWeatherError(null);
 		try {
-			navigator.geolocation.getCurrentPosition(
-				async position => {
-					try {
-						const { latitude, longitude } = position.coords;
+			const {
+				latitude,
+				longitude,
+				cityName,
+				state,
+				countryCode,
+			} = await getCurrentLocation();
 
-						// 🔹 Reverse geocode to get city name
-						const geoRes = await fetch(
-							`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
-						);
+			const locationParts = [cityName, state, countryCode].filter(Boolean);
+			const formattedLocation =
+			locationParts.length > 0
+				? locationParts.join(', ')
+				: 'Unknown';
 
-						const geoData = await geoRes.json();
-
-						const cityName =
-							geoData.city ||
-							geoData.locality ||
-							null;
-
-						const state =
-							geoData.principalSubdivision ||
-							null;
-
-						const countryCode =
-							geoData.countryCode ||
-							null;
-
-						// Build formatted location string
-						const locationParts = [cityName, state, countryCode].filter(Boolean);
-						const formattedLocation =
-							locationParts.length > 0
-								? locationParts.join(', ')
-								: 'Unknown';
-
-
-						const weather = await apiRequest<WeatherData>(
-							`/api/utility/weather?lat=${latitude}&lon=${longitude}`
-						);
-						setLocationLabel(formattedLocation);
-						setWeather(weather);
-					} catch (error) {
-						console.error(error);
-						setWeatherError(error instanceof Error
-							? error.message
-							: 'Failed to fetch weather.');
-					}
-				},
-				error => {
-					console.error(error);
-					setWeatherError(error instanceof GeolocationPositionError
-						? error.message
-						: 'Location permission denied.');
-				}, {
-					enableHighAccuracy: true,
-  					timeout: 5000,
-				}
+			const weather = await apiRequest<WeatherData>(
+				`/api/utility/weather?lat=${latitude}&lon=${longitude}`
 			);
-		} catch (err) {
-			setWeatherError(err instanceof Error
-				? err.message
-				: 'Failed to fetch weather.');
+
+			setLocationLabel(formattedLocation);
+			setWeather(weather);
+		} catch (error) {
+			console.error(error);
+			setWeatherError(
+				error instanceof Error
+					? error.message
+					: 'Failed to fetch weather.'
+			);
 		}
 	}, []);
+
 
 	async function fetchQuote() {
 		setQuote(null);
@@ -130,6 +103,7 @@ export default function Utility() {
 
 	const fetchNews = useCallback(async (category: string) => {
 		setNews(null);
+		setVisibleCount(10); // Reset to 10 on new tab
 		try {
 			const data = await apiRequest<NewsArticle[]>(
 				`/api/utility/news?category=${category}`
@@ -171,9 +145,9 @@ export default function Utility() {
 				<div className="app-container space-y-8 align-items-center">
 					{weather ? (
 						<>
-							<h2 className={`text-3xl font-semibold${!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code) ? ' text-background' : ' text-foreground'}`}>Weather</h2>
+							<h2 className={`text-3xl font-semibold${(!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code)) && weather.current.is_day ? ' text-background' : ' text-foreground'}`}>Weather</h2>
 							{/* Current */}
-							<div className={`flex items-center justify-between${!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code) ? ' bg-[var(--omkraft-blue-700)] ' : ' bg-muted '}p-6 rounded-xl`}>
+							<div className={`flex items-center justify-between${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)] ' : ' bg-muted '}p-6 rounded-xl`}>
 								<div className='flex flex-col gap-2'>
 									<div>
 										<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
@@ -197,7 +171,7 @@ export default function Utility() {
 
 							<Accordion
 								type="multiple"
-								className={`rounded-xl border ${weather.current.weather_code === 0 && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)]' : 'bg-muted'}`}
+								className={`rounded-xl border${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
 							>
 								<AccordionItem value="metrix" className="border-b px-4 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Weather Details</AccordionTrigger>
@@ -352,45 +326,60 @@ export default function Utility() {
 									))}
 								</div>
 							) : (
-								<div className='grid gap-8 lg:grid-cols-2'>
-									{news?.articles.map((item, index) => (
-										<Card
-											key={index}
-											className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
-										>
-											<CardHeader>
-												<a
-													href={item.url}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="hover:text-primary transition-colors"
-												>
-													<div className="flex flex-col-reverse lg:flex-row items-start lg:items-center gap-3">
-														<CardTitle className="text-lg leading-snug">
-															{item.title}
-														</CardTitle>
-														<NewsSourceLogo source={item.source} className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}`} />
-													</div>
-												</a>
+								<>
+									<div ref={newsSectionRef} className='grid gap-8 lg:grid-cols-2'>
+										{news.articles.slice(0, visibleCount).map((item, index) => (
+											<Card
+												key={index}
+												className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
+											>
+												<CardHeader>
+													<a
+														href={item.url}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="hover:text-primary transition-colors"
+													>
+														<div className="flex flex-col-reverse lg:flex-row items-start lg:items-center gap-3">
+															<CardTitle className="text-lg leading-snug">
+																{item.title}
+															</CardTitle>
+															<NewsSourceLogo source={item.source} className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}`} />
+														</div>
+													</a>
 
-												<CardDescription className="text-background flex justify-between text-xs mt-1">
-													<span>
-														{item.source}
-													</span>
-													<span>
-														{formatDate(item.publishedAt)}
-													</span>
-												</CardDescription>
-											</CardHeader>
+													<CardDescription className="text-background flex justify-between text-xs mt-1">
+														<span>
+															{item.source}
+														</span>
+														<span>
+															{formatDate(item.publishedAt)}
+														</span>
+													</CardDescription>
+												</CardHeader>
 
-											<CardContent>
-												<p className="text-sm line-clamp-3">
-													{item.description}
-												</p>
-											</CardContent>
-										</Card>
-									))}
-								</div>
+												<CardContent>
+													<p className="text-sm line-clamp-3">
+														{item.description}
+													</p>
+												</CardContent>
+											</Card>
+										))}
+									</div>
+
+									{visibleCount < news.articles.length && (
+										<div className="text-center pt-4">
+											<Button
+												onClick={() =>
+													setVisibleCount((prev) => prev + 10)
+												}
+												className="w-full lg:w-auto"
+											>
+												Read More
+											</Button>
+										</div>
+									)}
+								</>
 							)}
 						</div>
 					</Tabs>
