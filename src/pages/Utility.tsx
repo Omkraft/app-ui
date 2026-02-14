@@ -53,6 +53,8 @@ export default function Utility() {
 	const [weatherError, setWeatherError] = useState<string | null>(null);
 
 	const fetchWeather = useCallback(async () => {
+		setWeather(null);
+		setWeatherError(null);
 		try {
 			navigator.geolocation.getCurrentPosition(
 				async position => {
@@ -117,6 +119,7 @@ export default function Utility() {
 	}, []);
 
 	async function fetchQuote() {
+		setQuote(null);
 		try {
 			const data = await apiRequest<QuoteResponse>('/api/utility/quote');
 			setQuote(data);
@@ -126,6 +129,7 @@ export default function Utility() {
 	}
 
 	const fetchNews = useCallback(async (category: string) => {
+		setNews(null);
 		try {
 			const data = await apiRequest<NewsArticle[]>(
 				`/api/utility/news?category=${category}`
