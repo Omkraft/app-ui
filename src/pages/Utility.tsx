@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { apiRequest } from '@/api/client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { getWeatherTheme } from '@/utils/weatherTheme';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 
 interface NewsArticle {
 	title: string;
@@ -52,6 +53,8 @@ export default function Utility() {
 	const [news, setNews] = useState<NewsResponse | null>(null);
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
 	const [weatherError, setWeatherError] = useState<string | null>(null);
+	const [visibleCount, setVisibleCount] = useState(10);
+	const newsSectionRef = useRef<HTMLDivElement | null>(null);
 
 	const fetchWeather = useCallback(async () => {
 		setWeather(null);
@@ -100,6 +103,7 @@ export default function Utility() {
 
 	const fetchNews = useCallback(async (category: string) => {
 		setNews(null);
+		setVisibleCount(10); // Reset to 10 on new tab
 		try {
 			const data = await apiRequest<NewsArticle[]>(
 				`/api/utility/news?category=${category}`
@@ -322,45 +326,60 @@ export default function Utility() {
 									))}
 								</div>
 							) : (
-								<div className='grid gap-8 lg:grid-cols-2'>
-									{news?.articles.map((item, index) => (
-										<Card
-											key={index}
-											className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
-										>
-											<CardHeader>
-												<a
-													href={item.url}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="hover:text-primary transition-colors"
-												>
-													<div className="flex flex-col-reverse lg:flex-row items-start lg:items-center gap-3">
-														<CardTitle className="text-lg leading-snug">
-															{item.title}
-														</CardTitle>
-														<NewsSourceLogo source={item.source} className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}`} />
-													</div>
-												</a>
+								<>
+									<div ref={newsSectionRef} className='grid gap-8 lg:grid-cols-2'>
+										{news.articles.slice(0, visibleCount).map((item, index) => (
+											<Card
+												key={index}
+												className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
+											>
+												<CardHeader>
+													<a
+														href={item.url}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="hover:text-primary transition-colors"
+													>
+														<div className="flex flex-col-reverse lg:flex-row items-start lg:items-center gap-3">
+															<CardTitle className="text-lg leading-snug">
+																{item.title}
+															</CardTitle>
+															<NewsSourceLogo source={item.source} className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}`} />
+														</div>
+													</a>
 
-												<CardDescription className="text-background flex justify-between text-xs mt-1">
-													<span>
-														{item.source}
-													</span>
-													<span>
-														{formatDate(item.publishedAt)}
-													</span>
-												</CardDescription>
-											</CardHeader>
+													<CardDescription className="text-background flex justify-between text-xs mt-1">
+														<span>
+															{item.source}
+														</span>
+														<span>
+															{formatDate(item.publishedAt)}
+														</span>
+													</CardDescription>
+												</CardHeader>
 
-											<CardContent>
-												<p className="text-sm line-clamp-3">
-													{item.description}
-												</p>
-											</CardContent>
-										</Card>
-									))}
-								</div>
+												<CardContent>
+													<p className="text-sm line-clamp-3">
+														{item.description}
+													</p>
+												</CardContent>
+											</Card>
+										))}
+									</div>
+
+									{visibleCount < news.articles.length && (
+										<div className="text-center pt-4">
+											<Button
+												onClick={() =>
+													setVisibleCount((prev) => prev + 10)
+												}
+												className="w-full lg:w-auto"
+											>
+												Read More
+											</Button>
+										</div>
+									)}
+								</>
 							)}
 						</div>
 					</Tabs>
