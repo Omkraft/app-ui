@@ -8,6 +8,7 @@ import PublicRoute from './routes/PublicRoute';
 import { isAuthenticated } from './utils/auth';
 import { FooterPublic } from './components/FooterPublic';
 import { FooterApp } from './components/FooterApp';
+import Maintenance from './pages/Maintenance';
 
 
 const Welcome = lazy(() => import('./pages/Welcome'));
@@ -93,6 +94,7 @@ export default function App() {
 
 
 						<Route path="/verify-email" element={<VerifyEmail />} />
+						<Route path="/maintenance" element={<Maintenance />} />
 
 						{/* 404 */}
 						<Route
