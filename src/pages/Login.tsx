@@ -5,17 +5,19 @@ import { useAuth } from '@/auth/AuthContext';
 import { login as loginApi } from '@/api/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 import loginIllustration from '@/assets/login-illustration.svg';
 import Loading from '../components/Loading';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircleIcon } from 'lucide-react';
+import { AlertCircleIcon, Eye, EyeOff } from 'lucide-react';
+import { FieldGroup, Field, FieldLabel } from '@/components/ui/field';
+import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
 
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 
@@ -92,28 +94,47 @@ export default function Login() {
 							</CardHeader>
 							<CardContent>
 								<form onSubmit={handleSubmit} className="space-y-4">
-									<div className="space-y-2">
-										<Label htmlFor="email">Email</Label>
-										<Input
-											id="email"
-											type="email"
-											placeholder="you@omkraft.io"
-											value={email}
-											onChange={(e) => setEmail(e.target.value)}
-											required
-										/>
-									</div>
-
-									<div className="space-y-2">
-										<Label htmlFor="password">Password</Label>
-										<Input
-											id="password"
-											type="password"
-											value={password}
-											onChange={(e) => setPassword(e.target.value)}
-											required
-										/>
-									</div>
+									<FieldGroup className="gap-5">
+										<Field>
+											<FieldLabel htmlFor="email">Email <span className="text-destructive">*</span></FieldLabel>
+											<Input
+												id="email"
+												placeholder="you@omkraft.io"
+												value={email}
+												onChange={(e) => setEmail(e.target.value)}
+												required
+											/>
+										</Field>
+										<Field>
+											<FieldLabel htmlFor="password">Password <span className="text-destructive">*</span></FieldLabel>
+											<InputGroup className="bg-input border border-border">
+												<InputGroupInput
+													id="password"
+													type={showPassword ? 'text' : 'password'}
+													value={password}
+													onChange={(e) => setPassword(e.target.value)}
+													required
+													minLength={8}
+												/>
+												<InputGroupAddon align="inline-end">
+													<Button
+														className="hover:bg-transparent"
+														onClick={() => setShowPassword(!showPassword)}
+														size="icon"
+														type="button"
+														variant="ghost"
+													>
+														{showPassword ? (
+															<EyeOff className="h-4 w-4 text-muted-foreground" />
+														) : (
+															<Eye className="h-4 w-4 text-muted-foreground" />
+														)}
+													</Button>
+												</InputGroupAddon>
+												
+											</InputGroup>
+										</Field>
+									</FieldGroup>
 
 									{error && (
 										<Alert variant="destructive" className="max-w-md">
@@ -131,20 +152,19 @@ export default function Login() {
 									>
 										Login
 									</Button>
-
-									<p className="text-sm text-center text-muted-foreground mt-4">
-										<Link to="/forgot-password" className="text-white underline">
-											Forgot Password?
-										</Link>
-									</p>
-
-									<p className="text-sm text-center text-muted-foreground mt-4">
-										Don't have an account?{' '}
-										<Link to="/register" className="text-white underline">
-											Sign up
-										</Link>
-									</p>
 								</form>
+								<p className="text-sm text-center text-muted-foreground mt-4">
+									<Link to="/forgot-password" className="text-foreground underline">
+										Forgot Password?
+									</Link>
+								</p>
+
+								<p className="text-sm text-center text-muted-foreground mt-4">
+									Don't have an account?{' '}
+									<Link to="/register" className="text-foreground underline">
+										Sign up
+									</Link>
+								</p>
 							</CardContent>
 						</Card>
 					</div>

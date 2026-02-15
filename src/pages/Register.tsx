@@ -19,10 +19,9 @@ import { Input } from '@/components/ui/input';
 
 import registerIllustration from '@/assets/register-illustration.svg';
 import { register } from '@/api/auth';
-import { COUNTRIES } from '@/utils/countries';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import Loading from '../components/Loading';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 
 export default function Register() {
 	const [firstName, setFirstName] = useState('');
@@ -36,8 +35,6 @@ export default function Register() {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
-	const [countryIso, setCountryIso] = useState('in'); // default India
-	const selectedCountry = COUNTRIES.find((c) => c.iso === countryIso)!;
 	const isPositiveNumeric = (value: number) => !isNaN(value) && isFinite(value) && value > 0;
 
 	const handleRegister = async (e: React.FormEvent) => {
@@ -73,7 +70,7 @@ export default function Register() {
 
 		try {
 			setLoading(true);
-			const phoneNumber = `${selectedCountry.code}${phone}`;
+			const phoneNumber = `+91${phone}`;
 			await register(firstName, lastName, email, phoneNumber, password);
 		} catch (err) {
 			error = err instanceof Error
@@ -145,46 +142,20 @@ export default function Register() {
 												<Field>
 													<FieldLabel htmlFor="phone">Phone number <span className="text-destructive">*</span></FieldLabel>
 													<div className="flex gap-2">
-														{/* Country code dropdown */}
-														<Select
-															value={countryIso}
-															onValueChange={setCountryIso}
-														>
-															<SelectTrigger className="text-foreground px-3">
-																<SelectValue>
-																	<span className="flex items-center gap-2">
-																		<span
-																			className={`fi fi-${selectedCountry.iso} leading-none`}
-																		></span>
-																		<span className="text-sm">{selectedCountry.code}</span>
-																	</span>
-																</SelectValue>
-															</SelectTrigger>
-															<SelectContent>
-																{COUNTRIES.map((country) => (
-																	<SelectItem key={country.code} value={country.iso}>
-																		<span className="flex items-center gap-3">
-																			<span
-																				className={`fi fi-${country.iso} leading-none`}
-																			></span>
-																			<span className="flex-1">{country.label}</span>
-																			<span className="text-muted-foreground text-sm">
-																				{country.code}
-																			</span>
-																		</span>
-																	</SelectItem>
-																))}
-															</SelectContent>
-														</Select>
-
-														{/* Phone number input */}
-														<Input
-															type="tel"
-															placeholder="9876543210"
-															value={phone}
-															onChange={(e) => setPhone(e.target.value)}
-															required
-														/>
+														<InputGroup className="bg-input border border-border">
+															{/* Phone number input */}
+															<InputGroupInput
+																id="phone"
+																type="tel"
+																placeholder="9876543210"
+																value={phone}
+																onChange={(e) => setPhone(e.target.value)}
+																required
+															/>
+															<InputGroupAddon>
+																+91
+															</InputGroupAddon>
+														</InputGroup>
 													</div>
 													<FieldDescription className="text-xs">
 														Stored for account records. Not used for login or verification.
@@ -192,8 +163,8 @@ export default function Register() {
 												</Field>
 												<Field>
 													<FieldLabel htmlFor="password">Password <span className="text-destructive">*</span></FieldLabel>
-													<div className="relative">
-														<Input
+													<InputGroup className="bg-input border border-border">
+														<InputGroupInput
 															id="password"
 															type={showPassword ? 'text' : 'password'}
 															value={password}
@@ -201,48 +172,53 @@ export default function Register() {
 															required
 															minLength={8}
 														/>
-														<Button
-															className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
-															onClick={() => setShowPassword(!showPassword)}
-															size="icon"
-															type="button"
-															variant="ghost"
-														>
-															{showPassword ? (
-																<EyeOff className="h-4 w-4 text-muted-foreground" />
-															) : (
-																<Eye className="h-4 w-4 text-muted-foreground" />
-															)}
-														</Button>
-													</div>
+														<InputGroupAddon align="inline-end">
+															<Button
+																className="hover:bg-transparent"
+																onClick={() => setShowPassword(!showPassword)}
+																size="icon"
+																type="button"
+																variant="ghost"
+															>
+																{showPassword ? (
+																	<EyeOff className="h-4 w-4 text-muted-foreground" />
+																) : (
+																	<Eye className="h-4 w-4 text-muted-foreground" />
+																)}
+															</Button>
+														</InputGroupAddon>
+														
+													</InputGroup>
 													<FieldDescription className="text-xs">
 														Minimum 8 characters
 													</FieldDescription>
 												</Field>
 												<Field>
 													<FieldLabel htmlFor="confirmPassword">Confirm password <span className="text-destructive">*</span></FieldLabel>
-													<div className="relative">
-														<Input
+													<InputGroup className="bg-input border border-border">
+														<InputGroupInput
 															id="confirmPassword"
 															type={showConfirmPassword ? 'text' : 'password'}
 															value={confirmPassword}
 															onChange={(e) => setConfirmPassword(e.target.value)}
 															required
 														/>
-														<Button
-															className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
-															onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-															size="icon"
-															type="button"
-															variant="ghost"
-														>
-															{showConfirmPassword ? (
-																<EyeOff className="h-4 w-4 text-muted-foreground" />
-															) : (
-																<Eye className="h-4 w-4 text-muted-foreground" />
-															)}
-														</Button>
-													</div>
+														<InputGroupAddon align="inline-end">
+															<Button
+																className="hover:bg-transparent"
+																onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+																size="icon"
+																type="button"
+																variant="ghost"
+															>
+																{showConfirmPassword ? (
+																	<EyeOff className="h-4 w-4 text-muted-foreground" />
+																) : (
+																	<Eye className="h-4 w-4 text-muted-foreground" />
+																)}
+															</Button>
+														</InputGroupAddon>
+													</InputGroup>
 												</Field>
 												<Field>
 													<Button

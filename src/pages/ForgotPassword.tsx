@@ -15,10 +15,13 @@ import { forgotPassword, resetPassword } from '@/api/auth';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import Loading from '../components/Loading';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon } from 'lucide-react';
+import { AlertCircleIcon, Eye, EyeOff } from 'lucide-react';
+import { Field, FieldLabel, FieldDescription, FieldGroup } from '@/components/ui/field';
+import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
+import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { REGEXP_ONLY_DIGITS } from 'input-otp';
 
 export default function ForgotPassword() {
 	const [sent, setSent] = useState(false);
@@ -26,7 +29,9 @@ export default function ForgotPassword() {
 	const [email, setEmail] = useState('');
 	const [otp, setOtp] = useState('');
 	const [password, setPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
 	const [confirmPassword, setConfirmPassword] = useState('');
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const handleForgotPassword = async (e: React.FormEvent) => {
@@ -163,17 +168,16 @@ export default function ForgotPassword() {
 								{!sent ? (
 									<>
 										<form onSubmit={handleForgotPassword} className="space-y-4">
-											<div className="space-y-2">
-												<Label htmlFor="email">Registered Email</Label>
+											<Field>
+												<FieldLabel htmlFor="email">Registered Email <span className="text-destructive">*</span></FieldLabel>
 												<Input
 													id="email"
-													type="email"
 													placeholder="you@omkraft.io"
 													value={email}
 													onChange={(e) => setEmail(e.target.value)}
 													required
 												/>
-											</div>
+											</Field>
 											{error && (
 												<Alert variant="destructive" className="max-w-md">
 													<AlertCircleIcon />
@@ -195,41 +199,80 @@ export default function ForgotPassword() {
 									<>
 										{!reset ? (
 											<form onSubmit={handleResetPassword} className="space-y-4">
-												<div className="space-y-2">
-													<Label htmlFor="otp">One-Time Code</Label>
-													<Input
-														id="otp"
-														type="password"
-														value={otp}
-														onChange={(e) => setOtp(e.target.value)}
-														required
-													/>
-												</div>
-												<div className="space-y-2">
-													<Label htmlFor="password">Password</Label>
-													<Input
-														id="password"
-														type="password"
-														value={password}
-														onChange={(e) => setPassword(e.target.value)}
-														required
-														minLength={8}
-													/>
-													<p className="text-xs text-muted-foreground">
+												<FieldGroup>
+													<Field className="w-fit">
+														<FieldLabel htmlFor="otp">One-Time Code <span className="text-destructive">*</span></FieldLabel>
+														<InputOTP id="otp" maxLength={6} pattern={REGEXP_ONLY_DIGITS} onChange={(value) => setOtp(value)} required>
+															<InputOTPGroup>
+																<InputOTPSlot className="bg-input border-l-0 border-border" index={0} />
+																<InputOTPSlot className="bg-input border-l-0 border-border" index={1} />
+																<InputOTPSlot className="bg-input border-l-0 border-border" index={2} />
+																<InputOTPSlot className="bg-input border-l-0 border-border" index={3} />
+																<InputOTPSlot className="bg-input border-l-0 border-border" index={4} />
+																<InputOTPSlot className="bg-input border-l-0 border-border" index={5} />
+															</InputOTPGroup>
+														</InputOTP>
+													</Field>
+													<Field>
+														<FieldLabel htmlFor="password">Password <span className="text-destructive">*</span></FieldLabel>
+														<InputGroup className="bg-input border border-border">
+															<InputGroupInput
+																id="password"
+																type={showPassword ? 'text' : 'password'}
+																value={password}
+																onChange={(e) => setPassword(e.target.value)}
+																required
+																minLength={8}
+															/>
+															<InputGroupAddon align="inline-end">
+																<Button
+																	className="hover:bg-transparent"
+																	onClick={() => setShowPassword(!showPassword)}
+																	size="icon"
+																	type="button"
+																	variant="ghost"
+																>
+																	{showPassword ? (
+																		<EyeOff className="h-4 w-4 text-muted-foreground" />
+																	) : (
+																		<Eye className="h-4 w-4 text-muted-foreground" />
+																	)}
+																</Button>
+															</InputGroupAddon>
+														
+														</InputGroup>
+														<FieldDescription className="text-xs">
 														Minimum 8 characters
-													</p>
-												</div>
-
-												<div className="space-y-2">
-													<Label htmlFor="confirmPassword">Confirm password</Label>
-													<Input
-														id="confirmPassword"
-														type="password"
-														value={confirmPassword}
-														onChange={(e) => setConfirmPassword(e.target.value)}
-														required
-													/>
-												</div>
+														</FieldDescription>
+													</Field>
+													<Field>
+														<FieldLabel htmlFor="confirmPassword">Confirm password <span className="text-destructive">*</span></FieldLabel>
+														<InputGroup className="bg-input border border-border">
+															<InputGroupInput
+																id="confirmPassword"
+																type={showConfirmPassword ? 'text' : 'password'}
+																value={confirmPassword}
+																onChange={(e) => setConfirmPassword(e.target.value)}
+																required
+															/>
+															<InputGroupAddon align="inline-end">
+																<Button
+																	className="hover:bg-transparent"
+																	onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+																	size="icon"
+																	type="button"
+																	variant="ghost"
+																>
+																	{showConfirmPassword ? (
+																		<EyeOff className="h-4 w-4 text-muted-foreground" />
+																	) : (
+																		<Eye className="h-4 w-4 text-muted-foreground" />
+																	)}
+																</Button>
+															</InputGroupAddon>
+														</InputGroup>
+													</Field>
+												</FieldGroup>
 												{error && (
 													<Alert variant="destructive" className="max-w-md">
 														<AlertCircleIcon />
@@ -262,7 +305,7 @@ export default function ForgotPassword() {
 
 								<Link
 									to="/login"
-									className="block text-sm text-white text-center mt-4 underline"
+									className="block text-sm text-foreground text-center mt-4 underline"
 								>
 									Back to Login
 								</Link>
