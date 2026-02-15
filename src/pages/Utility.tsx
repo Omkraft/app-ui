@@ -24,7 +24,9 @@ import {
 	Sunrise,
 	Sunset,
 	Gauge,
-	AlertCircleIcon
+	AlertCircleIcon,
+	Quote,
+	CalendarClock
 } from 'lucide-react';
 import { getWeatherTheme } from '@/utils/weatherTheme';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -421,9 +423,9 @@ export default function Utility() {
 				<div className="app-container grid gap-6 items-center">
 					<h2 className='text-3xl'>Daily Insights</h2>
 					{/* ================= On This Day ================= */}
-					<Card className="bg-foreground text-background border border-muted-foreground">
-						<CardHeader>
-							<CardTitle><h3 className="text-2xl">On This Day</h3></CardTitle>
+					<Card className="bg-foreground text-background border border-background">
+						<CardHeader className="flex flex-col gap-2">
+							<CardTitle><h3 className="text-2xl flex items-center gap-2"><CalendarClock /> On This Day</h3></CardTitle>
 
 							<CardDescription className="text-background">
 								Significant events from history
@@ -475,15 +477,15 @@ export default function Utility() {
 						</CardContent>
 					</Card>
 
-					<Card className="bg-foreground text-background border border-muted-foreground">
+					<Card className="bg-foreground text-background border border-background">
 						<CardHeader>
-							<CardTitle><h3 className="text-2xl">Quote</h3></CardTitle>
+							<CardTitle><h3 className="text-2xl text-center flex flex-col items-center gap-2"><Quote />Quote of the Day</h3></CardTitle>
 						</CardHeader>
 						<CardContent className="grid gap-4">
 							{quote ? (
 								<>
-									<p className="italic">"{quote.q}"</p>
-									<p className="text-accent">— {quote.a}</p>
+									<p className="italic text-xl font-medium text-center">"{quote.q}" — </p>
+									<p className="text-accent italic text-xl font-medium text-center">{quote.a}</p>
 								</>
 							) : (
 								<p className="text-sm"><Spinner className='inline size-6' /> Loading quote...</p>
