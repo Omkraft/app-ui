@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { apiRequest } from '@/api/client';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -29,6 +29,9 @@ import {
 import { getWeatherTheme } from '@/utils/weatherTheme';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import type { OnThisDayResponse } from '@/types/insights';
+import { Separator } from '@radix-ui/react-separator';
+import { Item, ItemContent, ItemDescription, ItemGroup } from '@/components/ui/item';
 
 interface NewsArticle {
 	title: string;
@@ -54,6 +57,10 @@ export default function Utility() {
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
 	const [weatherError, setWeatherError] = useState<string | null>(null);
 	const [visibleCount, setVisibleCount] = useState(10);
+	const [onThisDay, setOnThisDay] = useState<OnThisDayResponse | null>(null);
+	const [onThisDayError, setOnThisDayError] = useState<string | null>(null);
+
+
 	const newsSectionRef = useRef<HTMLDivElement | null>(null);
 
 	const fetchWeather = useCallback(async () => {
@@ -91,7 +98,7 @@ export default function Utility() {
 	}, []);
 
 
-	async function fetchQuote() {
+	const fetchQuote = async () => {
 		setQuote(null);
 		try {
 			const data = await apiRequest<QuoteResponse>('/api/utility/quote');
@@ -99,7 +106,23 @@ export default function Utility() {
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
+
+	const fetchOnThisDay = async () => {
+		try {
+			const data = await apiRequest<OnThisDayResponse>(
+				'/api/utility/on-this-day'
+			);
+
+			setOnThisDay(data);
+		} catch (error) {
+			setOnThisDayError(
+				error instanceof Error
+					? error.message
+					: 'Failed to fetch historical events'
+			);
+		}
+	};
 
 	const fetchNews = useCallback(async (category: string) => {
 		setNews(null);
@@ -118,8 +141,9 @@ export default function Utility() {
 
 	useEffect(() => {
 		fetchWeather();
-		fetchQuote();
 		fetchNews('india');
+		fetchQuote();
+		fetchOnThisDay();
 	}, [fetchWeather, fetchNews]);
 
 	return (
@@ -164,8 +188,11 @@ export default function Utility() {
 									</p>
 								</div>
 
-								<div className="text-6xl">
-									{getWeatherIcon(weather.current.weather_code)}
+								<div>
+									{(() => {
+										const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
+										return <Icon size={80} />;
+									})()}
 								</div>
 							</div>
 
@@ -212,7 +239,7 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">UV Index</p>
 													<p className="text-lg font-semibold">
-														{round(weather?.hourly?.uv_index?.[0], 0)}
+														{round(weather.hourly.uv_index[0], 0)}
 													</p>
 												</div>
 											</Card>
@@ -264,7 +291,10 @@ export default function Utility() {
 														{round(weather.daily.temperature_2m_min[index])}°
 													</p>
 													<p className="text-lg flex items-center justify-center gap-1">
-														{getWeatherIcon(weather.daily.weather_code[index])}
+														{(() => {
+															const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
+															return <Icon />;
+														})()}
 													</p>
 												</Card>
 											))}
@@ -310,7 +340,7 @@ export default function Utility() {
 						<TabsContent value="global" />
 
 						<div className="pt-4 space-y-4">
-							{!news ? (
+							{!news || !(news?.articles?.length) ? (
 								<div className="grid gap-8 lg:grid-cols-2">
 									{Array.from({ length: 4 }).map((_, i) => (
 										<Card key={i} className='bg-foreground border border-muted-foreground'>
@@ -387,18 +417,79 @@ export default function Utility() {
 			</section>
 
 			{/* ================= Quote ================= */}
-			<section className="bg-gradient-to-br from-accent to-primary flex items-center py-6">
+			<section className="bg-accent text-accent-foreground grid gap-4 items-center py-6">
 				<div className="app-container grid gap-6 items-center">
-					<h2 className='text-3xl'>Daily Quote</h2>
+					<h2 className='text-3xl'>Daily Insights</h2>
+					{/* ================= On This Day ================= */}
+					<Card className="bg-foreground text-background border border-muted-foreground">
+						<CardHeader>
+							<CardTitle><h3 className="text-2xl">On This Day</h3></CardTitle>
 
-					{quote ? (
-						<>
-							<p className="italic">"{quote.q}"</p>
-							<p>— {quote.a}</p>
-						</>
-					) : (
-						<p><Spinner className='inline size-6' /> Loading quote...</p>
-					)}
+							<CardDescription className="text-background">
+								Significant events from history
+							</CardDescription>
+						</CardHeader>
+
+						<CardContent>
+							{!onThisDay ? (
+								<>
+									{!onThisDayError ? (
+										<p className="text-sm">
+											<Spinner className='inline size-6' /> Loading historical events...
+										</p>
+									) : (
+										<Alert variant="destructive">
+											<AlertCircleIcon />
+											<AlertTitle>Error occured</AlertTitle>
+											<AlertDescription className="text-sm">
+												{onThisDayError}
+											</AlertDescription>
+										</Alert>
+									)}
+									
+								</>
+							) : (
+								<ItemGroup>
+									{onThisDay.events.map((event, index) => (
+										<React.Fragment key={`${event.year}-${index}`}>
+											<Item>
+												<ItemContent>
+													<ItemDescription className="flex gap-3">
+														<span className="text-accent font-semibold min-w-[60px]">
+															{event.year}
+														</span>
+
+														<span className="text-sm text-background">
+															{event.text}
+														</span>
+													</ItemDescription>
+												</ItemContent>
+											</Item>
+											{index !== onThisDay.events.length-1 && (
+												<Separator className="border border-accent" />
+											)}
+										</React.Fragment>
+									))}
+								</ItemGroup>
+							)}
+						</CardContent>
+					</Card>
+
+					<Card className="bg-foreground text-background border border-muted-foreground">
+						<CardHeader>
+							<CardTitle><h3 className="text-2xl">Quote</h3></CardTitle>
+						</CardHeader>
+						<CardContent className="grid gap-4">
+							{quote ? (
+								<>
+									<p className="italic">"{quote.q}"</p>
+									<p className="text-accent">— {quote.a}</p>
+								</>
+							) : (
+								<p className="text-sm"><Spinner className='inline size-6' /> Loading quote...</p>
+							)}
+						</CardContent>
+					</Card>
 				</div>
 			</section>
 		</main>

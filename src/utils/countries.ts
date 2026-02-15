@@ -37,7 +37,6 @@ export const COUNTRIES: Country[] = [
 
 	{ iso: 'kh', code: '+855', label: 'Cambodia' },
 	{ iso: 'cm', code: '+237', label: 'Cameroon' },
-	{ iso: 'ca', code: '+1', label: 'Canada' },
 	{ iso: 'cv', code: '+238', label: 'Cape Verde' },
 	{ iso: 'cf', code: '+236', label: 'Central African Republic' },
 	{ iso: 'td', code: '+235', label: 'Chad' },
@@ -93,8 +92,6 @@ export const COUNTRIES: Country[] = [
 
 	{ iso: 'jp', code: '+81', label: 'Japan' },
 	{ iso: 'jo', code: '+962', label: 'Jordan' },
-
-	{ iso: 'kz', code: '+7', label: 'Kazakhstan' },
 	{ iso: 'ke', code: '+254', label: 'Kenya' },
 	{ iso: 'kw', code: '+965', label: 'Kuwait' },
 
