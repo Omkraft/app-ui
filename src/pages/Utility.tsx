@@ -26,7 +26,7 @@ import {
 	Gauge,
 	AlertCircleIcon,
 	Quote,
-	CalendarClock
+	CalendarClock,
 } from 'lucide-react';
 import { getWeatherTheme } from '@/utils/weatherTheme';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -34,6 +34,8 @@ import { Button } from '@/components/ui/button';
 import type { OnThisDayResponse } from '@/types/insights';
 import { Separator } from '@radix-ui/react-separator';
 import { Item, ItemContent, ItemDescription, ItemGroup } from '@/components/ui/item';
+import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
+import { Link } from 'react-router-dom';
 
 interface NewsArticle {
 	title: string;
@@ -111,6 +113,7 @@ export default function Utility() {
 	};
 
 	const fetchOnThisDay = async () => {
+		setOnThisDay(null);
 		try {
 			const data = await apiRequest<OnThisDayResponse>(
 				'/api/utility/on-this-day'
@@ -150,6 +153,23 @@ export default function Utility() {
 
 	return (
 		<main className="min-h-[calc(100vh-135px)] bg-background">
+			<section className="flex items-center py-6">
+				<div className="app-container grid gap-6 items-center">
+					<Breadcrumb>
+						<BreadcrumbList>
+							<BreadcrumbItem>
+								<BreadcrumbLink asChild>
+									<Link to="/dashboard">Dashboard</Link>
+								</BreadcrumbLink>
+							</BreadcrumbItem>
+							<BreadcrumbSeparator />
+							<BreadcrumbItem>
+								<BreadcrumbPage>Utility Hub</BreadcrumbPage>
+							</BreadcrumbItem>
+						</BreadcrumbList>
+					</Breadcrumb>
+				</div>
+			</section>
 			<section className="text-foreground flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					{/* ========================= */}
@@ -173,34 +193,36 @@ export default function Utility() {
 						<>
 							<h2 className={`text-3xl font-semibold${(!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code)) && weather.current.is_day ? ' text-background' : ' text-foreground'}`}>Weather</h2>
 							{/* Current */}
-							<div className={`flex items-center justify-between${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)] ' : ' bg-muted '}p-6 rounded-xl`}>
-								<div className='flex flex-col gap-2'>
-									<div>
-										<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
-										<p className="text-sm opacity-70">
-											{locationLabel?.split(',').slice(1).join(',')}
+							<Card className={`${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)] ' : 'bg-muted '}border border-foreground`}>
+								<CardContent className="flex items-center justify-between p-6">
+									<div className='flex flex-col gap-2'>
+										<div>
+											<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
+											<p className="text-sm opacity-70">
+												{locationLabel?.split(',').slice(1).join(',')}
+											</p>
+										</div>
+
+										<p className="text-5xl font-bold">
+											{round(weather.current.temperature_2m)}°C
+										</p>
+										<p>
+											Feels like {round(weather.current.apparent_temperature)}°C
 										</p>
 									</div>
 
-									<p className="text-5xl font-bold">
-										{round(weather.current.temperature_2m)}°C
-									</p>
-									<p>
-										Feels like {round(weather.current.apparent_temperature)}°C
-									</p>
-								</div>
-
-								<div>
-									{(() => {
-										const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
-										return <Icon size={80} />;
-									})()}
-								</div>
-							</div>
+									<div>
+										{(() => {
+											const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
+											return <Icon size={80} />;
+										})()}
+									</div>
+								</CardContent>
+							</Card>
 
 							<Accordion
 								type="multiple"
-								className={`rounded-xl border${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
+								className={`rounded-xl border border-foreground${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
 							>
 								<AccordionItem value="metrix" className="border-b px-4 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Weather Details</AccordionTrigger>
@@ -345,7 +367,7 @@ export default function Utility() {
 							{!news || !(news?.articles?.length) ? (
 								<div className="grid gap-8 lg:grid-cols-2">
 									{Array.from({ length: 4 }).map((_, i) => (
-										<Card key={i} className='bg-foreground border border-muted-foreground'>
+										<Card key={i} className='bg-foreground border border-primary'>
 											<CardHeader>
 												<Skeleton className="h-5 w-3/4 bg-background" />
 												<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
@@ -363,7 +385,7 @@ export default function Utility() {
 										{news.articles.slice(0, visibleCount).map((item, index) => (
 											<Card
 												key={index}
-												className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-muted-foreground"
+												className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
 											>
 												<CardHeader>
 													<a
@@ -481,11 +503,11 @@ export default function Utility() {
 						<CardHeader>
 							<CardTitle><h3 className="text-2xl text-center flex flex-col items-center gap-2"><Quote />Quote of the Day</h3></CardTitle>
 						</CardHeader>
-						<CardContent className="grid gap-4">
+						<CardContent className="grid gap-4 text-center">
 							{quote ? (
 								<>
-									<p className="italic text-xl font-medium text-center">"{quote.q}" — </p>
-									<p className="text-accent italic text-xl font-medium text-center">{quote.a}</p>
+									<p className="italic text-xl font-medium ">"{quote.q}" — </p>
+									<p className="text-accent italic text-xl font-medium">{quote.a}</p>
 								</>
 							) : (
 								<p className="text-sm"><Spinner className='inline size-6' /> Loading quote...</p>
