@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Eye, EyeOff, AlertCircleIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
 	Card,
@@ -7,9 +8,14 @@ import {
 	CardDescription,
 	CardContent,
 } from '@/components/ui/card';
+import {
+	Field,
+	FieldDescription,
+	FieldGroup,
+	FieldLabel,
+} from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 import registerIllustration from '@/assets/register-illustration.svg';
 import { register } from '@/api/auth';
@@ -17,7 +23,6 @@ import { COUNTRIES } from '@/utils/countries';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import Loading from '../components/Loading';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon } from 'lucide-react';
 
 export default function Register() {
 	const [firstName, setFirstName] = useState('');
@@ -26,6 +31,8 @@ export default function Register() {
 	const [phone, setPhone] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
@@ -98,125 +105,157 @@ export default function Register() {
 										</CardDescription>
 									</CardHeader>
 
-									<CardContent className="space-y-3">
-										<form onSubmit={handleRegister} className="space-y-4">
-											<div className="space-y-2">
-												<Label htmlFor="firstName">First name</Label>
-												<Input
-													id="firstName"
-													type="text"
-													placeholder="First name"
-													value={firstName}
-													onChange={(e) => setFirstName(e.target.value)}
-													required
-												/>
-											</div>
-
-											<div className="space-y-2">
-												<Label htmlFor="lastName">Last name</Label>
-												<Input
-													id="lastName"
-													type="text"
-													placeholder="Last name"
-													value={lastName}
-													onChange={(e) => setLastName(e.target.value)}
-													required
-												/>
-											</div>
-
-											<div className="space-y-2">
-												<Label htmlFor="email">Email</Label>
-												<Input
-													id="email"
-													type="email"
-													placeholder="you@omkraft.io"
-													value={email}
-													onChange={(e) => setEmail(e.target.value)}
-													required
-												/>
-												<p className="text-xs text-muted-foreground">
-													This will be used to sign in and account recovery purposes.
-												</p>
-											</div>
-
-											<div className="space-y-2">
-												<Label htmlFor="phone">Phone number</Label>
-												<div className="flex gap-2">
-													{/* Country code dropdown */}
-													<Select
-														value={countryIso}
-														onValueChange={setCountryIso}
-													>
-														<SelectTrigger className="text-foreground px-3">
-															<SelectValue>
-																<span className="flex items-center gap-2">
-																	<span
-																		className={`fi fi-${selectedCountry.iso} leading-none`}
-																	></span>
-																	<span className="text-sm">{selectedCountry.code}</span>
-																</span>
-															</SelectValue>
-														</SelectTrigger>
-														<SelectContent>
-															{COUNTRIES.map((country) => (
-																<SelectItem key={country.code} value={country.iso}>
-																	<span className="flex items-center gap-3">
-																		<span
-																			className={`fi fi-${country.iso} leading-none`}
-																		></span>
-																		<span className="flex-1">{country.label}</span>
-																		<span className="text-muted-foreground text-sm">
-																			{country.code}
-																		</span>
-																	</span>
-																</SelectItem>
-															))}
-														</SelectContent>
-													</Select>
-
-													{/* Phone number input */}
+									<CardContent>
+										<form onSubmit={handleRegister}>
+											<FieldGroup className="gap-5">
+												<Field>
+													<FieldLabel htmlFor="firstName">First name <span className="text-destructive">*</span></FieldLabel>
 													<Input
-														type="tel"
-														placeholder="9876543210"
-														value={phone}
-														onChange={(e) => setPhone(e.target.value)}
+														id="firstName"
+														placeholder="First name"
+														value={firstName}
+														onChange={(e) => setFirstName(e.target.value)}
 														required
 													/>
-												</div>
-												<p className="text-xs text-muted-foreground">
-													Stored for account records. Not used for login or verification.
-												</p>
-											</div>
+												</Field>
+												<Field>
+													<FieldLabel htmlFor="lastName">Last name <span className="text-destructive">*</span></FieldLabel>
+													<Input
+														id="lastName"
+														placeholder="First name"
+														value={lastName}
+														onChange={(e) => setLastName(e.target.value)}
+														required
+													/>
+												</Field>
+												<Field>
+													<FieldLabel htmlFor="email">Email <span className="text-destructive">*</span></FieldLabel>
+													<Input
+														id="email"
+														type="email"
+														placeholder="you@omkraft.io"
+														value={email}
+														onChange={(e) => setEmail(e.target.value)}
+														required
+													/>
+													<FieldDescription className="text-xs">
+														This will be used to sign in and account recovery purposes.
+													</FieldDescription>
+												</Field>
+												<Field>
+													<FieldLabel htmlFor="phone">Phone number <span className="text-destructive">*</span></FieldLabel>
+													<div className="flex gap-2">
+														{/* Country code dropdown */}
+														<Select
+															value={countryIso}
+															onValueChange={setCountryIso}
+														>
+															<SelectTrigger className="text-foreground px-3">
+																<SelectValue>
+																	<span className="flex items-center gap-2">
+																		<span
+																			className={`fi fi-${selectedCountry.iso} leading-none`}
+																		></span>
+																		<span className="text-sm">{selectedCountry.code}</span>
+																	</span>
+																</SelectValue>
+															</SelectTrigger>
+															<SelectContent>
+																{COUNTRIES.map((country) => (
+																	<SelectItem key={country.code} value={country.iso}>
+																		<span className="flex items-center gap-3">
+																			<span
+																				className={`fi fi-${country.iso} leading-none`}
+																			></span>
+																			<span className="flex-1">{country.label}</span>
+																			<span className="text-muted-foreground text-sm">
+																				{country.code}
+																			</span>
+																		</span>
+																	</SelectItem>
+																))}
+															</SelectContent>
+														</Select>
 
-
-											<div className="space-y-2">
-												<Label htmlFor="password">Password</Label>
-												<Input
-													id="password"
-													type="password"
-													value={password}
-													onChange={(e) => setPassword(e.target.value)}
-													required
-													minLength={8}
-												/>
-												<p className="text-xs text-muted-foreground">
-													Minimum 8 characters
-												</p>
-											</div>
-
-											<div className="space-y-2">
-												<Label htmlFor="confirmPassword">Confirm password</Label>
-												<Input
-													id="confirmPassword"
-													type="password"
-													value={confirmPassword}
-													onChange={(e) => setConfirmPassword(e.target.value)}
-													required
-												/>
-											</div>
+														{/* Phone number input */}
+														<Input
+															type="tel"
+															placeholder="9876543210"
+															value={phone}
+															onChange={(e) => setPhone(e.target.value)}
+															required
+														/>
+													</div>
+													<FieldDescription className="text-xs">
+														Stored for account records. Not used for login or verification.
+													</FieldDescription>
+												</Field>
+												<Field>
+													<FieldLabel htmlFor="password">Password <span className="text-destructive">*</span></FieldLabel>
+													<div className="relative">
+														<Input
+															id="password"
+															type={showPassword ? 'text' : 'password'}
+															value={password}
+															onChange={(e) => setPassword(e.target.value)}
+															required
+															minLength={8}
+														/>
+														<Button
+															className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
+															onClick={() => setShowPassword(!showPassword)}
+															size="icon"
+															type="button"
+															variant="ghost"
+														>
+															{showPassword ? (
+																<EyeOff className="h-4 w-4 text-muted-foreground" />
+															) : (
+																<Eye className="h-4 w-4 text-muted-foreground" />
+															)}
+														</Button>
+													</div>
+													<FieldDescription className="text-xs">
+														Minimum 8 characters
+													</FieldDescription>
+												</Field>
+												<Field>
+													<FieldLabel htmlFor="confirmPassword">Confirm password <span className="text-destructive">*</span></FieldLabel>
+													<div className="relative">
+														<Input
+															id="confirmPassword"
+															type={showConfirmPassword ? 'text' : 'password'}
+															value={confirmPassword}
+															onChange={(e) => setConfirmPassword(e.target.value)}
+															required
+														/>
+														<Button
+															className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
+															onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+															size="icon"
+															type="button"
+															variant="ghost"
+														>
+															{showConfirmPassword ? (
+																<EyeOff className="h-4 w-4 text-muted-foreground" />
+															) : (
+																<Eye className="h-4 w-4 text-muted-foreground" />
+															)}
+														</Button>
+													</div>
+												</Field>
+												<Field>
+													<Button
+														type="submit"
+														className="w-full btn-primary"
+													>
+														Create account
+													</Button>
+												</Field>
+											</FieldGroup>
 
 											{error && (
-												<Alert variant="destructive" className="max-w-md">
+												<Alert variant="destructive">
 													<AlertCircleIcon />
 													<AlertTitle>Registration failed</AlertTitle>
 													<AlertDescription className="text-sm">
@@ -224,13 +263,6 @@ export default function Register() {
 													</AlertDescription>
 												</Alert>
 											)}
-
-											<Button
-												type="submit"
-												className="w-full"
-											>
-												Create account
-											</Button>
 										</form>
 
 
