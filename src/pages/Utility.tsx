@@ -188,7 +188,7 @@ export default function Utility() {
 			
 			{/* ================= Weather ================= */}
 			<section className={`relative overflow-hidden text-foreground py-6 transition-all duration-700 ${getWeatherTheme(weather?.current?.weather_code, weather?.current?.is_day)}`}>
-				<div className="app-container space-y-8 align-items-center">
+				<div className="app-container grid gap-6 align-items-center">
 					{weather ? (
 						<>
 							<h2 className={`text-3xl font-semibold${(!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code)) && weather.current.is_day ? ' text-background' : ' text-foreground'}`}>Weather</h2>
@@ -326,6 +326,7 @@ export default function Utility() {
 									</AccordionContent>
 								</AccordionItem>
 							</Accordion>
+							<p className="text-sm text-muted-foreground text-right">Updated on: {formatDate(weather.current.time)}</p>
 						</>
 					) : (
 						<>
