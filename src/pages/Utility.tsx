@@ -36,6 +36,7 @@ import { Separator } from '@radix-ui/react-separator';
 import { Item, ItemContent, ItemDescription, ItemGroup } from '@/components/ui/item';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { Link } from 'react-router-dom';
+import { getNext5Hours } from '@/utils/weatherHelpers';
 
 interface NewsArticle {
 	title: string;
@@ -58,12 +59,12 @@ export default function Utility() {
 	const [weather, setWeather] = useState<WeatherData | null>(null);
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
 	const [news, setNews] = useState<NewsResponse | null>(null);
+	const [newsError, setNewsError] = useState<string | null>(null);
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
 	const [weatherError, setWeatherError] = useState<string | null>(null);
 	const [visibleCount, setVisibleCount] = useState(10);
 	const [onThisDay, setOnThisDay] = useState<OnThisDayResponse | null>(null);
 	const [onThisDayError, setOnThisDayError] = useState<string | null>(null);
-
 
 	const newsSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -131,6 +132,7 @@ export default function Utility() {
 
 	const fetchNews = useCallback(async (category: string) => {
 		setNews(null);
+		setNewsError(null);
 		setVisibleCount(10); // Reset to 10 on new tab
 		try {
 			const data = await apiRequest<NewsArticle[]>(
@@ -141,6 +143,11 @@ export default function Utility() {
 			});
 		} catch (error) {
 			console.error(error);
+			setNewsError(
+				error instanceof Error
+					? error.message
+					: 'Failed to fetch weather.'
+			);
 		}
 	}, []);
 
@@ -194,28 +201,59 @@ export default function Utility() {
 							<h2 className={`text-3xl font-semibold${(!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code)) && weather.current.is_day ? ' text-background' : ' text-foreground'}`}>Weather</h2>
 							{/* Current */}
 							<Card className={`${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)] ' : 'bg-muted '}border border-foreground`}>
-								<CardContent className="flex items-center justify-between p-6">
-									<div className='flex flex-col gap-2'>
-										<div>
-											<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
-											<p className="text-sm opacity-70">
-												{locationLabel?.split(',').slice(1).join(',')}
+								<CardContent className="p-0">
+									<div className="flex items-center justify-between p-6">
+										<div className='flex flex-col gap-2'>
+											<div>
+												<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
+												<p className="text-sm opacity-70">
+													{locationLabel?.split(',').slice(1).join(',')}
+												</p>
+											</div>
+
+											<p className="text-5xl font-bold">
+												{round(weather.current.temperature_2m)}°C
+											</p>
+											<p>
+												Feels like {round(weather.current.apparent_temperature)}°C
 											</p>
 										</div>
 
-										<p className="text-5xl font-bold">
-											{round(weather.current.temperature_2m)}°C
-										</p>
-										<p>
-											Feels like {round(weather.current.apparent_temperature)}°C
-										</p>
+										<div>
+											{(() => {
+												const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
+												return <Icon size={80} />;
+											})()}
+										</div>
 									</div>
 
-									<div>
-										{(() => {
-											const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
-											return <Icon size={80} />;
-										})()}
+									<div className="grid grid-cols-1 lg:grid-cols-5 gap-4 p-6">
+										{getNext5Hours(weather).map((hour, index) => (
+											<React.Fragment key={index}>
+												<div className="flex justify-around lg:block space-y-2 text-center justify-items-center items-center">
+													<div className="text-sm opacity-80">
+														{hour.time.toLocaleTimeString('en-IN', {
+															hour: 'numeric',
+															hour12: true
+														})}
+													</div>
+
+													<div>
+														{(() => {
+															const Icon = getWeatherIcon(hour.weather_code, weather.current.is_day);
+															return <Icon size={30} />;
+														})()}
+													</div>
+
+													<div className="font-semibold">
+														{Math.round(hour.temperature)}°
+													</div>
+												</div>
+												{index !== getNext5Hours(weather).length-1 && (
+													<Separator className="lg:hidden border" />
+												)}
+											</React.Fragment>
+										))}
 									</div>
 								</CardContent>
 							</Card>
@@ -224,11 +262,11 @@ export default function Utility() {
 								type="multiple"
 								className={`rounded-xl border border-foreground${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
 							>
-								<AccordionItem value="metrix" className="border-b px-4 last:border-b-0">
+								<AccordionItem value="metrix" className="border-b px-6 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Weather Details</AccordionTrigger>
-									<AccordionContent>
+									<AccordionContent className="pb-6">
 										<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted rounded-xl">
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Droplets className="w-7 h-7 text-accent" />
 												<div>
 													<p className="text-sm opacity-70">Humidity</p>
@@ -238,7 +276,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted rounded-xl">
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Cloud className="w-7 h-7 text-accent" />
 												<div>
 													<p className="text-sm opacity-70">Cloud Cover</p>
@@ -248,7 +286,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted rounded-xl">
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Wind className="w-7 h-7 text-accent" />
 												<div>
 													<p className="text-sm opacity-70">Wind</p>
@@ -258,7 +296,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted rounded-xl">
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Gauge className="w-7 h-7 text-accent" />
 												<div>
 													<p className="text-sm opacity-70">UV Index</p>
@@ -271,11 +309,11 @@ export default function Utility() {
 									</AccordionContent>
 								</AccordionItem>
 
-								<AccordionItem value="sunriseset" className="border-b px-4 last:border-b-0">
+								<AccordionItem value="sunriseset" className="border-b px-6 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Sunrise &amp; Sunset</AccordionTrigger>
-									<AccordionContent>
+									<AccordionContent className="pb-6">
 										<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted rounded-xl">
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Sunrise className="w-7 h-7 text-yellow-400" />
 												<div>
 													<p className="text-sm opacity-70">Sunrise</p>
@@ -285,7 +323,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted rounded-xl">
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Sunset className="w-7 h-7 text-orange-400" />
 												<div>
 													<p className="text-sm opacity-70">Sunset</p>
@@ -298,21 +336,21 @@ export default function Utility() {
 									</AccordionContent>
 								</AccordionItem>
 
-								<AccordionItem value="forecast" className="border-b px-4 last:border-b-0">
+								<AccordionItem value="forecast" className="border-b px-6 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">5-Day Forecast</AccordionTrigger>
-									<AccordionContent>
+									<AccordionContent className="pb-6">
 										<div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-											{weather?.daily?.time?.slice(1, 6).map((day: string, index: number) => (
-												<Card key={day} className="flex justify-around lg:block p-4 text-center bg-muted rounded-xl">
+											{weather.daily.time.slice(1, 6).map((day: string, index: number) => (
+												<Card key={day} className="flex justify-around lg:block p-4 space-y-2 text-center bg-muted items-center">
 													<p className="text-lg font-semibold">
 														{new Date(day).toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })}
 													</p>
 													<p className="font-semibold flex items-center justify-center gap-1">
-														<Sun className="w-4 h-4 text-yellow-400" />{round(weather.daily.temperature_2m_max[index])}°
+														<Sun className="w-5 h-5 text-yellow-400" />{round(weather.daily.temperature_2m_max[index], 0)}°
 													</p>
 													<p className="opacity-70 flex items-center justify-center gap-1">
-														<Moon className="w-4 h-4 text-blue-300" />
-														{round(weather.daily.temperature_2m_min[index])}°
+														<Moon className="w-5 h-5 text-blue-300" />
+														{round(weather.daily.temperature_2m_min[index], 0)}°
 													</p>
 													<p className="text-lg flex items-center justify-center gap-1">
 														{(() => {
@@ -326,7 +364,7 @@ export default function Utility() {
 									</AccordionContent>
 								</AccordionItem>
 							</Accordion>
-							<p className="text-sm text-muted-foreground text-right">Updated on: {formatDate(weather.current.time)}</p>
+							<p className="text-sm text-muted-foreground text-right">Updated on: {new Date(weather.current.time).toLocaleString(undefined, {day:'2-digit', month:'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true})}</p>
 						</>
 					) : (
 						<>
@@ -336,7 +374,7 @@ export default function Utility() {
 							) : (
 								<Alert variant="destructive">
 									<AlertCircleIcon />
-									<AlertTitle>Weather service failed</AlertTitle>
+									<AlertTitle>Weather unavailable</AlertTitle>
 									<AlertDescription className="text-sm">
 										{weatherError}
 									</AlertDescription>
@@ -351,7 +389,7 @@ export default function Utility() {
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<h2 className='text-3xl text-foreground'>News</h2>
-
+					<h3 className='text-2xl text-muted-foreground'>Top Stories</h3>
 					<Tabs
 						defaultValue="india"
 						onValueChange={(value) => fetchNews(value)}
@@ -366,20 +404,32 @@ export default function Utility() {
 
 						<div className="pt-4 space-y-4">
 							{!news || !(news?.articles?.length) ? (
-								<div className="grid gap-8 lg:grid-cols-2">
-									{Array.from({ length: 4 }).map((_, i) => (
-										<Card key={i} className='bg-foreground border border-primary'>
-											<CardHeader>
-												<Skeleton className="h-5 w-3/4 bg-background" />
-												<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
-											</CardHeader>
-											<CardContent>
-												<Skeleton className="h-4 w-full mb-2 bg-background" />
-												<Skeleton className="h-4 w-5/6 bg-background" />
-											</CardContent>
-										</Card>
-									))}
-								</div>
+								<>
+									{!newsError ? (
+										<div className="grid gap-8 lg:grid-cols-2">
+											{Array.from({ length: 4 }).map((_, i) => (
+												<Card key={i} className='bg-foreground border border-primary'>
+													<CardHeader>
+														<Skeleton className="h-5 w-3/4 bg-background" />
+														<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
+													</CardHeader>
+													<CardContent>
+														<Skeleton className="h-4 w-full mb-2 bg-background" />
+														<Skeleton className="h-4 w-5/6 bg-background" />
+													</CardContent>
+												</Card>
+											))}
+										</div>
+									):(
+										<Alert variant="destructive">
+											<AlertCircleIcon />
+											<AlertTitle>News unavailable</AlertTitle>
+											<AlertDescription className="text-sm">
+												{newsError}
+											</AlertDescription>
+										</Alert>
+									)};
+								</>
 							) : (
 								<>
 									<div ref={newsSectionRef} className='grid gap-8 lg:grid-cols-2'>
@@ -442,7 +492,7 @@ export default function Utility() {
 			</section>
 
 			{/* ================= Quote ================= */}
-			<section className="bg-accent text-accent-foreground grid gap-4 items-center py-6">
+			<section className="bg-accent text-accent-foreground items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<h2 className='text-3xl'>Daily Insights</h2>
 					{/* ================= On This Day ================= */}
