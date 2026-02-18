@@ -9,6 +9,7 @@ import { isAuthenticated } from './utils/auth';
 import { FooterPublic } from './components/FooterPublic';
 import { FooterApp } from './components/FooterApp';
 import Maintenance from './pages/Maintenance';
+import Subscription from './pages/Subscription';
 
 
 const Welcome = lazy(() => import('./pages/Welcome'));
@@ -88,6 +89,14 @@ export default function App() {
 							element={
 								<ProtectedRoute>
 									<Utility />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route path="/subscription"
+							element={
+								<ProtectedRoute>
+									<Subscription />
 								</ProtectedRoute>
 							}
 						/>

@@ -12,6 +12,9 @@ export interface WeatherData {
 
 	hourly: {
 		uv_index: number[];
+		time: string[],
+		temperature_2m: number[],
+		weather_code: number[],
 	};
 
 	daily: {
