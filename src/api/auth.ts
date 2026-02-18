@@ -16,7 +16,7 @@ export function login(email: string, password: string): Promise<AuthResponse> {
 	return apiRequest<AuthResponse>('/api/auth/login', {
 		method: 'POST',
 		body: JSON.stringify({ email, password }),
-	}, { skipAuthRefresh: true });
+	});
 }
 
 export function register(
