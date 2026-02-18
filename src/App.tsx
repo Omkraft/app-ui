@@ -6,8 +6,7 @@ import Loading from './components/Loading';
 import ProtectedRoute from './routes/ProtectedRoute';
 import PublicRoute from './routes/PublicRoute';
 import { isAuthenticated } from './utils/auth';
-import { FooterPublic } from './components/FooterPublic';
-import { FooterApp } from './components/FooterApp';
+import Footer from './components/Footer';
 import Maintenance from './pages/Maintenance';
 import Subscription from './pages/Subscription';
 
@@ -120,7 +119,8 @@ export default function App() {
 				</Suspense>
 			</div>
 
-			{isAuthenticated() ? <FooterApp /> : <FooterPublic />}
+			<Footer />
+
 		</div>
 	);
 }
