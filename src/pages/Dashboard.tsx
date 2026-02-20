@@ -141,7 +141,7 @@ export default function Dashboard() {
 							</ul>
 
 							<div className="flex flex-col lg:flex-row justify-items-end gap-4 pt-4">
-								<Link to="/subscription" className="btn-accent">
+								<Link to="/maintenance" className="btn-accent">
 									Open Subscription Tracker
 								</Link>
 							</div>
