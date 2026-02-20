@@ -100,6 +100,7 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 
 									<SelectContent className="bg-[var(--omkraft-blue-700)] text-foreground">
 										<SelectItem value="OTT" className="focus:text-background">OTT / Streaming</SelectItem>
+										<SelectItem value="MUSIC" className="focus:text-background">Music</SelectItem>
 										<SelectItem value="SIM_PREPAID" className="focus:text-background">Mobile (Prepaid)</SelectItem>
 										<SelectItem value="SIM_POSTPAID" className="focus:text-background">Mobile (Postpaid)</SelectItem>
 										<SelectItem value="INTERNET" className="focus:text-background">Internet / Broadband</SelectItem>

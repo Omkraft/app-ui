@@ -504,7 +504,7 @@ export default function Utility() {
 					{/* ================= On This Day ================= */}
 					<Card className="bg-foreground text-background border border-background">
 						<CardHeader className="flex flex-col gap-2">
-							<CardTitle className="flex align-center gap-2"><h3 className="text-2xl flex items-center gap-2"><CalendarClock /> On This Day</h3>
+							<CardTitle className="flex align-center gap-2 items-center"><h3 className="text-2xl flex items-center gap-2"><CalendarClock /> On This Day</h3>
 								{onThisDay && <span>({new Date(onThisDay.date).toLocaleDateString(undefined, { day: '2-digit', month: 'long' })})</span>}
 							</CardTitle>
 
@@ -535,10 +535,10 @@ export default function Utility() {
 								<ItemGroup>
 									{onThisDay.events.map((event, index) => (
 										<React.Fragment key={`${event.year}-${index}`}>
-											<Item>
+											<Item role="listitem">
 												<ItemContent>
 													<ItemDescription className="flex gap-3">
-														<span className="text-accent font-semibold min-w-[60px]">
+														<span className="text-[var(--omkraft-mint-700)] font-semibold min-w-[60px]">
 															{event.year}
 														</span>
 
@@ -549,7 +549,7 @@ export default function Utility() {
 												</ItemContent>
 											</Item>
 											{index !== onThisDay.events.length-1 && (
-												<Separator className="border border-accent" />
+												<Separator role='listitem' className="border border-[var(--omkraft-mint-700)]" />
 											)}
 										</React.Fragment>
 									))}
@@ -566,7 +566,7 @@ export default function Utility() {
 							{quote ? (
 								<>
 									<p className="italic text-xl font-medium ">"{quote.q}" — </p>
-									<p className="text-accent italic text-xl font-medium">{quote.a}</p>
+									<p className="text-[var(--omkraft-mint-700)] italic text-xl font-medium">{quote.a}</p>
 								</>
 							) : (
 								<>

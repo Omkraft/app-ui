@@ -16,6 +16,7 @@ import { getSubscriptions, type Subscription } from '@/api/subscription';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
+import { resolveLogo } from '@/utils/subscriptionBrand';
 
 export default function Subscription() {
 	const [subs, setSubs] = useState<Subscription[] | null>(null);
@@ -102,8 +103,8 @@ export default function Subscription() {
 								<CardTitle><h3 className="text-2xl font-semibold">Total Monthly Spend</h3></CardTitle>
 							</CardHeader>
 							<CardContent>
-								<div className="text-3xl font-semibold text-accent">
-							&#8377; {totalMonthly}
+								<div className="text-xl font-semibold text-accent">
+									&#8377; {totalMonthly}
 								</div>
 							</CardContent>
 						</Card>
@@ -115,8 +116,8 @@ export default function Subscription() {
 							<CardContent>
 								{nextRenewal ? (
 									<div className="flex flex-col gap-2">
-										<div className="text-xl font-semibold">
-											{nextRenewal.name.toLocaleUpperCase()}
+										<div className="text-xl">
+											{nextRenewal.name}
 										</div>
 										<div className="text-lg text-accent font-medium">
 											&#8377; {nextRenewal.amount}
@@ -153,37 +154,75 @@ export default function Subscription() {
 							</Alert>
 						)}
 
-						{subs && (
-							subs.map(sub => (
-								<Card key={sub._id}
-									className="bg-foreground border-background text-background">
-									<CardHeader>
-										<div className="flex justify-between items-start">
-											<div className="flex flex-col gap-2">
-												<CardTitle>
-													<h3>{sub.name.toLocaleUpperCase()}</h3>
-												</CardTitle>
-												<CardDescription className="text-primary">
-													Renews {formatDate(sub.nextBillingDate)}
-												</CardDescription>
+						{subs && subs.length ? (
+							subs.map(sub => {
+								const logo = resolveLogo(sub.category, sub.provider);
+
+								return (
+									<Card
+										key={sub._id}
+										className="bg-foreground border-background text-background"
+									>
+										<CardHeader>
+											<div className="flex justify-between items-start">
+
+												{/* LEFT SIDE */}
+												<div className="flex items-center gap-4">
+
+													{/* LOGO */}
+													{logo.type === 'image' ? (
+														<img
+															src={logo.src}
+															alt={logo.alt}
+															className="w-8 h-8 object-contain"
+														/>
+													) : (
+														logo.Icon && (
+															<logo.Icon className="w-6 h-6 text-primary" />
+														)
+													)}
+
+													{/* NAME + DATE */}
+													<div className="flex flex-col gap-1">
+														<CardTitle>
+															<h3>{sub.name.toUpperCase()}</h3>
+														</CardTitle>
+
+														<CardDescription className="text-primary">
+															Renews {formatDate(sub.nextBillingDate)}
+														</CardDescription>
+													</div>
+
+												</div>
+
+												{/* STATUS BADGE */}
+												<Badge className={getBadgeVariant(sub.status)}>
+													{sub.status}
+												</Badge>
+
 											</div>
-											<Badge className={getBadgeVariant(sub.status)}>
-												{sub.status}
-											</Badge>
-										</div>
-									</CardHeader>
-									<CardContent>
-										<div className="flex justify-between">
-											<div className="font-semibold">
-												&#8377; {sub.amount}
+										</CardHeader>
+
+										<CardContent>
+											<div className="flex justify-between">
+												<div className="font-semibold">
+													&#8377; {sub.amount}
+												</div>
+
+												<div className="text-background">
+													{sub.cycleInDays} days
+												</div>
 											</div>
-											<div className="text-background">
-												{sub.cycleInDays} days
-											</div>
-										</div>
-									</CardContent>
-								</Card>
-							))
+										</CardContent>
+
+									</Card>
+								);
+							})
+						) : (
+							<div className="flex flex-col gap-4 text-background">
+								<p className="text-lg font-semibold">No active subscriptions yet</p>
+								<p>Click on Add Subscription to add your first subscription to monitor billing cycles, renewal dates, and spending — all in one place.</p>
+							</div>
 						)}
 					</div>
 				</div>

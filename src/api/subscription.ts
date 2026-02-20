@@ -14,6 +14,7 @@ export interface Subscription {
 	name: string;
 	amount: number;
 	currency: string;
+	provider: string;
 	status: 'ACTIVE' | 'DUE' | 'EXPIRED';
 	nextBillingDate: string;
 	cycleInDays: number;
