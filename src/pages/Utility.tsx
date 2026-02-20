@@ -301,7 +301,7 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">UV Index</p>
 													<p className="text-lg font-semibold">
-														{round(weather.hourly.uv_index[0], 0)}
+														{round(weather.hourly.uv_index_clear_sky[0], 0)}
 													</p>
 												</div>
 											</Card>
@@ -445,7 +445,7 @@ export default function Utility() {
 														rel="noopener noreferrer"
 														className="hover:text-primary transition-colors"
 													>
-														<div className="flex flex-col-reverse lg:flex-row items-start lg:items-center gap-3">
+														<div className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center gap-3">
 															<CardTitle className="text-lg leading-snug">
 																{item.title}
 															</CardTitle>
@@ -498,7 +498,9 @@ export default function Utility() {
 					{/* ================= On This Day ================= */}
 					<Card className="bg-foreground text-background border border-background">
 						<CardHeader className="flex flex-col gap-2">
-							<CardTitle><h3 className="text-2xl flex items-center gap-2"><CalendarClock /> On This Day</h3></CardTitle>
+							<CardTitle className="flex align-center gap-2"><h3 className="text-2xl flex items-center gap-2"><CalendarClock /> On This Day</h3>
+								{onThisDay && <span>({new Date(onThisDay.date).toLocaleDateString(undefined, { day: '2-digit', month: 'long' })})</span>}
+							</CardTitle>
 
 							<CardDescription className="text-background">
 								Significant events from history

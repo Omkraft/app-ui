@@ -22,6 +22,7 @@ import { register } from '@/api/auth';
 import Loading from '../components/Loading';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
+import { isPositiveNumeric } from '@/utils/format';
 
 export default function Register() {
 	const [firstName, setFirstName] = useState('');
@@ -35,7 +36,6 @@ export default function Register() {
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
-	const isPositiveNumeric = (value: number) => !isNaN(value) && isFinite(value) && value > 0;
 
 	const handleRegister = async (e: React.FormEvent) => {
 		e.preventDefault();

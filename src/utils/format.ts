@@ -27,3 +27,7 @@ export function formatTimeLocal (time: string) {
 		hour12: true,
 	});
 };
+
+export function isPositiveNumeric(value: number) {
+	return !isNaN(value) && isFinite(value) && value > 0;
+}
