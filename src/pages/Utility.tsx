@@ -17,7 +17,6 @@ import { getWeatherIcon } from '@/utils/weatherIcons';
 import { Spinner } from '@/components/ui/spinner';
 import {
 	Droplets,
-	Cloud,
 	Wind,
 	Sun,
 	Moon,
@@ -27,6 +26,7 @@ import {
 	AlertCircleIcon,
 	Quote,
 	CalendarClock,
+	Umbrella,
 } from 'lucide-react';
 import { getWeatherTheme } from '@/utils/weatherTheme';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -58,6 +58,7 @@ interface QuoteResponse {
 export default function Utility() {
 	const [weather, setWeather] = useState<WeatherData | null>(null);
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
+	const [quoteError, setQuoteError] = useState<string | null>(null);
 	const [news, setNews] = useState<NewsResponse | null>(null);
 	const [newsError, setNewsError] = useState<string | null>(null);
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
@@ -105,15 +106,21 @@ export default function Utility() {
 
 	const fetchQuote = async () => {
 		setQuote(null);
+		setQuoteError(null);
 		try {
 			const data = await apiRequest<QuoteResponse>('/api/utility/quote');
 			setQuote(data);
 		} catch (error) {
-			console.error(error);
+			setQuoteError(
+				error instanceof Error
+					? error.message
+					: 'Failed to load quote'
+			);
 		}
 	};
 
 	const fetchOnThisDay = async () => {
+		setOnThisDayError(null);
 		setOnThisDay(null);
 		try {
 			const data = await apiRequest<OnThisDayResponse>(
@@ -262,6 +269,33 @@ export default function Utility() {
 								type="multiple"
 								className={`rounded-xl border border-foreground${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
 							>
+								<AccordionItem value="forecast" className="border-b px-6 last:border-b-0">
+									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">5-Day Forecast</AccordionTrigger>
+									<AccordionContent className="pb-6">
+										<div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+											{weather.daily.time.slice(1, 6).map((day: string, index: number) => (
+												<Card key={day} className="flex justify-around lg:block p-4 space-y-2 text-center bg-muted items-center">
+													<p className="text-lg font-semibold">
+														{new Date(day).toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })}
+													</p>
+													<p className="font-semibold flex items-center justify-center gap-1">
+														<Sun className="w-5 h-5 text-yellow-400" />{round(weather.daily.temperature_2m_max[index], 0)}°
+													</p>
+													<p className="opacity-70 flex items-center justify-center gap-1">
+														<Moon className="w-5 h-5 text-blue-300" />
+														{round(weather.daily.temperature_2m_min[index], 0)}°
+													</p>
+													<p className="text-lg flex items-center justify-center gap-1">
+														{(() => {
+															const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
+															return <Icon />;
+														})()}
+													</p>
+												</Card>
+											))}
+										</div>
+									</AccordionContent>
+								</AccordionItem>
 								<AccordionItem value="metrix" className="border-b px-6 last:border-b-0">
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Weather Details</AccordionTrigger>
 									<AccordionContent className="pb-6">
@@ -277,11 +311,11 @@ export default function Utility() {
 											</Card>
 
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
-												<Cloud className="w-7 h-7 text-accent" />
+												<Umbrella className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">Cloud Cover</p>
+													<p className="text-sm opacity-70">Precipitation</p>
 													<p className="text-xl font-semibold">
-														{weather.current.cloud_cover}%
+														{weather.current.precipitation} mm
 													</p>
 												</div>
 											</Card>
@@ -301,7 +335,7 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">UV Index</p>
 													<p className="text-lg font-semibold">
-														{round(weather.hourly.uv_index_clear_sky[0], 0)}
+														{round(weather.hourly.uv_index_clear_sky?.[0], 0)}
 													</p>
 												</div>
 											</Card>
@@ -332,34 +366,6 @@ export default function Utility() {
 													</p>
 												</div>
 											</Card>
-										</div>
-									</AccordionContent>
-								</AccordionItem>
-
-								<AccordionItem value="forecast" className="border-b px-6 last:border-b-0">
-									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">5-Day Forecast</AccordionTrigger>
-									<AccordionContent className="pb-6">
-										<div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-											{weather.daily.time.slice(1, 6).map((day: string, index: number) => (
-												<Card key={day} className="flex justify-around lg:block p-4 space-y-2 text-center bg-muted items-center">
-													<p className="text-lg font-semibold">
-														{new Date(day).toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })}
-													</p>
-													<p className="font-semibold flex items-center justify-center gap-1">
-														<Sun className="w-5 h-5 text-yellow-400" />{round(weather.daily.temperature_2m_max[index], 0)}°
-													</p>
-													<p className="opacity-70 flex items-center justify-center gap-1">
-														<Moon className="w-5 h-5 text-blue-300" />
-														{round(weather.daily.temperature_2m_min[index], 0)}°
-													</p>
-													<p className="text-lg flex items-center justify-center gap-1">
-														{(() => {
-															const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
-															return <Icon />;
-														})()}
-													</p>
-												</Card>
-											))}
 										</div>
 									</AccordionContent>
 								</AccordionItem>
@@ -563,7 +569,18 @@ export default function Utility() {
 									<p className="text-accent italic text-xl font-medium">{quote.a}</p>
 								</>
 							) : (
-								<p className="text-sm"><Spinner className='inline size-6' /> Loading quote...</p>
+								<>
+									{quoteError ? (
+										<Alert variant="destructive" className="flex flex-col gap-2">
+											<AlertTitle className="flex gap-2 items-center"><AlertCircleIcon />Quote unavailable</AlertTitle>
+											<AlertDescription className="text-sm">
+												{quoteError}
+											</AlertDescription>
+										</Alert>
+									) : (
+										<p className="text-sm"><Spinner className='inline size-6' /> Loading quote...</p>
+									)}
+								</>
 							)}
 						</CardContent>
 					</Card>

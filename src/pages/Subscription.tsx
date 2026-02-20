@@ -15,6 +15,7 @@ import AddSubscriptionDialog from '@/components/subscription/AddSubscriptionDial
 import { getSubscriptions, type Subscription } from '@/api/subscription';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
+import { Spinner } from '@/components/ui/spinner';
 
 export default function Subscription() {
 	const [subs, setSubs] = useState<Subscription[] | null>(null);
@@ -91,23 +92,23 @@ export default function Subscription() {
 					</header>
 				</div>
 			</section>
-			<section className="flex items-center py-6 bg-[var(--omkraft-blue-300)]">
+			<section className="flex items-center py-6 bg-accent">
 				<div className="app-container grid gap-6 items-center">
 					<h2 className="text-3xl font-semibold">Summary</h2>
 					{/* Summary cards */}
 					<div className="grid lg:grid-cols-2 gap-6">
-						<Card className="border-primary">
+						<Card className="border-foreground">
 							<CardHeader>
 								<CardTitle><h3 className="text-2xl font-semibold">Total Monthly Spend</h3></CardTitle>
 							</CardHeader>
 							<CardContent>
-								<div className="text-3xl font-semibold text-primary">
+								<div className="text-3xl font-semibold text-accent">
 							&#8377; {totalMonthly}
 								</div>
 							</CardContent>
 						</Card>
 
-						<Card className="border-primary">
+						<Card className="border-foreground">
 							<CardHeader>
 								<CardTitle><h3 className="text-2xl font-semibold">Next Renewal</h3></CardTitle>
 							</CardHeader>
@@ -117,10 +118,10 @@ export default function Subscription() {
 										<div className="text-xl font-semibold">
 											{nextRenewal.name.toLocaleUpperCase()}
 										</div>
-										<div className="text-lg text-primary font-medium">
+										<div className="text-lg text-accent font-medium">
 											&#8377; {nextRenewal.amount}
 										</div>
-										<div className="text-muted-foreground">
+										<div className="text-sm text-muted-foreground">
 											{formatDate(nextRenewal.nextBillingDate)}
 										</div>
 									</div>
@@ -134,13 +135,13 @@ export default function Subscription() {
 					</div>
 				</div>
 			</section>
-			<section className="flex items-center py-6 bg-primary">
+			<section className="flex items-center py-6 bg-[var(--omkraft-blue-300)]">
 				<div className="app-container grid gap-6 items-center">
-					<h2 className="text-3xl font-semibold text-primary-foreground">Current Subscriptions</h2>
+					<h2 className="text-3xl font-semibold">Current Subscriptions</h2>
 					{/* List */}
 					<div className="grid gap-6">
 						{loading && (
-							<div className="opacity-70">Loading subscriptions...</div>
+							<p className="text-sm text-background"><Spinner className='inline size-6' /> Loading subscriptions...</p>
 						)}
 
 						{subsError && (
@@ -157,10 +158,10 @@ export default function Subscription() {
 								<Card key={sub._id}
 									className="bg-foreground border-background text-background">
 									<CardHeader>
-										<div className="flex justify-between items-center">
+										<div className="flex justify-between items-start">
 											<div className="flex flex-col gap-2">
 												<CardTitle>
-													{sub.name.toLocaleUpperCase()}
+													<h3>{sub.name.toLocaleUpperCase()}</h3>
 												</CardTitle>
 												<CardDescription className="text-primary">
 													Renews {formatDate(sub.nextBillingDate)}

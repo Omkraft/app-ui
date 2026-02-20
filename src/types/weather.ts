@@ -8,6 +8,7 @@ export interface WeatherData {
 		is_day: number;
 		cloud_cover: string;
 		apparent_temperature: number;
+		precipitation: string,
 	};
 
 	hourly: {
