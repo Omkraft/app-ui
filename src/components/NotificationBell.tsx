@@ -60,7 +60,7 @@ export default function NotificationBell()
 				</button>
 			</PopoverTrigger>
 
-			<PopoverContent className="bg-primary">
+			<PopoverContent className="bg-primary border-primary-foreground">
 				<div className="space-y-2">
 					{notifications.length === 0
 						? (
