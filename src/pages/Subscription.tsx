@@ -165,7 +165,7 @@ export default function Subscription() {
 										className="bg-foreground border-background text-background"
 									>
 										<CardHeader>
-											<div className="flex justify-between items-start">
+											<div className="flex justify-between items-start gap-4">
 
 												{/* LEFT SIDE */}
 												<div className="flex items-center gap-4">

@@ -1,4 +1,4 @@
-const LOGO_API_KEY = import.meta.env.LOGO_DEV_API_KEY;
+const LOGO_API_KEY = import.meta.env.VITE_LOGO_DEV_API_KEY as string;
 import {
 	Gamepad2,
 	Package,
