@@ -23,7 +23,6 @@ export function Header() {
 				<img src={logo} alt="Omkraft Inc." className="header__logo" />
 
 				<div className="flex items-center gap-3">
-					<NotificationBell />
 					{!isAuthenticated && pathname === '/login' && (
 						<Link to="/register" className="btn-primary">
 						Register
@@ -43,17 +42,18 @@ export function Header() {
 					)}
 
 					{isAuthenticated && (
-						<>
+						<div className="flex gap-4 items-center">
 							<span className="hidden md:inline text-sm text-muted-foreground">
 								{user?.email}
 							</span>
+							<NotificationBell />
 							<Button
 								className="w-full"
 								onClick={logoutUser}
 							>
 								Logout
 							</Button>
-						</>
+						</div>
 					)}
 				</div>
 			</div>
