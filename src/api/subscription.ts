@@ -40,3 +40,11 @@ export function getSubscriptions() {
 		method: 'GET'
 	});
 }
+
+export function confirmSubscriptionPayment(id: string) {
+
+	return apiRequest(`/api/subscription/${id}/confirm-payment`, {
+		method: 'POST',
+	});
+
+}

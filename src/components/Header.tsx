@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import './Header.scss';
 import { Button } from '@/components/ui/button';
+import NotificationBell from '@/components/NotificationBell';
 
 export function Header() {
 	const location = useLocation();
@@ -22,6 +23,7 @@ export function Header() {
 				<img src={logo} alt="Omkraft Inc." className="header__logo" />
 
 				<div className="flex items-center gap-3">
+					<NotificationBell />
 					{!isAuthenticated && pathname === '/login' && (
 						<Link to="/register" className="btn-primary">
 						Register

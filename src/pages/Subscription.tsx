@@ -12,11 +12,12 @@ import { Badge } from '@/components/ui/badge';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { Link } from 'react-router-dom';
 import AddSubscriptionDialog from '@/components/subscription/AddSubscriptionDialog';
-import { getSubscriptions, type Subscription } from '@/api/subscription';
+import { confirmSubscriptionPayment, getSubscriptions, type Subscription } from '@/api/subscription';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { resolveLogo } from '@/utils/subscriptionBrand';
+import { Button } from '@/components/ui/button';
 
 export default function Subscription() {
 	const [subs, setSubs] = useState<Subscription[] | null>(null);
@@ -136,7 +137,7 @@ export default function Subscription() {
 					</div>
 				</div>
 			</section>
-			<section className="flex items-center py-6 bg-[var(--omkraft-blue-300)]">
+			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<h2 className="text-3xl font-semibold">Current Subscriptions</h2>
 					{/* List */}
@@ -189,10 +190,9 @@ export default function Subscription() {
 														</CardTitle>
 
 														<CardDescription className="text-primary">
-															Renews {formatDate(sub.nextBillingDate)}
+															Renews on {formatDate(sub.nextBillingDate)}
 														</CardDescription>
 													</div>
-
 												</div>
 
 												{/* STATUS BADGE */}
@@ -204,9 +204,20 @@ export default function Subscription() {
 										</CardHeader>
 
 										<CardContent>
-											<div className="flex justify-between">
-												<div className="font-semibold">
+											<div className="flex justify-between items-end">
+												<div className="font-semibold flex flex-col">
 													&#8377; {sub.amount}
+													{sub.status !== 'ACTIVE' && (
+														<Button
+															onClick={async () => {
+																await confirmSubscriptionPayment(sub._id);
+																await fetchSubscriptions();
+															}}
+															className="btn-primary mt-3"
+														>
+															Mark as Paid
+														</Button>
+													)}
 												</div>
 
 												<div className="text-background">
@@ -219,10 +230,14 @@ export default function Subscription() {
 								);
 							})
 						) : (
-							<div className="flex flex-col gap-4 text-background">
-								<p className="text-lg font-semibold">No active subscriptions yet</p>
-								<p>Click on Add Subscription to add your first subscription to monitor billing cycles, renewal dates, and spending — all in one place.</p>
-							</div>
+							<>
+								{!loading && (
+									<div className="flex flex-col gap-4 text-background">
+										<p className="text-lg font-semibold">No active subscriptions yet</p>
+										<p>Click on Add Subscription to add your first subscription to monitor billing cycles, renewal dates, and spending — all in one place.</p>
+									</div>
+								)}
+							</>
 						)}
 					</div>
 				</div>
@@ -247,12 +262,15 @@ function getBadgeVariant(status: string) {
 	switch (status) {
 
 	case 'ACTIVE':
-		return 'bg-background';
+		return 'bg-accent text-accent-foreground';
 
 	case 'DUE':
-		return 'border-background text-background bg-transparent';
+		return 'bg-yellow-500 text-black';
 
-	case 'EXPIRED':
+	case 'OVERDUE':
 		return 'bg-destructive text-destructive-foreground';
+
+	default:
+		return 'bg-gray-500';
 	}
 }
