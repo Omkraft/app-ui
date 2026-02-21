@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import './Header.scss';
 import { Button } from '@/components/ui/button';
+import NotificationBell from '@/components/NotificationBell';
 
 export function Header() {
 	const location = useLocation();
@@ -41,17 +42,18 @@ export function Header() {
 					)}
 
 					{isAuthenticated && (
-						<>
+						<div className="flex gap-4 items-center">
 							<span className="hidden md:inline text-sm text-muted-foreground">
 								{user?.email}
 							</span>
+							<NotificationBell />
 							<Button
 								className="w-full"
 								onClick={logoutUser}
 							>
 								Logout
 							</Button>
-						</>
+						</div>
 					)}
 				</div>
 			</div>
