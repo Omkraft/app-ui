@@ -14,9 +14,9 @@ export function round(value: string | number, decimals = 1) {
 	return Number(value.toFixed(decimals));
 }
 
-export function formatTimeLocal (time: string) {
+export function formatTimeLocal(time: string) {
 	const [hour, minute] = time.split('T')[1].slice(0, 5).split(':');
-		
+
 	const date = new Date();
 	date.setHours(Number(hour));
 	date.setMinutes(Number(minute));
@@ -26,7 +26,7 @@ export function formatTimeLocal (time: string) {
 		minute: '2-digit',
 		hour12: true,
 	});
-};
+}
 
 export function isPositiveNumeric(value: number) {
 	return !isNaN(value) && isFinite(value) && value > 0;

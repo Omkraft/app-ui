@@ -1,12 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardDescription,
-	CardContent,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
 import forgotIllustration from '@/assets/forgot-password-illustration.svg';
 import resetIllustration from '@/assets/reset-password-illustration.svg';
@@ -46,9 +40,7 @@ export default function ForgotPassword() {
 			setLoading(true);
 			await forgotPassword(email);
 		} catch (err) {
-			error = err instanceof Error
-				? err.message
-				: 'Failed to send OTP. Please try again.';
+			error = err instanceof Error ? err.message : 'Failed to send OTP. Please try again.';
 			setError(error);
 		} finally {
 			if (!error) {
@@ -77,9 +69,8 @@ export default function ForgotPassword() {
 			setLoading(true);
 			await resetPassword(email, otp, password);
 		} catch (err) {
-			error = err instanceof Error
-				? err.message
-				: 'Failed to reset password. Please try again.';
+			error =
+				err instanceof Error ? err.message : 'Failed to reset password. Please try again.';
 			setError(error);
 		} finally {
 			if (!error) {
@@ -100,12 +91,14 @@ export default function ForgotPassword() {
 								{!sent ? (
 									<>
 										<h1 className="text-4xl font-semibold text-foreground leading-tight">
-											Forgot<br />
+											Forgot
+											<br />
 											<span className="text-primary">password</span>
 										</h1>
 
 										<p className="text-muted-foreground max-w-md">
-											Enter your email address and we'll help you securely regain access to your workspace.
+											Enter your email address and we'll help you securely
+											regain access to your workspace.
 										</p>
 										<img
 											src={forgotIllustration}
@@ -116,12 +109,14 @@ export default function ForgotPassword() {
 								) : (
 									<>
 										<h1 className="text-4xl font-semibold text-foreground leading-tight">
-											Set a new<br />
+											Set a new
+											<br />
 											<span className="text-primary">password</span>
 										</h1>
 
 										<p className="text-muted-foreground max-w-md">
-											Enter the one-time code we sent to your email and choose a new password to secure your account.
+											Enter the one-time code we sent to your email and choose
+											a new password to secure your account.
 										</p>
 										<img
 											src={resetIllustration}
@@ -136,7 +131,9 @@ export default function ForgotPassword() {
 							<CardHeader>
 								{!sent ? (
 									<>
-										<CardTitle><h2>Forgot password</h2></CardTitle>
+										<CardTitle>
+											<h2>Forgot password</h2>
+										</CardTitle>
 										<CardDescription>
 											We'll send you a one-time code
 										</CardDescription>
@@ -145,15 +142,20 @@ export default function ForgotPassword() {
 									<>
 										{!reset ? (
 											<>
-												<CardTitle><h2>Reset password</h2></CardTitle>
+												<CardTitle>
+													<h2>Reset password</h2>
+												</CardTitle>
 												<CardDescription>
-													Please check your email for the OTP to reset your password.
+													Please check your email for the OTP to reset
+													your password.
 												</CardDescription>
 											</>
 										) : (
 											<>
 												<CardTitle>
-													<h2 className="text-accent">Password Updated Successfully</h2>
+													<h2 className="text-accent">
+														Password Updated Successfully
+													</h2>
 												</CardTitle>
 												<CardDescription className="mt-2">
 													Your password has been reset.
@@ -169,7 +171,10 @@ export default function ForgotPassword() {
 									<>
 										<form onSubmit={handleForgotPassword} className="space-y-4">
 											<Field>
-												<FieldLabel htmlFor="email">Registered Email <span className="text-destructive">*</span></FieldLabel>
+												<FieldLabel htmlFor="email">
+													Registered Email{' '}
+													<span className="text-destructive">*</span>
+												</FieldLabel>
 												<Input
 													id="email"
 													placeholder="you@omkraft.io"
@@ -187,10 +192,7 @@ export default function ForgotPassword() {
 													</AlertDescription>
 												</Alert>
 											)}
-											<Button
-												type="submit"
-												className="w-full"
-											>
+											<Button type="submit" className="w-full">
 												Send OTP
 											</Button>
 										</form>
@@ -198,36 +200,83 @@ export default function ForgotPassword() {
 								) : (
 									<>
 										{!reset ? (
-											<form onSubmit={handleResetPassword} className="space-y-4">
+											<form
+												onSubmit={handleResetPassword}
+												className="space-y-4"
+											>
 												<FieldGroup>
 													<Field className="w-fit">
-														<FieldLabel htmlFor="otp">One-Time Code <span className="text-destructive">*</span></FieldLabel>
-														<InputOTP id="otp" maxLength={6} pattern={REGEXP_ONLY_DIGITS} onChange={(value) => setOtp(value)} required>
+														<FieldLabel htmlFor="otp">
+															One-Time Code{' '}
+															<span className="text-destructive">
+																*
+															</span>
+														</FieldLabel>
+														<InputOTP
+															id="otp"
+															maxLength={6}
+															pattern={REGEXP_ONLY_DIGITS}
+															onChange={(value) => setOtp(value)}
+															required
+														>
 															<InputOTPGroup>
-																<InputOTPSlot className="bg-input border-l-0 border-border" index={0} />
-																<InputOTPSlot className="bg-input border-l-0 border-border" index={1} />
-																<InputOTPSlot className="bg-input border-l-0 border-border" index={2} />
-																<InputOTPSlot className="bg-input border-l-0 border-border" index={3} />
-																<InputOTPSlot className="bg-input border-l-0 border-border" index={4} />
-																<InputOTPSlot className="bg-input border-l-0 border-border" index={5} />
+																<InputOTPSlot
+																	className="bg-input border-l-0 border-border"
+																	index={0}
+																/>
+																<InputOTPSlot
+																	className="bg-input border-l-0 border-border"
+																	index={1}
+																/>
+																<InputOTPSlot
+																	className="bg-input border-l-0 border-border"
+																	index={2}
+																/>
+																<InputOTPSlot
+																	className="bg-input border-l-0 border-border"
+																	index={3}
+																/>
+																<InputOTPSlot
+																	className="bg-input border-l-0 border-border"
+																	index={4}
+																/>
+																<InputOTPSlot
+																	className="bg-input border-l-0 border-border"
+																	index={5}
+																/>
 															</InputOTPGroup>
 														</InputOTP>
 													</Field>
 													<Field>
-														<FieldLabel htmlFor="password">Password <span className="text-destructive">*</span></FieldLabel>
+														<FieldLabel htmlFor="password">
+															Password{' '}
+															<span className="text-destructive">
+																*
+															</span>
+														</FieldLabel>
 														<InputGroup className="bg-input border border-border">
 															<InputGroupInput
 																id="password"
-																type={showPassword ? 'text' : 'password'}
+																type={
+																	showPassword
+																		? 'text'
+																		: 'password'
+																}
 																value={password}
-																onChange={(e) => setPassword(e.target.value)}
+																onChange={(e) =>
+																	setPassword(e.target.value)
+																}
 																required
 																minLength={8}
 															/>
 															<InputGroupAddon align="inline-end">
 																<Button
 																	className="hover:bg-transparent"
-																	onClick={() => setShowPassword(!showPassword)}
+																	onClick={() =>
+																		setShowPassword(
+																			!showPassword
+																		)
+																	}
 																	size="icon"
 																	type="button"
 																	variant="ghost"
@@ -239,26 +288,42 @@ export default function ForgotPassword() {
 																	)}
 																</Button>
 															</InputGroupAddon>
-														
 														</InputGroup>
 														<FieldDescription className="text-xs">
-														Minimum 8 characters
+															Minimum 8 characters
 														</FieldDescription>
 													</Field>
 													<Field>
-														<FieldLabel htmlFor="confirmPassword">Confirm password <span className="text-destructive">*</span></FieldLabel>
+														<FieldLabel htmlFor="confirmPassword">
+															Confirm password{' '}
+															<span className="text-destructive">
+																*
+															</span>
+														</FieldLabel>
 														<InputGroup className="bg-input border border-border">
 															<InputGroupInput
 																id="confirmPassword"
-																type={showConfirmPassword ? 'text' : 'password'}
+																type={
+																	showConfirmPassword
+																		? 'text'
+																		: 'password'
+																}
 																value={confirmPassword}
-																onChange={(e) => setConfirmPassword(e.target.value)}
+																onChange={(e) =>
+																	setConfirmPassword(
+																		e.target.value
+																	)
+																}
 																required
 															/>
 															<InputGroupAddon align="inline-end">
 																<Button
 																	className="hover:bg-transparent"
-																	onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+																	onClick={() =>
+																		setShowConfirmPassword(
+																			!showConfirmPassword
+																		)
+																	}
 																	size="icon"
 																	type="button"
 																	variant="ghost"
@@ -274,29 +339,33 @@ export default function ForgotPassword() {
 													</Field>
 												</FieldGroup>
 												{error && (
-													<Alert variant="destructive" className="max-w-md">
+													<Alert
+														variant="destructive"
+														className="max-w-md"
+													>
 														<AlertCircleIcon />
-														<AlertTitle>Password reset failed</AlertTitle>
+														<AlertTitle>
+															Password reset failed
+														</AlertTitle>
 														<AlertDescription className="text-sm">
 															{error}
 														</AlertDescription>
 													</Alert>
 												)}
-												<Button
-													type="submit"
-													className="w-full"
-												>
+												<Button type="submit" className="w-full">
 													Submit
 												</Button>
 											</form>
 										) : (
 											<>
 												<p className="text-sm text-muted-foreground">
-													You can now sign in using your new password and continue where you left off.
+													You can now sign in using your new password and
+													continue where you left off.
 												</p>
 
 												<p className="text-xs text-muted-foreground mt-4">
-													For your security, never share your password with anyone.
+													For your security, never share your password
+													with anyone.
 												</p>
 											</>
 										)}

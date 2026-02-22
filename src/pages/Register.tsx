@@ -1,19 +1,8 @@
 import { useState } from 'react';
 import { Eye, EyeOff, AlertCircleIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardDescription,
-	CardContent,
-} from '@/components/ui/card';
-import {
-	Field,
-	FieldDescription,
-	FieldGroup,
-	FieldLabel,
-} from '@/components/ui/field';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -42,12 +31,7 @@ export default function Register() {
 		setError(null);
 		let error = null;
 
-		if (
-			!firstName.trim() ||
-			!lastName.trim() ||
-			!email.trim() ||
-			!phone.trim()
-		) {
+		if (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim()) {
 			setError('All fields are required');
 			return;
 		}
@@ -73,9 +57,7 @@ export default function Register() {
 			const phoneNumber = `+91${phone}`;
 			await register(firstName, lastName, email, phoneNumber, password);
 		} catch (err) {
-			error = err instanceof Error
-				? err.message
-				: 'Registration failed. Please try again.';
+			error = err instanceof Error ? err.message : 'Registration failed. Please try again.';
 			setError(error);
 		} finally {
 			setLoading(false);
@@ -106,27 +88,40 @@ export default function Register() {
 										<form onSubmit={handleRegister}>
 											<FieldGroup className="gap-5">
 												<Field>
-													<FieldLabel htmlFor="firstName">First name <span className="text-destructive">*</span></FieldLabel>
+													<FieldLabel htmlFor="firstName">
+														First name{' '}
+														<span className="text-destructive">*</span>
+													</FieldLabel>
 													<Input
 														id="firstName"
 														placeholder="First name"
 														value={firstName}
-														onChange={(e) => setFirstName(e.target.value)}
+														onChange={(e) =>
+															setFirstName(e.target.value)
+														}
 														required
 													/>
 												</Field>
 												<Field>
-													<FieldLabel htmlFor="lastName">Last name <span className="text-destructive">*</span></FieldLabel>
+													<FieldLabel htmlFor="lastName">
+														Last name{' '}
+														<span className="text-destructive">*</span>
+													</FieldLabel>
 													<Input
 														id="lastName"
 														placeholder="First name"
 														value={lastName}
-														onChange={(e) => setLastName(e.target.value)}
+														onChange={(e) =>
+															setLastName(e.target.value)
+														}
 														required
 													/>
 												</Field>
 												<Field>
-													<FieldLabel htmlFor="email">Email <span className="text-destructive">*</span></FieldLabel>
+													<FieldLabel htmlFor="email">
+														Email{' '}
+														<span className="text-destructive">*</span>
+													</FieldLabel>
 													<Input
 														id="email"
 														type="email"
@@ -136,11 +131,15 @@ export default function Register() {
 														required
 													/>
 													<FieldDescription className="text-xs">
-														This will be used to sign in and account recovery purposes.
+														This will be used to sign in and account
+														recovery purposes.
 													</FieldDescription>
 												</Field>
 												<Field>
-													<FieldLabel htmlFor="phone">Phone number <span className="text-destructive">*</span></FieldLabel>
+													<FieldLabel htmlFor="phone">
+														Phone number{' '}
+														<span className="text-destructive">*</span>
+													</FieldLabel>
 													<div className="flex gap-2">
 														<InputGroup className="bg-input border border-border">
 															{/* Phone number input */}
@@ -149,33 +148,43 @@ export default function Register() {
 																type="tel"
 																placeholder="9876543210"
 																value={phone}
-																onChange={(e) => setPhone(e.target.value)}
+																onChange={(e) =>
+																	setPhone(e.target.value)
+																}
 																required
 															/>
-															<InputGroupAddon>
-																+91
-															</InputGroupAddon>
+															<InputGroupAddon>+91</InputGroupAddon>
 														</InputGroup>
 													</div>
 													<FieldDescription className="text-xs">
-														Stored for account records. Not used for login or verification.
+														Stored for account records. Not used for
+														login or verification.
 													</FieldDescription>
 												</Field>
 												<Field>
-													<FieldLabel htmlFor="password">Password <span className="text-destructive">*</span></FieldLabel>
+													<FieldLabel htmlFor="password">
+														Password{' '}
+														<span className="text-destructive">*</span>
+													</FieldLabel>
 													<InputGroup className="bg-input border border-border">
 														<InputGroupInput
 															id="password"
-															type={showPassword ? 'text' : 'password'}
+															type={
+																showPassword ? 'text' : 'password'
+															}
 															value={password}
-															onChange={(e) => setPassword(e.target.value)}
+															onChange={(e) =>
+																setPassword(e.target.value)
+															}
 															required
 															minLength={8}
 														/>
 														<InputGroupAddon align="inline-end">
 															<Button
 																className="hover:bg-transparent"
-																onClick={() => setShowPassword(!showPassword)}
+																onClick={() =>
+																	setShowPassword(!showPassword)
+																}
 																size="icon"
 																type="button"
 																variant="ghost"
@@ -187,26 +196,38 @@ export default function Register() {
 																)}
 															</Button>
 														</InputGroupAddon>
-														
 													</InputGroup>
 													<FieldDescription className="text-xs">
 														Minimum 8 characters
 													</FieldDescription>
 												</Field>
 												<Field>
-													<FieldLabel htmlFor="confirmPassword">Confirm password <span className="text-destructive">*</span></FieldLabel>
+													<FieldLabel htmlFor="confirmPassword">
+														Confirm password{' '}
+														<span className="text-destructive">*</span>
+													</FieldLabel>
 													<InputGroup className="bg-input border border-border">
 														<InputGroupInput
 															id="confirmPassword"
-															type={showConfirmPassword ? 'text' : 'password'}
+															type={
+																showConfirmPassword
+																	? 'text'
+																	: 'password'
+															}
 															value={confirmPassword}
-															onChange={(e) => setConfirmPassword(e.target.value)}
+															onChange={(e) =>
+																setConfirmPassword(e.target.value)
+															}
 															required
 														/>
 														<InputGroupAddon align="inline-end">
 															<Button
 																className="hover:bg-transparent"
-																onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+																onClick={() =>
+																	setShowConfirmPassword(
+																		!showConfirmPassword
+																	)
+																}
 																size="icon"
 																type="button"
 																variant="ghost"
@@ -241,7 +262,6 @@ export default function Register() {
 											)}
 										</form>
 
-
 										<p className="text-sm text-center text-muted-foreground mt-4">
 											Already have an account?{' '}
 											<Link to="/login" className="text-white underline">
@@ -263,19 +283,20 @@ export default function Register() {
 
 									<CardContent className="text-center space-y-3">
 										<p className="text-sm text-muted-foreground">
-											We’ve sent a verification email to your registered address.
-											Please confirm your email to activate your account.
+											We’ve sent a verification email to your registered
+											address. Please confirm your email to activate your
+											account.
 										</p>
 
 										<p className="text-xs text-muted-foreground">
-											Didn’t receive the email? Be sure to check your <strong>Spam</strong> or <strong>Junk</strong> folder.
+											Didn’t receive the email? Be sure to check your{' '}
+											<strong>Spam</strong> or <strong>Junk</strong> folder.
 										</p>
 
 										<Link to="/login" className="btn-primary inline-block mt-4">
 											Go to Login
 										</Link>
 									</CardContent>
-
 								</>
 							)}
 						</Card>
@@ -283,21 +304,21 @@ export default function Register() {
 						<div className="hidden lg:block relative">
 							<div className="relative space-y-6">
 								<h1 className="text-4xl font-semibold text-foreground leading-tight">
-									Create your<br />
+									Create your
+									<br />
 									<span className="text-primary">Omkraft</span> account
 								</h1>
 
 								<p className="text-muted-foreground max-w-md">
-									Join Omkraft to start exploring a clean, scalable foundation designed for modern systems.
+									Join Omkraft to start exploring a clean, scalable foundation
+									designed for modern systems.
 								</p>
-
 
 								<img
 									src={registerIllustration}
 									alt="Register illustration"
 									className="w-full max-w-md opacity-90"
 								/>
-
 							</div>
 						</div>
 					</div>

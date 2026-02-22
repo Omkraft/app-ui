@@ -1,89 +1,62 @@
 import { Bell } from 'lucide-react';
 
-import {
-	Popover,
-	PopoverTrigger,
-	PopoverContent,
-} from '@/components/ui/popover';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { useNotifications } from '@/context/NotificationContext';
 
-import { useEffect, useState } from 'react';
-
-import {
-	fetchNotifications,
-	type Notification,
-} from '@/api/notification';
 import { Separator } from '@/components/ui/separator';
 import React from 'react';
+import { Badge } from '@/components/ui/badge';
 
-export default function NotificationBell()
-{
-	const [notifications,
-		setNotifications] =
-		useState<Notification[]>([]);
-
-	useEffect(() =>
-	{
-		load();
-	}, []);
-
-	async function load()
-	{
-		const data =
-			await fetchNotifications();
-		setNotifications(data);
-	}
-
-	const unread =
-		notifications.filter(n => !n.read).length;
+export default function NotificationBell() {
+	const { unreadCount, notifications } = useNotifications();
 
 	return (
 		<Popover>
 			<PopoverTrigger asChild>
-				<button className="relative">
+				<button className="relative" aria-label="Notifications">
 					<Bell />
-					{unread > 0 && (
-						<span className="
+					{unreadCount > 0 && (
+						<Badge
+							className="
 							absolute
-							top-0
-							right-0
+							-top-1
+							-right-1
+							p-0
 							bg-destructive
+							text-destructive-foreground
 							text-xs
 							rounded-full
 							w-4
 							h-4
 							flex
 							items-center
-							justify-center">
-							{unread}
-						</span>
+							justify-center"
+						>
+							{unreadCount <= 9 ? unreadCount : '!'}
+						</Badge>
 					)}
 				</button>
 			</PopoverTrigger>
 
 			<PopoverContent className="bg-primary border-primary-foreground">
 				<div className="space-y-2">
-					{notifications.length === 0
-						? (
-							<p>
-								No notifications
-							</p>
-						)
-						: notifications.map((n, i) => (
+					{notifications.length === 0 ? (
+						<p>No notifications</p>
+					) : (
+						notifications.map((n, i) => (
 							<React.Fragment key={n._id}>
-								<div className="flex flex-col gap-1">
-									<p className="font-semibold">
-										{n.title}
-									</p>
-									<p className="text-sm">
-										{n.message}
-									</p>
+								<div
+									className={`flex flex-col gap-1${n.read && ' text-muted-foreground'}`}
+								>
+									<p className="font-semibold">{n.title}</p>
+									<p className="text-sm">{n.message}</p>
 								</div>
-								{i !== notifications.length-1 && (
-									<Separator role='listitem' className="border border-border" />
+								{i !== notifications.length - 1 && (
+									<Separator role="listitem" className="border border-border" />
 								)}
 							</React.Fragment>
 						))
-					}
+					)}
 				</div>
 			</PopoverContent>
 		</Popover>

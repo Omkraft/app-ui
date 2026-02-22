@@ -8,14 +8,14 @@ export interface WeatherData {
 		is_day: number;
 		cloud_cover: string;
 		apparent_temperature: number;
-		precipitation: string,
+		precipitation: string;
 	};
 
 	hourly: {
 		uv_index_clear_sky: number[];
-		time: string[],
-		temperature_2m: number[],
-		weather_code: number[],
+		time: string[];
+		temperature_2m: number[];
+		weather_code: number[];
 	};
 
 	daily: {

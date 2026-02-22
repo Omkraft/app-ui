@@ -37,14 +37,12 @@ export function addSubscription(subscriptionData: SubscriptionData) {
 
 export function getSubscriptions() {
 	return apiRequest<Subscription[]>('/api/subscription', {
-		method: 'GET'
+		method: 'GET',
 	});
 }
 
 export function confirmSubscriptionPayment(id: string) {
-
 	return apiRequest(`/api/subscription/${id}/confirm-payment`, {
 		method: 'POST',
 	});
-
 }

@@ -1,4 +1,4 @@
-import { useAuth } from '@/auth/AuthContext';
+import { useAuth } from '@/context/auth/AuthContext';
 import { FooterPublic } from './FooterPublic';
 import { FooterApp } from './FooterApp';
 

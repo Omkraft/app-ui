@@ -7,7 +7,6 @@ export const theme = {
 		white: '#FFFFFF',
 	},
 	fonts: {
-		system:
-			'-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif',
+		system: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif',
 	},
 };
