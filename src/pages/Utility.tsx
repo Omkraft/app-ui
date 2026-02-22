@@ -34,7 +34,14 @@ import { Button } from '@/components/ui/button';
 import type { OnThisDayResponse } from '@/types/insights';
 import { Separator } from '@radix-ui/react-separator';
 import { Item, ItemContent, ItemDescription, ItemGroup } from '@/components/ui/item';
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
+import {
+	Breadcrumb,
+	BreadcrumbList,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbSeparator,
+	BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
 import { Link } from 'react-router-dom';
 import { getNext5Hours } from '@/utils/weatherHelpers';
 
@@ -73,19 +80,12 @@ export default function Utility() {
 		setWeather(null);
 		setWeatherError(null);
 		try {
-			const {
-				latitude,
-				longitude,
-				cityName,
-				state,
-				countryCode,
-			} = await getCurrentLocation();
+			const { latitude, longitude, cityName, state, countryCode } =
+				await getCurrentLocation();
 
 			const locationParts = [cityName, state, countryCode].filter(Boolean);
 			const formattedLocation =
-			locationParts.length > 0
-				? locationParts.join(', ')
-				: 'Unknown';
+				locationParts.length > 0 ? locationParts.join(', ') : 'Unknown';
 
 			const weather = await apiRequest<WeatherData>(
 				`/api/utility/weather?lat=${latitude}&lon=${longitude}`
@@ -95,14 +95,9 @@ export default function Utility() {
 			setWeather(weather);
 		} catch (error) {
 			console.error(error);
-			setWeatherError(
-				error instanceof Error
-					? error.message
-					: 'Failed to fetch weather.'
-			);
+			setWeatherError(error instanceof Error ? error.message : 'Failed to fetch weather.');
 		}
 	}, []);
-
 
 	const fetchQuote = async () => {
 		setQuote(null);
@@ -111,11 +106,7 @@ export default function Utility() {
 			const data = await apiRequest<QuoteResponse>('/api/utility/quote');
 			setQuote(data);
 		} catch (error) {
-			setQuoteError(
-				error instanceof Error
-					? error.message
-					: 'Failed to load quote'
-			);
+			setQuoteError(error instanceof Error ? error.message : 'Failed to load quote');
 		}
 	};
 
@@ -123,16 +114,12 @@ export default function Utility() {
 		setOnThisDayError(null);
 		setOnThisDay(null);
 		try {
-			const data = await apiRequest<OnThisDayResponse>(
-				'/api/utility/on-this-day'
-			);
+			const data = await apiRequest<OnThisDayResponse>('/api/utility/on-this-day');
 
 			setOnThisDay(data);
 		} catch (error) {
 			setOnThisDayError(
-				error instanceof Error
-					? error.message
-					: 'Failed to fetch historical events'
+				error instanceof Error ? error.message : 'Failed to fetch historical events'
 			);
 		}
 	};
@@ -142,19 +129,13 @@ export default function Utility() {
 		setNewsError(null);
 		setVisibleCount(10); // Reset to 10 on new tab
 		try {
-			const data = await apiRequest<NewsArticle[]>(
-				`/api/utility/news?category=${category}`
-			);
+			const data = await apiRequest<NewsArticle[]>(`/api/utility/news?category=${category}`);
 			setNews({
-				articles: data
+				articles: data,
 			});
 		} catch (error) {
 			console.error(error);
-			setNewsError(
-				error instanceof Error
-					? error.message
-					: 'Failed to fetch weather.'
-			);
+			setNewsError(error instanceof Error ? error.message : 'Failed to fetch weather.');
 		}
 	}, []);
 
@@ -191,7 +172,7 @@ export default function Utility() {
 					{/* ========================= */}
 					<header className="space-y-4">
 						<h1 className="text-4xl font-semibold">
-							Personal {' '}<span className="text-primary">Utility Hub</span>
+							Personal <span className="text-primary">Utility Hub</span>
 						</h1>
 						<p className="text-muted-foreground">
 							Daily essentials, in one calm place.
@@ -199,20 +180,30 @@ export default function Utility() {
 					</header>
 				</div>
 			</section>
-			
+
 			{/* ================= Weather ================= */}
-			<section className={`relative overflow-hidden text-foreground py-6 transition-all duration-700 ${getWeatherTheme(weather?.current?.weather_code, weather?.current?.is_day)}`}>
+			<section
+				className={`relative overflow-hidden text-foreground py-6 transition-all duration-700 ${getWeatherTheme(weather?.current?.weather_code, weather?.current?.is_day)}`}
+			>
 				<div className="app-container grid gap-6 align-items-center">
 					{weather ? (
 						<>
-							<h2 className={`text-3xl font-semibold${(!(weather.current.weather_code) || [71, 73, 75, 85, 86].includes(weather.current.weather_code)) && weather.current.is_day ? ' text-background' : ' text-foreground'}`}>Weather</h2>
+							<h2
+								className={`text-3xl font-semibold${(!weather.current.weather_code || [71, 73, 75, 85, 86].includes(weather.current.weather_code)) && weather.current.is_day ? ' text-background' : ' text-foreground'}`}
+							>
+								Weather
+							</h2>
 							{/* Current */}
-							<Card className={`${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)] ' : 'bg-muted '}border border-foreground`}>
+							<Card
+								className={`${(!weather.current.weather_code || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)] ' : 'bg-muted '}border border-foreground`}
+							>
 								<CardContent className="p-0">
 									<div className="flex items-center justify-between p-6">
-										<div className='flex flex-col gap-2'>
+										<div className="flex flex-col gap-2">
 											<div>
-												<p className="text-lg font-medium">{locationLabel?.split(',')[0]}</p>
+												<p className="text-lg font-medium">
+													{locationLabel?.split(',')[0]}
+												</p>
 												<p className="text-sm opacity-70">
 													{locationLabel?.split(',').slice(1).join(',')}
 												</p>
@@ -222,13 +213,17 @@ export default function Utility() {
 												{round(weather.current.temperature_2m)}°C
 											</p>
 											<p>
-												Feels like {round(weather.current.apparent_temperature)}°C
+												Feels like{' '}
+												{round(weather.current.apparent_temperature)}°C
 											</p>
 										</div>
 
 										<div>
 											{(() => {
-												const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
+												const Icon = getWeatherIcon(
+													weather.current.weather_code,
+													weather.current.is_day
+												);
 												return <Icon size={80} />;
 											})()}
 										</div>
@@ -241,13 +236,16 @@ export default function Utility() {
 													<div className="text-sm opacity-80">
 														{hour.time.toLocaleTimeString('en-IN', {
 															hour: 'numeric',
-															hour12: true
+															hour12: true,
 														})}
 													</div>
 
 													<div>
 														{(() => {
-															const Icon = getWeatherIcon(hour.weather_code, weather.current.is_day);
+															const Icon = getWeatherIcon(
+																hour.weather_code,
+																weather.current.is_day
+															);
 															return <Icon size={30} />;
 														})()}
 													</div>
@@ -256,7 +254,7 @@ export default function Utility() {
 														{Math.round(hour.temperature)}°
 													</div>
 												</div>
-												{index !== getNext5Hours(weather).length-1 && (
+												{index !== getNext5Hours(weather).length - 1 && (
 													<Separator className="lg:hidden border" />
 												)}
 											</React.Fragment>
@@ -267,37 +265,75 @@ export default function Utility() {
 
 							<Accordion
 								type="multiple"
-								className={`rounded-xl border border-foreground${(!(weather.current.weather_code) || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
+								className={`rounded-xl border border-foreground${(!weather.current.weather_code || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
 							>
-								<AccordionItem value="forecast" className="border-b px-6 last:border-b-0">
-									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">5-Day Forecast</AccordionTrigger>
+								<AccordionItem
+									value="forecast"
+									className="border-b px-6 last:border-b-0"
+								>
+									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">
+										5-Day Forecast
+									</AccordionTrigger>
 									<AccordionContent className="pb-6">
 										<div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-											{weather.daily.time.slice(1, 6).map((day: string, index: number) => (
-												<Card key={day} className="flex justify-around lg:block p-4 space-y-2 text-center bg-muted items-center">
-													<p className="text-lg font-semibold">
-														{new Date(day).toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' })}
-													</p>
-													<p className="font-semibold flex items-center justify-center gap-1">
-														<Sun className="w-5 h-5 text-yellow-400" />{round(weather.daily.temperature_2m_max[index], 0)}°
-													</p>
-													<p className="opacity-70 flex items-center justify-center gap-1">
-														<Moon className="w-5 h-5 text-blue-300" />
-														{round(weather.daily.temperature_2m_min[index], 0)}°
-													</p>
-													<p className="text-lg flex items-center justify-center gap-1">
-														{(() => {
-															const Icon = getWeatherIcon(weather.current.weather_code, weather.current.is_day);
-															return <Icon />;
-														})()}
-													</p>
-												</Card>
-											))}
+											{weather.daily.time
+												.slice(1, 6)
+												.map((day: string, index: number) => (
+													<Card
+														key={day}
+														className="flex justify-around lg:block p-4 space-y-2 text-center bg-muted items-center"
+													>
+														<p className="text-lg font-semibold">
+															{new Date(day).toLocaleDateString(
+																undefined,
+																{
+																	weekday: 'short',
+																	day: '2-digit',
+																	month: 'short',
+																}
+															)}
+														</p>
+														<p className="font-semibold flex items-center justify-center gap-1">
+															<Sun className="w-5 h-5 text-yellow-400" />
+															{round(
+																weather.daily.temperature_2m_max[
+																	index
+																],
+																0
+															)}
+															°
+														</p>
+														<p className="opacity-70 flex items-center justify-center gap-1">
+															<Moon className="w-5 h-5 text-blue-300" />
+															{round(
+																weather.daily.temperature_2m_min[
+																	index
+																],
+																0
+															)}
+															°
+														</p>
+														<p className="text-lg flex items-center justify-center gap-1">
+															{(() => {
+																const Icon = getWeatherIcon(
+																	weather.current.weather_code,
+																	weather.current.is_day
+																);
+																return <Icon />;
+															})()}
+														</p>
+													</Card>
+												))}
 										</div>
 									</AccordionContent>
 								</AccordionItem>
-								<AccordionItem value="metrix" className="border-b px-6 last:border-b-0">
-									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Weather Details</AccordionTrigger>
+								<AccordionItem
+									value="metrix"
+									className="border-b px-6 last:border-b-0"
+								>
+									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">
+										Weather Details
+									</AccordionTrigger>
 									<AccordionContent className="pb-6">
 										<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
@@ -313,7 +349,9 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Umbrella className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">Precipitation</p>
+													<p className="text-sm opacity-70">
+														Precipitation
+													</p>
 													<p className="text-xl font-semibold">
 														{weather.current.precipitation} mm
 													</p>
@@ -335,7 +373,10 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">UV Index</p>
 													<p className="text-lg font-semibold">
-														{round(weather.hourly.uv_index_clear_sky?.[0], 0)}
+														{round(
+															weather.hourly.uv_index_clear_sky?.[0],
+															0
+														)}
 													</p>
 												</div>
 											</Card>
@@ -343,16 +384,24 @@ export default function Utility() {
 									</AccordionContent>
 								</AccordionItem>
 
-								<AccordionItem value="sunriseset" className="border-b px-6 last:border-b-0">
-									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">Sunrise &amp; Sunset</AccordionTrigger>
+								<AccordionItem
+									value="sunriseset"
+									className="border-b px-6 last:border-b-0"
+								>
+									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">
+										Sunrise &amp; Sunset
+									</AccordionTrigger>
 									<AccordionContent className="pb-6">
-										<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Sunrise className="w-7 h-7 text-yellow-400" />
 												<div>
 													<p className="text-sm opacity-70">Sunrise</p>
 													<p className="text-lg font-semibold">
-														{weather.daily.sunrise[0] && formatTimeLocal(weather.daily.sunrise[0])}
+														{weather.daily.sunrise[0] &&
+															formatTimeLocal(
+																weather.daily.sunrise[0]
+															)}
 													</p>
 												</div>
 											</Card>
@@ -362,7 +411,10 @@ export default function Utility() {
 												<div>
 													<p className="text-sm opacity-70">Sunset</p>
 													<p className="text-lg font-semibold">
-														{weather.daily.sunset[0] && formatTimeLocal(weather.daily.sunset[0])}
+														{weather.daily.sunset[0] &&
+															formatTimeLocal(
+																weather.daily.sunset[0]
+															)}
 													</p>
 												</div>
 											</Card>
@@ -370,13 +422,25 @@ export default function Utility() {
 									</AccordionContent>
 								</AccordionItem>
 							</Accordion>
-							<p className="text-sm text-muted-foreground text-right">Updated on: {new Date(weather.current.time).toLocaleString(undefined, {day:'2-digit', month:'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true})}</p>
+							<p className="text-sm text-muted-foreground text-right">
+								Updated on:{' '}
+								{new Date(weather.current.time).toLocaleString(undefined, {
+									day: '2-digit',
+									month: 'short',
+									year: 'numeric',
+									hour: '2-digit',
+									minute: '2-digit',
+									hour12: true,
+								})}
+							</p>
 						</>
 					) : (
 						<>
 							<h2 className="text-3xl font-semibold">Weather</h2>
 							{!weatherError ? (
-								<p><Spinner className='inline size-6' /> Loading weather...</p>
+								<p>
+									<Spinner className="inline size-6" /> Loading weather...
+								</p>
 							) : (
 								<Alert variant="destructive">
 									<AlertCircleIcon />
@@ -394,13 +458,10 @@ export default function Utility() {
 			{/* ================= News ================= */}
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
-					<h2 className='text-3xl text-foreground'>News</h2>
-					<h3 className='text-2xl text-muted-foreground'>Top Stories</h3>
-					<Tabs
-						defaultValue="india"
-						onValueChange={(value) => fetchNews(value)}
-					>
-						<TabsList className='bg-primary text-foreground'>
+					<h2 className="text-3xl text-foreground">News</h2>
+					<h3 className="text-2xl text-muted-foreground">Top Stories</h3>
+					<Tabs defaultValue="india" onValueChange={(value) => fetchNews(value)}>
+						<TabsList className="bg-primary text-foreground">
 							<TabsTrigger value="india">India</TabsTrigger>
 							<TabsTrigger value="global">Global</TabsTrigger>
 						</TabsList>
@@ -409,12 +470,15 @@ export default function Utility() {
 						<TabsContent value="global" />
 
 						<div className="pt-4 space-y-4">
-							{!news || !(news?.articles?.length) ? (
+							{!news || !news?.articles?.length ? (
 								<>
 									{!newsError ? (
 										<div className="grid gap-8 lg:grid-cols-2">
 											{Array.from({ length: 4 }).map((_, i) => (
-												<Card key={i} className='bg-foreground border border-primary'>
+												<Card
+													key={i}
+													className="bg-foreground border border-primary"
+												>
 													<CardHeader>
 														<Skeleton className="h-5 w-3/4 bg-background" />
 														<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
@@ -426,7 +490,7 @@ export default function Utility() {
 												</Card>
 											))}
 										</div>
-									):(
+									) : (
 										<Alert variant="destructive">
 											<AlertCircleIcon />
 											<AlertTitle>News unavailable</AlertTitle>
@@ -434,11 +498,12 @@ export default function Utility() {
 												{newsError}
 											</AlertDescription>
 										</Alert>
-									)};
+									)}
+									;
 								</>
 							) : (
 								<>
-									<div ref={newsSectionRef} className='grid gap-8 lg:grid-cols-2'>
+									<div ref={newsSectionRef} className="grid gap-8 lg:grid-cols-2">
 										{news.articles.slice(0, visibleCount).map((item, index) => (
 											<Card
 												key={index}
@@ -455,17 +520,16 @@ export default function Utility() {
 															<CardTitle className="text-lg leading-snug">
 																{item.title}
 															</CardTitle>
-															<NewsSourceLogo source={item.source} className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}`} />
+															<NewsSourceLogo
+																source={item.source}
+																className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}`}
+															/>
 														</div>
 													</a>
 
 													<CardDescription className="text-background flex justify-between text-xs mt-1">
-														<span>
-															{item.source}
-														</span>
-														<span>
-															{formatDate(item.publishedAt)}
-														</span>
+														<span>{item.source}</span>
+														<span>{formatDate(item.publishedAt)}</span>
 													</CardDescription>
 												</CardHeader>
 
@@ -481,9 +545,7 @@ export default function Utility() {
 									{visibleCount < news.articles.length && (
 										<div className="text-center pt-4">
 											<Button
-												onClick={() =>
-													setVisibleCount((prev) => prev + 10)
-												}
+												onClick={() => setVisibleCount((prev) => prev + 10)}
 												className="w-full lg:w-auto"
 											>
 												Read More
@@ -500,12 +562,24 @@ export default function Utility() {
 			{/* ================= Quote ================= */}
 			<section className="bg-accent text-accent-foreground items-center py-6">
 				<div className="app-container grid gap-6 items-center">
-					<h2 className='text-3xl'>Daily Insights</h2>
+					<h2 className="text-3xl">Daily Insights</h2>
 					{/* ================= On This Day ================= */}
 					<Card className="bg-foreground text-background border border-background">
 						<CardHeader className="flex flex-col gap-2">
-							<CardTitle className="flex align-center gap-2 items-center"><h3 className="text-2xl flex items-center gap-2"><CalendarClock /> On This Day</h3>
-								{onThisDay && <span>({new Date(onThisDay.date).toLocaleDateString(undefined, { day: '2-digit', month: 'long' })})</span>}
+							<CardTitle className="flex align-center gap-2 items-center">
+								<h3 className="text-2xl flex items-center gap-2">
+									<CalendarClock /> On This Day
+								</h3>
+								{onThisDay && (
+									<span>
+										(
+										{new Date(onThisDay.date).toLocaleDateString(undefined, {
+											day: '2-digit',
+											month: 'long',
+										})}
+										)
+									</span>
+								)}
 							</CardTitle>
 
 							<CardDescription className="text-background">
@@ -518,7 +592,8 @@ export default function Utility() {
 								<>
 									{!onThisDayError ? (
 										<p className="text-sm">
-											<Spinner className='inline size-6' /> Loading historical events...
+											<Spinner className="inline size-6" /> Loading historical
+											events...
 										</p>
 									) : (
 										<Alert variant="destructive">
@@ -529,7 +604,6 @@ export default function Utility() {
 											</AlertDescription>
 										</Alert>
 									)}
-									
 								</>
 							) : (
 								<ItemGroup>
@@ -548,8 +622,11 @@ export default function Utility() {
 													</ItemDescription>
 												</ItemContent>
 											</Item>
-											{index !== onThisDay.events.length-1 && (
-												<Separator role='listitem' className="border border-[var(--omkraft-mint-700)]" />
+											{index !== onThisDay.events.length - 1 && (
+												<Separator
+													role="listitem"
+													className="border border-[var(--omkraft-mint-700)]"
+												/>
 											)}
 										</React.Fragment>
 									))}
@@ -560,25 +637,40 @@ export default function Utility() {
 
 					<Card className="bg-foreground text-background border border-background">
 						<CardHeader>
-							<CardTitle><h3 className="text-2xl text-center flex flex-col items-center gap-2"><Quote />Quote of the Day</h3></CardTitle>
+							<CardTitle>
+								<h3 className="text-2xl text-center flex flex-col items-center gap-2">
+									<Quote />
+									Quote of the Day
+								</h3>
+							</CardTitle>
 						</CardHeader>
 						<CardContent className="grid gap-4 text-center">
 							{quote ? (
 								<>
 									<p className="italic text-xl font-medium ">"{quote.q}" — </p>
-									<p className="text-[var(--omkraft-mint-700)] italic text-xl font-medium">{quote.a}</p>
+									<p className="text-[var(--omkraft-mint-700)] italic text-xl font-medium">
+										{quote.a}
+									</p>
 								</>
 							) : (
 								<>
 									{quoteError ? (
-										<Alert variant="destructive" className="flex flex-col gap-2">
-											<AlertTitle className="flex gap-2 items-center"><AlertCircleIcon />Quote unavailable</AlertTitle>
+										<Alert
+											variant="destructive"
+											className="flex flex-col gap-2"
+										>
+											<AlertTitle className="flex gap-2 items-center">
+												<AlertCircleIcon />
+												Quote unavailable
+											</AlertTitle>
 											<AlertDescription className="text-sm">
 												{quoteError}
 											</AlertDescription>
 										</Alert>
 									) : (
-										<p className="text-sm"><Spinner className='inline size-6' /> Loading quote...</p>
+										<p className="text-sm">
+											<Spinner className="inline size-6" /> Loading quote...
+										</p>
 									)}
 								</>
 							)}

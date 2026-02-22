@@ -1,20 +1,25 @@
 import { useEffect, useState } from 'react';
-
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardContent,
-	CardDescription,
-} from '@/components/ui/card';
+import { useNotifications } from '@/context/NotificationContext';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 
 import { Badge } from '@/components/ui/badge';
-import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
+import {
+	Breadcrumb,
+	BreadcrumbList,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbSeparator,
+	BreadcrumbPage,
+} from '@/components/ui/breadcrumb';
 import { Link } from 'react-router-dom';
 import AddSubscriptionDialog from '@/components/subscription/AddSubscriptionDialog';
-import { confirmSubscriptionPayment, getSubscriptions, type Subscription } from '@/api/subscription';
+import {
+	confirmSubscriptionPayment,
+	getSubscriptions,
+	type Subscription,
+} from '@/api/subscription';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon } from 'lucide-react';
+import { AlertCircleIcon, CircleCheckBig } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { resolveLogo } from '@/utils/subscriptionBrand';
 import { Button } from '@/components/ui/button';
@@ -23,6 +28,7 @@ export default function Subscription() {
 	const [subs, setSubs] = useState<Subscription[] | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [subsError, setSubsError] = useState<string | null>(null);
+	const { refreshNotifications } = useNotifications();
 
 	useEffect(() => {
 		fetchSubscriptions();
@@ -37,9 +43,7 @@ export default function Subscription() {
 			setSubs(data);
 		} catch (err) {
 			console.error(err);
-			error = err instanceof Error
-				? err.message
-				: 'Failed to get subscriptions';
+			error = err instanceof Error ? err.message : 'Failed to get subscriptions';
 			setSubsError(error);
 		} finally {
 			setLoading(false);
@@ -52,11 +56,9 @@ export default function Subscription() {
 	}, 0);
 
 	const nextRenewal = subs
-		?.filter(s => s.status === 'ACTIVE')
+		?.filter((s) => s.status === 'ACTIVE')
 		.sort(
-			(a, b) =>
-				new Date(a.nextBillingDate).getTime() -
-				new Date(b.nextBillingDate).getTime()
+			(a, b) => new Date(a.nextBillingDate).getTime() - new Date(b.nextBillingDate).getTime()
 		)[0];
 
 	return (
@@ -66,13 +68,18 @@ export default function Subscription() {
 					<Breadcrumb>
 						<BreadcrumbList>
 							<BreadcrumbItem>
-								<BreadcrumbLink asChild className="text-[var(--omkraft-blue-700)] hover:text-background">
+								<BreadcrumbLink
+									asChild
+									className="text-[var(--omkraft-blue-700)] hover:text-background"
+								>
 									<Link to="/dashboard">Dashboard</Link>
 								</BreadcrumbLink>
 							</BreadcrumbItem>
 							<BreadcrumbSeparator className="text-background" />
 							<BreadcrumbItem>
-								<BreadcrumbPage className="text-background">Subscription Tracker</BreadcrumbPage>
+								<BreadcrumbPage className="text-background">
+									Subscription Tracker
+								</BreadcrumbPage>
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>
@@ -85,7 +92,7 @@ export default function Subscription() {
 					{/* ========================= */}
 					<header className="space-y-4">
 						<h1 className="text-4xl font-semibold">
-							Subscription {' '}<span className="text-primary">Tracker</span>
+							Subscription <span className="text-primary">Tracker</span>
 						</h1>
 						<p className="text-background">
 							Track all your prepaid plans and subscriptions
@@ -101,7 +108,9 @@ export default function Subscription() {
 					<div className="grid lg:grid-cols-2 gap-6">
 						<Card className="border-foreground">
 							<CardHeader>
-								<CardTitle><h3 className="text-2xl font-semibold">Total Monthly Spend</h3></CardTitle>
+								<CardTitle>
+									<h3 className="text-2xl font-semibold">Total Monthly Spend</h3>
+								</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<div className="text-xl font-semibold text-accent">
@@ -112,14 +121,14 @@ export default function Subscription() {
 
 						<Card className="border-foreground">
 							<CardHeader>
-								<CardTitle><h3 className="text-2xl font-semibold">Next Renewal</h3></CardTitle>
+								<CardTitle>
+									<h3 className="text-2xl font-semibold">Next Renewal</h3>
+								</CardTitle>
 							</CardHeader>
 							<CardContent>
 								{nextRenewal ? (
 									<div className="flex flex-col gap-2">
-										<div className="text-xl">
-											{nextRenewal.name}
-										</div>
+										<div className="text-xl">{nextRenewal.name}</div>
 										<div className="text-lg text-accent font-medium">
 											&#8377; {nextRenewal.amount}
 										</div>
@@ -128,9 +137,7 @@ export default function Subscription() {
 										</div>
 									</div>
 								) : (
-									<div className="opacity-70">
-										No active subscriptions
-									</div>
+									<div className="opacity-70">No active subscriptions</div>
 								)}
 							</CardContent>
 						</Card>
@@ -143,20 +150,23 @@ export default function Subscription() {
 					{/* List */}
 					<div className="grid gap-6">
 						{loading && (
-							<p className="text-sm text-background"><Spinner className='inline size-6' /> Loading subscriptions...</p>
+							<p className="text-sm text-background">
+								<Spinner className="inline size-6" /> Loading subscriptions...
+							</p>
 						)}
 
 						{subsError && (
 							<Alert variant="destructive" className="flex flex-col gap-2">
-								<AlertTitle className="flex gap-2 items-center"><AlertCircleIcon />Error occured</AlertTitle>
-								<AlertDescription className="text-sm">
-									{subsError}
-								</AlertDescription>
+								<AlertTitle className="flex gap-2 items-center">
+									<AlertCircleIcon />
+									Error occured
+								</AlertTitle>
+								<AlertDescription className="text-sm">{subsError}</AlertDescription>
 							</Alert>
 						)}
 
 						{subs && subs.length ? (
-							subs.map(sub => {
+							subs.map((sub) => {
 								const logo = resolveLogo(sub.category, sub.provider);
 
 								return (
@@ -166,10 +176,8 @@ export default function Subscription() {
 									>
 										<CardHeader>
 											<div className="flex justify-between items-start gap-4">
-
 												{/* LEFT SIDE */}
 												<div className="flex items-center gap-4">
-
 													{/* LOGO */}
 													{logo.type === 'image' ? (
 														<img
@@ -190,7 +198,8 @@ export default function Subscription() {
 														</CardTitle>
 
 														<CardDescription className="text-primary">
-															Renews on {formatDate(sub.nextBillingDate)}
+															Renews on{' '}
+															{formatDate(sub.nextBillingDate)}
 														</CardDescription>
 													</div>
 												</div>
@@ -199,23 +208,26 @@ export default function Subscription() {
 												<Badge className={getBadgeVariant(sub.status)}>
 													{sub.status}
 												</Badge>
-
 											</div>
 										</CardHeader>
 
 										<CardContent>
 											<div className="flex justify-between items-end">
-												<div className="font-semibold flex flex-col">
+												<div className="font-semibold flex flex-col gap-2">
 													&#8377; {sub.amount}
 													{sub.status !== 'ACTIVE' && (
 														<Button
 															onClick={async () => {
-																await confirmSubscriptionPayment(sub._id);
+																await confirmSubscriptionPayment(
+																	sub._id
+																);
 																await fetchSubscriptions();
+																await refreshNotifications();
 															}}
-															className="btn-primary mt-3"
+															className="btn-primary flex gap-2"
 														>
-															Mark as Paid
+															<CircleCheckBig size={20} /> Mark as
+															Paid
 														</Button>
 													)}
 												</div>
@@ -225,7 +237,6 @@ export default function Subscription() {
 												</div>
 											</div>
 										</CardContent>
-
 									</Card>
 								);
 							})
@@ -233,8 +244,14 @@ export default function Subscription() {
 							<>
 								{!loading && (
 									<div className="flex flex-col gap-4 text-background">
-										<p className="text-lg font-semibold">No active subscriptions yet</p>
-										<p>Click on Add Subscription to add your first subscription to monitor billing cycles, renewal dates, and spending — all in one place.</p>
+										<p className="text-lg font-semibold">
+											No active subscriptions yet
+										</p>
+										<p>
+											Click on Add Subscription to add your first subscription
+											to monitor billing cycles, renewal dates, and spending —
+											all in one place.
+										</p>
 									</div>
 								)}
 							</>
@@ -247,7 +264,6 @@ export default function Subscription() {
 }
 
 function formatDate(date: string) {
-
 	const d = new Date(date);
 
 	return d.toLocaleDateString('en-IN', {
@@ -258,19 +274,17 @@ function formatDate(date: string) {
 }
 
 function getBadgeVariant(status: string) {
-
 	switch (status) {
+		case 'ACTIVE':
+			return 'bg-[var(--omkraft-mint-700)] text-foreground';
 
-	case 'ACTIVE':
-		return 'bg-accent text-accent-foreground';
+		case 'DUE':
+			return 'bg-yellow-500 text-black';
 
-	case 'DUE':
-		return 'bg-yellow-500 text-black';
+		case 'OVERDUE':
+			return 'bg-destructive text-destructive-foreground';
 
-	case 'OVERDUE':
-		return 'bg-destructive text-destructive-foreground';
-
-	default:
-		return 'bg-gray-500';
+		default:
+			return 'bg-gray-500';
 	}
 }

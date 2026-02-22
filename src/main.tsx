@@ -5,18 +5,19 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
-import { AuthProvider } from './auth/AuthContext';
-import './index.scss';          // Tailwind
+import { AuthProvider } from './context/auth/AuthContext';
+import { NotificationProvider } from '@/context/NotificationContext';
+import './index.scss'; // Tailwind
 import './styles/global.scss'; // Omkraft styles
 
-ReactDOM.createRoot(
-	document.getElementById('root')!
-).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<AuthProvider>
-			<BrowserRouter>
-				<App />
-			</BrowserRouter>
+			<NotificationProvider>
+				<BrowserRouter>
+					<App />
+				</BrowserRouter>
+			</NotificationProvider>
 		</AuthProvider>
 	</React.StrictMode>
 );

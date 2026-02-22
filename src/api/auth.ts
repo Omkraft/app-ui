@@ -32,20 +32,14 @@ export function register(
 	});
 }
 
-export function forgotPassword(
-	email: string
-) {
+export function forgotPassword(email: string) {
 	return apiRequest('/api/auth/forgot-password', {
 		method: 'POST',
 		body: JSON.stringify({ email }),
 	});
 }
 
-export function resetPassword(
-	email: string,
-	otp: string,
-	password: string
-) {
+export function resetPassword(email: string, otp: string, password: string) {
 	return apiRequest('/api/auth/reset-password', {
 		method: 'POST',
 		body: JSON.stringify({ email, otp, password }),

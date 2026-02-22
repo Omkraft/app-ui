@@ -14,14 +14,11 @@ export default function Maintenance() {
 					</div>
 
 					{/* Heading */}
-					<h1 className="text-2xl font-semibold">
-						We're working on this
-					</h1>
+					<h1 className="text-2xl font-semibold">We're working on this</h1>
 
 					{/* Sub Heading */}
 					<p className="text-muted-foreground">
-						This section is currently being improved.
-						Please check back again soon.
+						This section is currently being improved. Please check back again soon.
 					</p>
 				</div>
 			</div>

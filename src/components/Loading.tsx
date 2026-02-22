@@ -1,6 +1,5 @@
 import { Spinner } from './ui/spinner';
 
-
 export default function Loading() {
 	return (
 		<div className="min-h-[calc(100vh-145px)] bg-background text-foreground flex items-center">
@@ -12,9 +11,7 @@ export default function Loading() {
 					</div>
 
 					{/* Heading */}
-					<h1 className="text-2xl font-semibold">
-						Just a moment…
-					</h1>
+					<h1 className="text-2xl font-semibold">Just a moment…</h1>
 
 					{/* Sub Heading */}
 					<p className="text-muted-foreground">

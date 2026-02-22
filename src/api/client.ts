@@ -1,9 +1,6 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 
-export async function apiRequest<T>(
-	endpoint: string,
-	options: RequestInit = {}
-): Promise<T> {
+export async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
 	const token = localStorage.getItem('token');
 
 	const headers: HeadersInit = {

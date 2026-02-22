@@ -2,6 +2,8 @@ const js = require('@eslint/js');
 const react = require('eslint-plugin-react');
 const reactHooks = require('eslint-plugin-react-hooks');
 const tseslint = require('typescript-eslint');
+const prettierPlugin = require('eslint-plugin-prettier');
+const prettierConfig = require('eslint-config-prettier');
 
 module.exports = [
 	{
@@ -30,6 +32,7 @@ module.exports = [
 		plugins: {
 			react,
 			'react-hooks': reactHooks,
+			prettier: prettierPlugin,
 		},
 		settings: {
 			react: {
@@ -37,20 +40,27 @@ module.exports = [
 			},
 		},
 		rules: {
-			/* formatting */
-			indent: ['error', 'tab'],
+			// Formatting (Tabs)
+			'prettier/prettier': [
+				'error',
+				{
+					useTabs: true,
+					tabWidth: 4,
+					singleQuote: true,
+					semi: true,
+					trailingComma: 'es5',
+					printWidth: 100,
+					endOfLine: 'auto',
+				},
+			],
+
+			// Disable conflicting rules
+			indent: 'off',
+			'no-tabs': 'off',
+
+			// Code quality
 			quotes: ['error', 'single'],
 			semi: ['error', 'always'],
-
-			/* React */
-			'react/react-in-jsx-scope': 'off',
-			'react/prop-types': 'off',
-
-			/* Hooks */
-			'react-hooks/rules-of-hooks': 'error',
-			'react-hooks/exhaustive-deps': 'warn',
-
-			/* TS */
 			'@typescript-eslint/no-unused-vars': [
 				'warn',
 				{
@@ -58,9 +68,8 @@ module.exports = [
 					caughtErrorsIgnorePattern: '^_',
 				},
 			],
-
-			/* Allow CommonJS in config files */
-			'@typescript-eslint/no-require-imports': 'off',
 		},
 	},
+
+	prettierConfig,
 ];

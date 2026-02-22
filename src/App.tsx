@@ -10,7 +10,6 @@ import Footer from './components/Footer';
 import Maintenance from './pages/Maintenance';
 import Subscription from './pages/Subscription';
 
-
 const Welcome = lazy(() => import('./pages/Welcome'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
@@ -31,9 +30,11 @@ export default function App() {
 						<Route
 							path="/"
 							element={
-								isAuthenticated()
-									? <Navigate to="/dashboard" replace />
-									: <Navigate to="/welcome" replace />
+								isAuthenticated() ? (
+									<Navigate to="/dashboard" replace />
+								) : (
+									<Navigate to="/welcome" replace />
+								)
 							}
 						/>
 
@@ -46,7 +47,7 @@ export default function App() {
 								</PublicRoute>
 							}
 						/>
-						
+
 						<Route
 							path="/login"
 							element={
@@ -84,7 +85,8 @@ export default function App() {
 							}
 						/>
 
-						<Route path="/utility"
+						<Route
+							path="/utility"
 							element={
 								<ProtectedRoute>
 									<Utility />
@@ -92,14 +94,14 @@ export default function App() {
 							}
 						/>
 
-						<Route path="/subscription"
+						<Route
+							path="/subscription"
 							element={
 								<ProtectedRoute>
 									<Subscription />
 								</ProtectedRoute>
 							}
 						/>
-
 
 						<Route path="/verify-email" element={<VerifyEmail />} />
 						<Route path="/maintenance" element={<Maintenance />} />
@@ -109,9 +111,7 @@ export default function App() {
 							path="*"
 							element={
 								<div className="app-container py-8">
-									<h1 className="text-xl font-semibold">
-										404 – Page not found
-									</h1>
+									<h1 className="text-xl font-semibold">404 – Page not found</h1>
 								</div>
 							}
 						/>
@@ -120,7 +120,6 @@ export default function App() {
 			</div>
 
 			<Footer />
-
 		</div>
 	);
 }

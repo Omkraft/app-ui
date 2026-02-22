@@ -1,7 +1,6 @@
 export function getWeatherTheme(code?: number, isDay?: number) {
 	// Default fallback (brand navy depth)
-	const defaultTheme =
-		'bg-background';
+	const defaultTheme = 'bg-background';
 
 	if (code === undefined || code === null) {
 		return defaultTheme;

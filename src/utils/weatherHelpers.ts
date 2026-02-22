@@ -14,7 +14,7 @@ export function getNext5Hours(weather: WeatherData) {
 			result.push({
 				time: hourTime,
 				temperature: weather.hourly.temperature_2m[i],
-				weather_code: weather.hourly.weather_code[i]
+				weather_code: weather.hourly.weather_code[i],
 			});
 		}
 

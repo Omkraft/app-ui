@@ -9,7 +9,7 @@ import {
 	Snowflake,
 	MoonStar,
 	CloudMoon,
-	CloudMoonRain
+	CloudMoonRain,
 } from 'lucide-react';
 
 export function getWeatherIcon(code: number, isDay: number) {

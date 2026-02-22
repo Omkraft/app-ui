@@ -9,7 +9,13 @@ import {
 
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+	Select,
+	SelectItem,
+	SelectContent,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 
 import { FieldGroup, Field, FieldLabel } from '@/components/ui/field';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
@@ -37,7 +43,14 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 		setError(null);
 		let error = null;
 
-		if (!name.trim() || !provider.trim() || !price.trim() || !billingCycleDays || !category || !startDate) {
+		if (
+			!name.trim() ||
+			!provider.trim() ||
+			!price.trim() ||
+			!billingCycleDays ||
+			!category ||
+			!startDate
+		) {
 			setError('All fields are required');
 			return;
 		} else if (!isPositiveNumeric(Number(price))) {
@@ -53,14 +66,12 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 				provider,
 				amount: price,
 				billingCycleDays,
-				startDate
+				startDate,
 			};
 			await addSubscription(subscriptionData);
 		} catch (err) {
 			console.error(err);
-			error = err instanceof Error
-				? err.message
-				: 'Failed to add subscription';
+			error = err instanceof Error ? err.message : 'Failed to add subscription';
 			setError(error);
 		} finally {
 			setLoading(false);
@@ -73,13 +84,11 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
-
 			<DialogTrigger asChild>
 				<Button>Add Subscription</Button>
 			</DialogTrigger>
 
-			<DialogContent className='text-foreground'>
-
+			<DialogContent className="text-foreground">
 				<DialogHeader>
 					<DialogTitle>Add Subscription</DialogTitle>
 				</DialogHeader>
@@ -88,7 +97,9 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 					<form onSubmit={handleSubmit} className="space-y-4">
 						<FieldGroup className="gap-5">
 							<Field>
-								<FieldLabel htmlFor="category">Category <span className="text-destructive">*</span></FieldLabel>
+								<FieldLabel htmlFor="category">
+									Category <span className="text-destructive">*</span>
+								</FieldLabel>
 								<Select
 									value={category}
 									onValueChange={(value) => setCategory(value)}
@@ -99,21 +110,58 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 									</SelectTrigger>
 
 									<SelectContent className="bg-[var(--omkraft-blue-700)] text-foreground">
-										<SelectItem value="OTT" className="focus:text-background">OTT / Streaming</SelectItem>
-										<SelectItem value="MUSIC" className="focus:text-background">Music</SelectItem>
-										<SelectItem value="SIM_PREPAID" className="focus:text-background">Mobile (Prepaid)</SelectItem>
-										<SelectItem value="SIM_POSTPAID" className="focus:text-background">Mobile (Postpaid)</SelectItem>
-										<SelectItem value="INTERNET" className="focus:text-background">Internet / Broadband</SelectItem>
-										<SelectItem value="DTH" className="focus:text-background">DTH / TV</SelectItem>
-										<SelectItem value="SOFTWARE" className="focus:text-background">Software / SaaS</SelectItem>
-										<SelectItem value="CLOUD" className="focus:text-background">Cloud Storage</SelectItem>
-										<SelectItem value="GAMING" className="focus:text-background">Gaming</SelectItem>
-										<SelectItem value="OTHER" className="focus:text-background">Other</SelectItem>
+										<SelectItem value="OTT" className="focus:text-background">
+											OTT / Streaming
+										</SelectItem>
+										<SelectItem value="MUSIC" className="focus:text-background">
+											Music
+										</SelectItem>
+										<SelectItem
+											value="SIM_PREPAID"
+											className="focus:text-background"
+										>
+											Mobile (Prepaid)
+										</SelectItem>
+										<SelectItem
+											value="SIM_POSTPAID"
+											className="focus:text-background"
+										>
+											Mobile (Postpaid)
+										</SelectItem>
+										<SelectItem
+											value="INTERNET"
+											className="focus:text-background"
+										>
+											Internet / Broadband
+										</SelectItem>
+										<SelectItem value="DTH" className="focus:text-background">
+											DTH / TV
+										</SelectItem>
+										<SelectItem
+											value="SOFTWARE"
+											className="focus:text-background"
+										>
+											Software / SaaS
+										</SelectItem>
+										<SelectItem value="CLOUD" className="focus:text-background">
+											Cloud Storage
+										</SelectItem>
+										<SelectItem
+											value="GAMING"
+											className="focus:text-background"
+										>
+											Gaming
+										</SelectItem>
+										<SelectItem value="OTHER" className="focus:text-background">
+											Other
+										</SelectItem>
 									</SelectContent>
 								</Select>
 							</Field>
 							<Field>
-								<FieldLabel htmlFor="name">Name <span className="text-destructive">*</span></FieldLabel>
+								<FieldLabel htmlFor="name">
+									Name <span className="text-destructive">*</span>
+								</FieldLabel>
 								<Input
 									id="name"
 									placeholder="Name"
@@ -123,7 +171,9 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 								/>
 							</Field>
 							<Field>
-								<FieldLabel htmlFor="provider">Provider <span className="text-destructive">*</span></FieldLabel>
+								<FieldLabel htmlFor="provider">
+									Provider <span className="text-destructive">*</span>
+								</FieldLabel>
 								<Input
 									id="provider"
 									placeholder="Provider"
@@ -133,7 +183,9 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 								/>
 							</Field>
 							<Field>
-								<FieldLabel htmlFor="price">Price <span className="text-destructive">*</span></FieldLabel>
+								<FieldLabel htmlFor="price">
+									Price <span className="text-destructive">*</span>
+								</FieldLabel>
 								<div className="flex gap-2">
 									<InputGroup className="bg-input border border-border">
 										{/* Phone number input */}
@@ -144,9 +196,7 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 											onChange={(e) => setPrice(e.target.value)}
 											required
 										/>
-										<InputGroupAddon>
-											&#8377;
-										</InputGroupAddon>
+										<InputGroupAddon>&#8377;</InputGroupAddon>
 									</InputGroup>
 								</div>
 							</Field>
@@ -156,32 +206,41 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 									value={billingCycleDays}
 									onValueChange={(value) => setBillingCycleDays(value)}
 								>
-									<SelectTrigger id="billingCycle" className="border-border bg-muted">
+									<SelectTrigger
+										id="billingCycle"
+										className="border-border bg-muted"
+									>
 										<SelectValue />
 									</SelectTrigger>
 
 									<SelectContent className="bg-[var(--omkraft-blue-700)] text-foreground">
-										<SelectItem value="28" className="focus:text-background">28 days (Mobile)</SelectItem>
-										<SelectItem value="30" className="focus:text-background">Monthly</SelectItem>
-										<SelectItem value="365" className="focus:text-background">Yearly</SelectItem>
+										<SelectItem value="28" className="focus:text-background">
+											28 days (Mobile)
+										</SelectItem>
+										<SelectItem value="30" className="focus:text-background">
+											Monthly
+										</SelectItem>
+										<SelectItem value="365" className="focus:text-background">
+											Yearly
+										</SelectItem>
 									</SelectContent>
 								</Select>
 							</Field>
 							<Field>
-								<FieldLabel htmlFor="startDate">Start date <span className="text-destructive">*</span></FieldLabel>
-								<StartDatePicker
-									value={startDate}
-									onChange={setStartDate}
-								/>
+								<FieldLabel htmlFor="startDate">
+									Start date <span className="text-destructive">*</span>
+								</FieldLabel>
+								<StartDatePicker value={startDate} onChange={setStartDate} />
 							</Field>
 						</FieldGroup>
 
 						{error && (
 							<Alert variant="destructive" className="flex flex-col gap-2">
-								<AlertTitle className="flex gap-2 items-center"><AlertCircleIcon />Error occured</AlertTitle>
-								<AlertDescription className="text-sm">
-									{error}
-								</AlertDescription>
+								<AlertTitle className="flex gap-2 items-center">
+									<AlertCircleIcon />
+									Error occured
+								</AlertTitle>
+								<AlertDescription className="text-sm">{error}</AlertDescription>
 							</Alert>
 						)}
 
@@ -192,11 +251,8 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 								</Button>
 							</div>
 						) : (
-							<Button
-								type="submit"
-								className="w-full btn-primary"
-							>
-										Save Subscription
+							<Button type="submit" className="w-full btn-primary">
+								Save Subscription
 							</Button>
 						)}
 					</form>

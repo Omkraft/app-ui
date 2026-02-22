@@ -32,18 +32,11 @@ export async function getCurrentLocation(): Promise<LocationData> {
 
 					const geoData = await geoRes.json();
 
-					const cityName =
-						geoData.city ||
-						geoData.locality ||
-						null;
+					const cityName = geoData.city || geoData.locality || null;
 
-					const state =
-						geoData.principalSubdivision ||
-						null;
+					const state = geoData.principalSubdivision || null;
 
-					const countryCode =
-						geoData.countryCode ||
-						null;
+					const countryCode = geoData.countryCode || null;
 
 					resolve({
 						latitude,
@@ -54,9 +47,7 @@ export async function getCurrentLocation(): Promise<LocationData> {
 					});
 				} catch (error) {
 					reject(
-						error instanceof Error
-							? error
-							: new Error('Failed to fetch location data.')
+						error instanceof Error ? error : new Error('Failed to fetch location data.')
 					);
 				}
 			},
@@ -68,7 +59,7 @@ export async function getCurrentLocation(): Promise<LocationData> {
 				);
 			},
 			{
-				enableHighAccuracy: true
+				enableHighAccuracy: true,
 			}
 		);
 	});

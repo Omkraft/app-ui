@@ -12,25 +12,29 @@ import {
 	Music,
 } from 'lucide-react';
 
-const brandsInCategory:Record<string, { name: string; src: string; alt: string }[]> = {
+const brandsInCategory: Record<string, { name: string; src: string; alt: string }[]> = {
 	SIM_PREPAID: [
 		{
 			name: 'jio',
 			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png`,
-			alt: 'Jio logo'
-		}, {
+			alt: 'Jio logo',
+		},
+		{
 			name: 'airtel',
 			src: `https://img.logo.dev/airtel.com?token=${LOGO_API_KEY}&format=png`,
-			alt: 'Airtel logo'
-		}, {
+			alt: 'Airtel logo',
+		},
+		{
 			name: 'vi',
 			src: `https://img.logo.dev/vodafone.com?token=${LOGO_API_KEY}&format=png`,
-			alt: 'Vodafone logo'
-		}, {
+			alt: 'Vodafone logo',
+		},
+		{
 			name: 'vodafone',
 			src: `https://img.logo.dev/vodafone.com?token=${LOGO_API_KEY}&format=png`,
-			alt: 'Vodafone logo'
-		}, {
+			alt: 'Vodafone logo',
+		},
+		{
 			name: 'bsnl',
 			src: `https://img.logo.dev/bsnl.co.in?token=${LOGO_API_KEY}&format=png`,
 			alt: 'BSNL logo',
@@ -40,20 +44,24 @@ const brandsInCategory:Record<string, { name: string; src: string; alt: string }
 		{
 			name: 'jio',
 			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png`,
-			alt: 'Jio logo'
-		}, {
+			alt: 'Jio logo',
+		},
+		{
 			name: 'airtel',
 			src: `https://img.logo.dev/airtel.com?token=${LOGO_API_KEY}&format=png`,
-			alt: 'Airtel logo'
-		}, {
+			alt: 'Airtel logo',
+		},
+		{
 			name: 'vi',
 			src: `https://img.logo.dev/vodafone.com?token=${LOGO_API_KEY}&format=png`,
-			alt: 'Vodafone logo'
-		}, {
+			alt: 'Vodafone logo',
+		},
+		{
 			name: 'vodafone',
 			src: `https://img.logo.dev/vodafone.com?token=${LOGO_API_KEY}&format=png`,
-			alt: 'Vodafone logo'
-		}, {
+			alt: 'Vodafone logo',
+		},
+		{
 			name: 'bsnl',
 			src: `https://img.logo.dev/bsnl.co.in?token=${LOGO_API_KEY}&format=png`,
 			alt: 'BSNL logo',
@@ -122,10 +130,30 @@ const brandsInCategory:Record<string, { name: string; src: string; alt: string }
 			src: `https://img.logo.dev/gaana.com?token=${LOGO_API_KEY}&format=png&retina=true`,
 			alt: 'Gaana.com logo',
 		},
+		{
+			name: 'apple',
+			src: `https://img.logo.dev/apple.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Apple logo',
+		},
+		{
+			name: 'youtube',
+			src: `https://img.logo.dev/youtube.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Google logo',
+		},
+		{
+			name: 'google',
+			src: `https://img.logo.dev/google.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Google logo',
+		},
 	],
 	INTERNET: [
 		{
 			name: 'jio',
+			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Jio Fiber logo',
+		},
+		{
+			name: 'reliance',
 			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png&retina=true`,
 			alt: 'Jio Fiber logo',
 		},
@@ -145,7 +173,7 @@ const brandsInCategory:Record<string, { name: string; src: string; alt: string }
 			alt: 'Hathway logo',
 		},
 		{
-			name: 'bsnl fiber',
+			name: 'bsnl',
 			src: `https://img.logo.dev/bsnl.co.in?token=${LOGO_API_KEY}&format=png&retina=true`,
 			alt: 'BSNL Fiber logo',
 		},
@@ -199,6 +227,21 @@ const brandsInCategory:Record<string, { name: string; src: string; alt: string }
 			src: `https://img.logo.dev/icloud.com?token=${LOGO_API_KEY}&format=png&retina=true`,
 			alt: 'iCloud logo',
 		},
+		{
+			name: 'microsoft',
+			src: `https://img.logo.dev/microsoft.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Microsoft logo',
+		},
+		{
+			name: 'onedrive',
+			src: `https://img.logo.dev/onedrive.com.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Microsoft logo',
+		},
+		{
+			name: 'one drive',
+			src: `https://img.logo.dev/onedrive.com.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Microsoft logo',
+		},
 	],
 
 	SOFTWARE: [
@@ -232,6 +275,16 @@ const brandsInCategory:Record<string, { name: string; src: string; alt: string }
 			src: `https://img.logo.dev/office365.com?token=${LOGO_API_KEY}&format=png&retina=true`,
 			alt: 'Office 365 logo',
 		},
+		{
+			name: 'google',
+			src: `https://img.logo.dev/google.com?token=${LOGO_API_KEY}&format=png`,
+			alt: 'Google One logo',
+		},
+		{
+			name: 'apple',
+			src: `https://img.logo.dev/apple.com?token=${LOGO_API_KEY}&format=png`,
+			alt: 'Apple logo',
+		},
 	],
 
 	GAMING: [
@@ -264,7 +317,7 @@ const brandsInCategory:Record<string, { name: string; src: string; alt: string }
 
 	OTHER: [
 		{
-			name: 'google one',
+			name: 'google',
 			src: `https://img.logo.dev/google.com?token=${LOGO_API_KEY}&format=png`,
 			alt: 'Google One logo',
 		},
@@ -273,9 +326,13 @@ const brandsInCategory:Record<string, { name: string; src: string; alt: string }
 			src: `https://img.logo.dev/apple.com?token=${LOGO_API_KEY}&format=png`,
 			alt: 'Apple logo',
 		},
-	]};
+	],
+};
 
-export function resolveLogo(category: string, provider?: string): {
+export function resolveLogo(
+	category: string,
+	provider?: string
+): {
 	type: 'image' | 'icon';
 	src?: string;
 	alt?: string;
@@ -285,7 +342,7 @@ export function resolveLogo(category: string, provider?: string): {
 	if (provider && category in brandsInCategory) {
 		const brands = brandsInCategory[category];
 
-		const match = brands.find(brand =>
+		const match = brands.find((brand) =>
 			provider.toLowerCase().includes(brand.name.toLowerCase())
 		);
 
@@ -307,32 +364,32 @@ export function resolveLogo(category: string, provider?: string): {
 
 function getCategoryIcon(category: string): LucideIcon {
 	switch (category) {
-	case 'SIM_PREPAID':
-	case 'SIM_POSTPAID':
-		return CardSim;
+		case 'SIM_PREPAID':
+		case 'SIM_POSTPAID':
+			return CardSim;
 
-	case 'OTT':
-		return TvMinimalPlay;
+		case 'OTT':
+			return TvMinimalPlay;
 
-	case 'DTH':
-		return SatelliteDish;
-	
-	case 'MUSIC':
-		return Music;
+		case 'DTH':
+			return SatelliteDish;
 
-	case 'INTERNET':
-		return Router;
+		case 'MUSIC':
+			return Music;
 
-	case 'CLOUD':
-		return CloudUpload;
+		case 'INTERNET':
+			return Router;
 
-	case 'GAMING':
-		return Gamepad2;
+		case 'CLOUD':
+			return CloudUpload;
 
-	case 'SOFTWARE':
-		return Disc3;
+		case 'GAMING':
+			return Gamepad2;
 
-	default:
-		return Package;
+		case 'SOFTWARE':
+			return Disc3;
+
+		default:
+			return Package;
 	}
 }

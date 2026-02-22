@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { useAuth } from '@/auth/AuthContext';
+import { useAuth } from '@/context/auth/AuthContext';
 import { login as loginApi } from '@/api/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,10 +29,7 @@ export default function Login() {
 		setError(null);
 		let error = null;
 
-		if (
-			!email.trim() ||
-			!password.trim()
-		) {
+		if (!email.trim() || !password.trim()) {
 			setError('All fields are required');
 			return;
 		}
@@ -42,9 +39,7 @@ export default function Login() {
 			const { token, user } = await loginApi(email, password);
 			login(token, user);
 		} catch (err) {
-			error = err instanceof Error
-				? err.message
-				: 'Login failed. Please try again.';
+			error = err instanceof Error ? err.message : 'Login failed. Please try again.';
 			setError(error);
 		} finally {
 			setLoading(false);
@@ -54,7 +49,6 @@ export default function Login() {
 		}
 	};
 
-
 	return (
 		<>
 			{!loading ? (
@@ -62,15 +56,16 @@ export default function Login() {
 					<div className="app-container grid gap-12 lg:grid-cols-2 py-6 items-center justify-items-center">
 						{/* Left visual panel */}
 						<div className="hidden lg:block relative">
-
 							<div className="relative space-y-6">
 								<h1 className="text-4xl font-semibold text-foreground leading-tight">
-									Welcome to<br />
+									Welcome to
+									<br />
 									<span className="text-primary">Omkraft</span>
 								</h1>
 
 								<p className="text-muted-foreground max-w-md">
-									Sign in to access your workspace and continue exploring a clean, scalable foundation.
+									Sign in to access your workspace and continue exploring a clean,
+									scalable foundation.
 								</p>
 
 								<img
@@ -78,7 +73,6 @@ export default function Login() {
 									alt="Login illustration"
 									className="w-full max-w-md opacity-90"
 								/>
-
 							</div>
 						</div>
 
@@ -88,15 +82,15 @@ export default function Login() {
 								<CardTitle>
 									<h2>Sign in</h2>
 								</CardTitle>
-								<CardDescription>
-									Access your Omkraft workspace
-								</CardDescription>
+								<CardDescription>Access your Omkraft workspace</CardDescription>
 							</CardHeader>
 							<CardContent>
 								<form onSubmit={handleSubmit} className="space-y-4">
 									<FieldGroup className="gap-5">
 										<Field>
-											<FieldLabel htmlFor="email">Email <span className="text-destructive">*</span></FieldLabel>
+											<FieldLabel htmlFor="email">
+												Email <span className="text-destructive">*</span>
+											</FieldLabel>
 											<Input
 												id="email"
 												placeholder="you@omkraft.io"
@@ -106,7 +100,9 @@ export default function Login() {
 											/>
 										</Field>
 										<Field>
-											<FieldLabel htmlFor="password">Password <span className="text-destructive">*</span></FieldLabel>
+											<FieldLabel htmlFor="password">
+												Password <span className="text-destructive">*</span>
+											</FieldLabel>
 											<InputGroup className="bg-input border border-border">
 												<InputGroupInput
 													id="password"
@@ -119,7 +115,9 @@ export default function Login() {
 												<InputGroupAddon align="inline-end">
 													<Button
 														className="hover:bg-transparent"
-														onClick={() => setShowPassword(!showPassword)}
+														onClick={() =>
+															setShowPassword(!showPassword)
+														}
 														size="icon"
 														type="button"
 														variant="ghost"
@@ -131,7 +129,6 @@ export default function Login() {
 														)}
 													</Button>
 												</InputGroupAddon>
-												
 											</InputGroup>
 										</Field>
 									</FieldGroup>
@@ -146,15 +143,15 @@ export default function Login() {
 										</Alert>
 									)}
 
-									<Button
-										type="submit"
-										className="w-full"
-									>
+									<Button type="submit" className="w-full">
 										Login
 									</Button>
 								</form>
 								<p className="text-sm text-center text-muted-foreground mt-4">
-									<Link to="/forgot-password" className="text-foreground underline">
+									<Link
+										to="/forgot-password"
+										className="text-foreground underline"
+									>
 										Forgot Password?
 									</Link>
 								</p>

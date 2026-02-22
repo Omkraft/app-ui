@@ -7,8 +7,8 @@ import cnn from '@/assets/media/cnn.svg';
 import { cn } from '@/lib/utils';
 
 interface Props {
-  source: string;
-  className?: string;
+	source: string;
+	className?: string;
 }
 
 const logoMap: Record<string, string> = {
@@ -16,7 +16,7 @@ const logoMap: Record<string, string> = {
 	'Indian Express': ie,
 	'Hindustan Times': ht,
 	'BBC News': bbc,
-	'CNN': cnn,
+	CNN: cnn,
 };
 
 export function NewsSourceLogo({ source, className }: Props) {
@@ -28,10 +28,7 @@ export function NewsSourceLogo({ source, className }: Props) {
 		<img
 			src={logo}
 			alt={source}
-			className={cn(
-				'h-3 w-auto object-contain transition-all duration-200',
-				className
-			)}
+			className={cn('h-3 w-auto object-contain transition-all duration-200', className)}
 		/>
 	);
 }

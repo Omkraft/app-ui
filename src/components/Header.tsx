@@ -1,4 +1,4 @@
-import { useAuth } from '@/auth/AuthContext';
+import { useAuth } from '@/context/auth/AuthContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import './Header.scss';
@@ -9,8 +9,7 @@ export function Header() {
 	const location = useLocation();
 	const { user, isAuthenticated, logout } = useAuth();
 	const pathname = location.pathname;
-	const logo =
-		'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-secondary.svg';
+	const logo = 'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-secondary.svg';
 	const navigate = useNavigate();
 	function logoutUser() {
 		logout();
@@ -25,19 +24,19 @@ export function Header() {
 				<div className="flex items-center gap-3">
 					{!isAuthenticated && pathname === '/login' && (
 						<Link to="/register" className="btn-primary">
-						Register
+							Register
 						</Link>
 					)}
 
 					{!isAuthenticated && pathname === '/register' && (
 						<Link to="/login" className="btn-primary">
-						Login
+							Login
 						</Link>
 					)}
 
 					{!isAuthenticated && pathname === '/forgot-password' && (
 						<Link to="/login" className="btn-primary">
-						Login
+							Login
 						</Link>
 					)}
 
@@ -47,10 +46,7 @@ export function Header() {
 								{user?.email}
 							</span>
 							<NotificationBell />
-							<Button
-								className="w-full"
-								onClick={logoutUser}
-							>
+							<Button className="w-full" onClick={logoutUser}>
 								Logout
 							</Button>
 						</div>

@@ -1,4 +1,4 @@
-import { useAuth } from '@/auth/AuthContext';
+import { useAuth } from '@/context/auth/AuthContext';
 import { Link } from 'react-router-dom';
 import newsIllustration from '@/assets/news-illustration.svg';
 import mediaIllustration from '@/assets/media-illustration.svg';
@@ -15,11 +15,13 @@ export default function Dashboard() {
 					{/* ========================= */}
 					<header className="space-y-6">
 						<h1 className="text-4xl font-semibold">
-							Welcome,{' '}<br />
-							<span className="text-primary">{user?.firstName
-								? `${user.firstName} ${user.lastName ?? ''}`.trim()
-								: 'Guest'}
-							!</span>
+							Welcome, <br />
+							<span className="text-primary">
+								{user?.firstName
+									? `${user.firstName} ${user.lastName ?? ''}`.trim()
+									: 'Guest'}
+								!
+							</span>
 						</h1>
 						<p className="text-muted-foreground">
 							Everything you use daily — thoughtfully organized.
@@ -29,9 +31,7 @@ export default function Dashboard() {
 							problems. Each app is independent, but connected through a single
 							account — so you move seamlessly between them without friction.
 						</p>
-						<p className="text-muted-foreground">
-							Choose where you’d like to begin.
-						</p>
+						<p className="text-muted-foreground">Choose where you’d like to begin.</p>
 					</header>
 				</div>
 			</section>
@@ -43,7 +43,9 @@ export default function Dashboard() {
 					<div className="grid gap-12 lg:grid-cols-2 items-center">
 						{/* Text */}
 						<div className="space-y-4">
-							<h2 className="text-3xl">Personal<br />
+							<h2 className="text-3xl">
+								Personal
+								<br />
 								<span className="text-[var(--omkraft-mint-900)]">Utility Hub</span>
 							</h2>
 							<p className="text-accent-foreground">
@@ -58,9 +60,8 @@ export default function Dashboard() {
 							</p>
 
 							<p>
-								Check the weather before stepping out.  
-								Stay informed with essential news.  
-								Glance at what matters today — without noise, ads, or clutter.
+								Check the weather before stepping out. Stay informed with essential
+								news. Glance at what matters today — without noise, ads, or clutter.
 							</p>
 
 							<p>
@@ -109,12 +110,12 @@ export default function Dashboard() {
 						</div>
 						{/* Text */}
 						<div className="space-y-4 lg:text-right lg:justify-items-end">
-							<h2 className="text-3xl">Subscription<br />
+							<h2 className="text-3xl">
+								Subscription
+								<br />
 								<span className="text-[var(--omkraft-bg)]">Tracker</span>
 							</h2>
-							<p>
-								Know what you're paying for — always.
-							</p>
+							<p>Know what you're paying for — always.</p>
 
 							<p>
 								Subscriptions are easy to start — and easy to forget. Over time,
@@ -127,11 +128,7 @@ export default function Dashboard() {
 								over time.
 							</p>
 
-							<p>
-								No spreadsheets.  
-								No guesswork.  
-								Just clarity and control.
-							</p>
+							<p>No spreadsheets. No guesswork. Just clarity and control.</p>
 
 							<ul className="list-disc pl-5 space-y-2 lg:justify-items-start">
 								<li>Track all active subscriptions</li>

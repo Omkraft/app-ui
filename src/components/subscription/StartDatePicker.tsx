@@ -5,19 +5,14 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 type Props = {
-  value?: Date
-  onChange: (date: Date | undefined) => void
-}
+	value?: Date;
+	onChange: (date: Date | undefined) => void;
+};
 
 export function StartDatePicker({ value, onChange }: Props) {
-
 	const [open, setOpen] = React.useState(false);
 
 	return (
@@ -31,12 +26,7 @@ export function StartDatePicker({ value, onChange }: Props) {
 					)}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-					{value ? (
-						format(value, 'PPP')
-					) : (
-						<span>Select start date</span>
-					)}
-
+					{value ? format(value, 'PPP') : <span>Select start date</span>}
 				</Button>
 			</PopoverTrigger>
 
@@ -56,6 +46,5 @@ export function StartDatePicker({ value, onChange }: Props) {
 				/>
 			</PopoverContent>
 		</Popover>
-
 	);
 }
