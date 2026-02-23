@@ -112,7 +112,9 @@ export default function Subscription() {
 						<p className="text-background">
 							Track all your prepaid plans and subscriptions
 						</p>
-						<AddSubscriptionDialog onSuccess={fetchSubscriptions} />
+						{!loading && !subsError && (
+							<AddSubscriptionDialog onSuccess={fetchSubscriptions} />
+						)}
 					</header>
 				</div>
 			</section>
