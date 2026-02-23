@@ -3,10 +3,11 @@ import { useAuth } from '@/context/auth/AuthContext';
 export function FooterApp() {
 	const { user } = useAuth();
 	const year = new Date().getFullYear();
+	const logo = 'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-small.svg';
 
 	return (
 		<footer className="border-t border-border bg-background text-foreground">
-			<div className="app-container py-6 grid gap-8 lg:grid-cols-3">
+			<div className="app-container py-4 grid gap-8 lg:grid-cols-3">
 				{/* Brand / About */}
 				<div className="space-y-3">
 					<h4 className="text-muted-foreground font-semibold">Omkraft</h4>
@@ -46,8 +47,14 @@ export function FooterApp() {
 
 			{/* Bottom Bar */}
 			<div className="border-t border-border">
-				<div className="app-container py-4 text-xs text-muted-foreground flex flex-col sm:flex-row sm:justify-between gap-2">
-					<p>&copy; {year} Omkraft Inc.</p>
+				<div className="app-container py-4 text-xs text-muted-foreground flex flex-col lg:flex-row gap-2 items-center">
+					<img src={logo} alt="Omkraft Inc." className="footer__logo" />
+					<p>
+						&copy; {year} <span className="font-bold">Omkraft</span> Inc.
+					</p>
+					<p>
+						<em>Systems, Crafted.</em>
+					</p>
 					<p>Demo project — built for learning, feedback, and future possibilities.</p>
 				</div>
 			</div>

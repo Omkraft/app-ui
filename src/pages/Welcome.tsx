@@ -57,7 +57,7 @@ export default function Welcome() {
 					</div>
 
 					{/* Footer note */}
-					<p className="text-sm text-muted-foreground pt-6">
+					<p className="text-sm text-muted-foreground pt-6 lg:hidden">
 						For the best experience, try Omkraft on a laptop or desktop if possible.
 						Mobile support is improving continuously.
 					</p>

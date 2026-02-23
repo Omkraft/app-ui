@@ -18,7 +18,7 @@ export function Header() {
 
 	return (
 		<header className="header bg-background text-foreground border-b border-border">
-			<div className="app-container py-1 flex justify-between">
+			<div className="app-container py-2 flex justify-between">
 				<img src={logo} alt="Omkraft Inc." className="header__logo" />
 
 				<div className="flex items-center gap-3">

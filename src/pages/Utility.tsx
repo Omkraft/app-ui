@@ -680,7 +680,7 @@ export default function Utility() {
 											</AlertDescription>
 										</Alert>
 									) : (
-										<p className="text-sm">
+										<p className="text-sm text-center">
 											<Spinner className="inline size-6" /> Loading quote...
 										</p>
 									)}
