@@ -70,7 +70,7 @@ export default function Register() {
 	return (
 		<>
 			{!loading ? (
-				<div className="min-h-[calc(100vh-145px)] bg-background text-foreground flex items-center">
+				<div className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
 					<div className="app-container grid gap-12 py-6 lg:grid-cols-2 items-center justify-items-center">
 						<Card className="w-full max-w-md">
 							{!submitted ? (

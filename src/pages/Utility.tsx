@@ -147,7 +147,7 @@ export default function Utility() {
 	}, [fetchWeather, fetchNews]);
 
 	return (
-		<main className="min-h-[calc(100vh-135px)] bg-background">
+		<main className="min-h-[calc(100vh-178px)] bg-background">
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<Breadcrumb>

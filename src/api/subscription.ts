@@ -46,3 +46,23 @@ export function confirmSubscriptionPayment(id: string) {
 		method: 'POST',
 	});
 }
+
+export async function updateSubscription(id: string, subscriptionData: SubscriptionData) {
+	return apiRequest(`/api/subscription/${id}`, {
+		method: 'PUT',
+		body: JSON.stringify({
+			category: subscriptionData.category,
+			name: subscriptionData.name,
+			provider: subscriptionData.provider,
+			amount: Number(subscriptionData.amount),
+			billingCycleDays: Number(subscriptionData.billingCycleDays),
+			startDate: subscriptionData.startDate,
+		}),
+	});
+}
+
+export async function deleteSubscription(id: string) {
+	return apiRequest(`/api/subscription/${id}`, {
+		method: 'DELETE',
+	});
+}

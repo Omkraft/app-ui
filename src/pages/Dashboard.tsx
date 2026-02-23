@@ -7,7 +7,7 @@ export default function Dashboard() {
 	const { user } = useAuth();
 
 	return (
-		<main className="min-h-[calc(100vh-135px)] bg-background">
+		<main className="min-h-[calc(100vh-178px)] bg-background">
 			<section className="text-foreground flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					{/* ========================= */}
@@ -138,7 +138,7 @@ export default function Dashboard() {
 							</ul>
 
 							<div className="flex flex-col lg:flex-row justify-items-end gap-4 pt-4">
-								<Link to="/maintenance" className="btn-accent">
+								<Link to="/subscription" className="btn-accent">
 									Open Subscription Tracker
 								</Link>
 							</div>
