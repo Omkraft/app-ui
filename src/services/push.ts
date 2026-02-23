@@ -9,7 +9,7 @@ export async function registerPush() {
 		applicationServerKey: import.meta.env.VITE_VAPID_PUBLIC_KEY,
 	});
 
-	await fetch('/api/push/subscribe', {
+	fetch(`${import.meta.env.VITE_API_BASE_URL}/api/push/subscribe`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
