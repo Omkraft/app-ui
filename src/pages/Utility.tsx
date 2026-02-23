@@ -442,9 +442,11 @@ export default function Utility() {
 									<Spinner className="inline size-6" /> Loading weather...
 								</p>
 							) : (
-								<Alert variant="destructive">
-									<AlertCircleIcon />
-									<AlertTitle>Weather unavailable</AlertTitle>
+								<Alert variant="destructive" className="flex flex-col gap-2">
+									<AlertTitle className="flex gap-2 items-center">
+										<AlertCircleIcon />
+										Weather unavailable
+									</AlertTitle>
 									<AlertDescription className="text-sm">
 										{weatherError}
 									</AlertDescription>
@@ -491,9 +493,14 @@ export default function Utility() {
 											))}
 										</div>
 									) : (
-										<Alert variant="destructive">
-											<AlertCircleIcon />
-											<AlertTitle>News unavailable</AlertTitle>
+										<Alert
+											variant="destructive"
+											className="flex flex-col gap-2"
+										>
+											<AlertTitle className="flex gap-2 items-center">
+												<AlertCircleIcon />
+												News unavailable
+											</AlertTitle>
 											<AlertDescription className="text-sm">
 												{newsError}
 											</AlertDescription>
@@ -596,9 +603,14 @@ export default function Utility() {
 											events...
 										</p>
 									) : (
-										<Alert variant="destructive">
-											<AlertCircleIcon />
-											<AlertTitle>Error occured</AlertTitle>
+										<Alert
+											variant="destructive"
+											className="flex flex-col gap-2"
+										>
+											<AlertTitle className="flex gap-2 items-center">
+												<AlertCircleIcon />
+												Error occured
+											</AlertTitle>
 											<AlertDescription className="text-sm">
 												{onThisDayError}
 											</AlertDescription>
@@ -644,14 +656,14 @@ export default function Utility() {
 								</h3>
 							</CardTitle>
 						</CardHeader>
-						<CardContent className="grid gap-4 text-center">
+						<CardContent>
 							{quote ? (
-								<>
+								<div className="text-center grid gap-4">
 									<p className="italic text-xl font-medium ">"{quote.q}" — </p>
 									<p className="text-[var(--omkraft-mint-700)] italic text-xl font-medium">
 										{quote.a}
 									</p>
-								</>
+								</div>
 							) : (
 								<>
 									{quoteError ? (
