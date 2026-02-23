@@ -101,49 +101,53 @@ export default function Subscription() {
 					</header>
 				</div>
 			</section>
-			<section className="flex items-center py-6 bg-accent">
-				<div className="app-container grid gap-6 items-center">
-					<h2 className="text-3xl font-semibold">Summary</h2>
-					{/* Summary cards */}
-					<div className="grid lg:grid-cols-2 gap-6">
-						<Card className="border-foreground">
-							<CardHeader>
-								<CardTitle>
-									<h3 className="text-2xl font-semibold">Total Monthly Spend</h3>
-								</CardTitle>
-							</CardHeader>
-							<CardContent>
-								<div className="text-xl font-semibold text-accent">
-									&#8377; {totalMonthly}
-								</div>
-							</CardContent>
-						</Card>
-
-						<Card className="border-foreground">
-							<CardHeader>
-								<CardTitle>
-									<h3 className="text-2xl font-semibold">Next Renewal</h3>
-								</CardTitle>
-							</CardHeader>
-							<CardContent>
-								{nextRenewal ? (
-									<div className="flex flex-col gap-2">
-										<div className="text-xl">{nextRenewal.name}</div>
-										<div className="text-lg text-accent font-medium">
-											&#8377; {nextRenewal.amount}
-										</div>
-										<div className="text-sm text-muted-foreground">
-											{formatDate(nextRenewal.nextBillingDate)}
-										</div>
+			{!subsError && !loading && (
+				<section className="flex items-center py-6 bg-accent">
+					<div className="app-container grid gap-6 items-center">
+						<h2 className="text-3xl font-semibold">Summary</h2>
+						{/* Summary cards */}
+						<div className="grid lg:grid-cols-2 gap-6">
+							<Card className="border-foreground">
+								<CardHeader>
+									<CardTitle>
+										<h3 className="text-2xl font-semibold">
+											Total Monthly Spend
+										</h3>
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<div className="text-xl font-semibold text-accent">
+										&#8377; {totalMonthly}
 									</div>
-								) : (
-									<div className="opacity-70">No active subscriptions</div>
-								)}
-							</CardContent>
-						</Card>
+								</CardContent>
+							</Card>
+
+							<Card className="border-foreground">
+								<CardHeader>
+									<CardTitle>
+										<h3 className="text-2xl font-semibold">Next Renewal</h3>
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									{nextRenewal ? (
+										<div className="flex flex-col gap-2">
+											<div className="text-xl">{nextRenewal.name}</div>
+											<div className="text-lg text-accent font-medium">
+												&#8377; {nextRenewal.amount}
+											</div>
+											<div className="text-sm text-muted-foreground">
+												{formatDate(nextRenewal.nextBillingDate)}
+											</div>
+										</div>
+									) : (
+										<div className="opacity-70">No active subscriptions</div>
+									)}
+								</CardContent>
+							</Card>
+						</div>
 					</div>
-				</div>
-			</section>
+				</section>
+			)}
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<h2 className="text-3xl font-semibold">Current Subscriptions</h2>
@@ -242,7 +246,7 @@ export default function Subscription() {
 							})
 						) : (
 							<>
-								{!loading && (
+								{!subsError && !loading && (
 									<div className="flex flex-col gap-4 text-background">
 										<p className="text-lg font-semibold">
 											No active subscriptions yet
