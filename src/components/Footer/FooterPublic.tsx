@@ -2,14 +2,19 @@ import { Link } from 'react-router-dom';
 
 export function FooterPublic() {
 	const year = new Date().getFullYear();
+	const logo = 'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-small.svg';
 
 	return (
 		<footer className="border-t border-border bg-background text-foreground">
-			<div className="app-container py-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+			<div className="app-container py-4 flex flex-col gap-2 lg:flex-row items-center lg:justify-between">
 				{/* Left */}
+				<img src={logo} alt="Omkraft Inc." className="footer__logo" />
 				<p className="text-sm text-muted-foreground">
-					&copy; {year} Omkraft Inc. All rights reserved.
+					&copy; {year} <span className="font-bold">Omkraft</span> Inc.{' '}
+					<em>Systems, Crafted.</em>
 				</p>
+
+				<p className="text-sm text-muted-foreground">All rights reserved.</p>
 
 				{/* Center */}
 				<p className="text-sm text-muted-foreground">

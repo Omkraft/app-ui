@@ -1,6 +1,7 @@
 import { useAuth } from '@/context/auth/AuthContext';
 import { FooterPublic } from './FooterPublic';
 import { FooterApp } from './FooterApp';
+import './Footer.scss';
 
 export default function Footer() {
 	const { isAuthenticated } = useAuth();
