@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Link } from 'react-router-dom';
 import AddSubscriptionDialog from '@/components/subscription/AddSubscriptionDialog';
+import EditSubscriptionDialog from '@/components/subscription/EditSubscriptionDialog';
+import DeleteSubscriptionDialog from '@/components/subscription/DeleteSubscriptionDialog';
 import {
 	confirmSubscriptionPayment,
 	getSubscriptions,
@@ -50,10 +52,23 @@ export default function Subscription() {
 		}
 	}
 
-	const totalMonthly = subs?.reduce((sum, s) => {
-		if (s.status !== 'ACTIVE') return sum;
-		return sum + s.amount;
-	}, 0);
+	function getMonthlyEquivalent(subscription: Subscription) {
+		const amount = subscription.amount;
+		const billingDays = Number(subscription.cycleInDays);
+
+		if (!billingDays || billingDays <= 0) return amount;
+
+		if (billingDays === 30) return amount;
+
+		return (amount * 365) / billingDays / 12;
+	}
+
+	const totalMonthly =
+		subs?.reduce((sum, s) => {
+			if (s.status !== 'ACTIVE') return sum;
+			return sum + getMonthlyEquivalent(s);
+		}, 0) ?? 0;
+	const totalMonthlyRounded = Math.round(totalMonthly * 100) / 100;
 
 	const nextRenewal = subs
 		?.filter((s) => s.status === 'ACTIVE')
@@ -62,7 +77,7 @@ export default function Subscription() {
 		)[0];
 
 	return (
-		<main className="min-h-[calc(100vh-135px)] bg-[var(--omkraft-blue-200)]">
+		<main className="min-h-[calc(100vh-178px)] bg-[var(--omkraft-blue-200)]">
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<Breadcrumb>
@@ -117,7 +132,7 @@ export default function Subscription() {
 								</CardHeader>
 								<CardContent>
 									<div className="text-xl font-semibold text-accent">
-										&#8377; {totalMonthly}
+										&#8377; {totalMonthlyRounded.toFixed(2)}
 									</div>
 								</CardContent>
 							</Card>
@@ -236,8 +251,16 @@ export default function Subscription() {
 													)}
 												</div>
 
-												<div className="text-background">
-													{sub.cycleInDays} days
+												<div className="flex gap-2">
+													<EditSubscriptionDialog
+														subscription={sub}
+														onSuccess={fetchSubscriptions}
+													/>
+
+													<DeleteSubscriptionDialog
+														id={sub._id}
+														onSuccess={fetchSubscriptions}
+													/>
 												</div>
 											</div>
 										</CardContent>

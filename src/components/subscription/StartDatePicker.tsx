@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 
 type Props = {
 	value?: Date;
-	onChange: (date: Date | undefined) => void;
+	onChange: (date: Date) => void;
 };
 
 export function StartDatePicker({ value, onChange }: Props) {
@@ -39,6 +39,8 @@ export function StartDatePicker({ value, onChange }: Props) {
 					selected={value}
 					className="rounded-xl bg-[var(--omkraft-blue-700)]"
 					onSelect={(date) => {
+						if (!date) return;
+
 						onChange(date);
 						setOpen(false);
 					}}

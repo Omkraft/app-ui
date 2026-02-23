@@ -246,8 +246,9 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 
 						{loading ? (
 							<div className="flex gap-2">
-								<Button className="w-full btn-primary" disabled>
-									<Spinner data-icon="inline-start" /> Please wait...
+								<Button className="w-full btn-primary flex gap-1" disabled>
+									<Spinner data-icon="inline-start" />
+									Please wait...
 								</Button>
 							</div>
 						) : (

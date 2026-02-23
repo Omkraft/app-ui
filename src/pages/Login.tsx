@@ -52,7 +52,7 @@ export default function Login() {
 	return (
 		<>
 			{!loading ? (
-				<div className="min-h-[calc(100vh-145px)] bg-background text-foreground flex items-center">
+				<div className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
 					<div className="app-container grid gap-12 lg:grid-cols-2 py-6 items-center justify-items-center">
 						{/* Left visual panel */}
 						<div className="hidden lg:block relative">

@@ -2,7 +2,7 @@ import maintenanceIllustration from '@/assets/maintenance-illustration.svg';
 
 export default function Maintenance() {
 	return (
-		<div className="min-h-[calc(100vh-145px)] bg-background text-foreground flex items-center">
+		<div className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
 			<div className="app-container grid gap-12 items-center py-6 justify-items-center">
 				<div className="text-center space-y-4">
 					<div className="flex justify-center">
