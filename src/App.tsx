@@ -8,7 +8,6 @@ import PublicRoute from './routes/PublicRoute';
 import { isAuthenticated } from './utils/auth';
 import Footer from './components/Footer';
 import Maintenance from './pages/Maintenance';
-import Subscription from './pages/Subscription';
 
 const Welcome = lazy(() => import('./pages/Welcome'));
 const Login = lazy(() => import('./pages/Login'));
@@ -17,6 +16,7 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Utility = lazy(() => import('./pages/Utility'));
+const Subscription = lazy(() => import('./pages/Subscription'));
 
 export default function App() {
 	return (
