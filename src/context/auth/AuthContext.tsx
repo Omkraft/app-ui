@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
+import { registerPush } from '@/services/push';
 
 type User = {
 	firstName: string;
@@ -26,13 +27,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 		if (token && storedUser) {
 			setUser(JSON.parse(storedUser));
+			registerPush();
 		}
 	}, []);
 
-	function login(token: string, user: User) {
+	async function login(token: string, user: User) {
 		localStorage.setItem('token', token);
 		localStorage.setItem('auth', JSON.stringify(user));
 		setUser(user);
+		await registerPush();
 	}
 
 	function logout() {
