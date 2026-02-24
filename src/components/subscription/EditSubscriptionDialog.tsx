@@ -27,6 +27,48 @@ import { isPositiveNumeric } from '@/utils/format';
 import { updateSubscription } from '@/api/subscription';
 import type { Subscription } from '@/api/subscription';
 
+function subtractMonthsSafe(date: Date, months: number) {
+	const d = new Date(date);
+	const originalDay = d.getDate();
+
+	d.setDate(1);
+	d.setMonth(d.getMonth() - months);
+
+	const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+
+	d.setDate(Math.min(originalDay, lastDay));
+
+	return d;
+}
+
+function subtractYearsSafe(date: Date, years: number) {
+	const d = new Date(date);
+	const originalDay = d.getDate();
+
+	d.setDate(1);
+	d.setFullYear(d.getFullYear() - years);
+
+	const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+
+	d.setDate(Math.min(originalDay, lastDay));
+
+	return d;
+}
+
+function calculateLastChargedDate(nextBillingDate: Date, cycleInDays: number) {
+	if (cycleInDays === 30) {
+		return subtractMonthsSafe(nextBillingDate, 1);
+	}
+
+	if (cycleInDays === 365) {
+		return subtractYearsSafe(nextBillingDate, 1);
+	}
+
+	const prev = new Date(nextBillingDate);
+	prev.setDate(prev.getDate() - cycleInDays);
+	return prev;
+}
+
 export default function EditSubscriptionDialog({
 	subscription,
 	onSuccess,
@@ -41,8 +83,10 @@ export default function EditSubscriptionDialog({
 	const [price, setPrice] = useState(String(subscription.amount));
 	const [billingCycleDays, setBillingCycleDays] = useState(String(subscription.cycleInDays));
 	const [category, setCategory] = useState(subscription.category);
-	const derivedStartDate = new Date(subscription.nextBillingDate);
-	derivedStartDate.setDate(derivedStartDate.getDate() - subscription.cycleInDays);
+	const derivedStartDate = calculateLastChargedDate(
+		new Date(subscription.nextBillingDate),
+		subscription.cycleInDays
+	);
 
 	const [startDate, setStartDate] = useState<Date>(derivedStartDate);
 
@@ -73,11 +117,6 @@ export default function EditSubscriptionDialog({
 
 		try {
 			setLoading(true);
-
-			const cycleDays = Number(billingCycleDays);
-
-			const nextBillingDate = new Date(startDate);
-			nextBillingDate.setDate(nextBillingDate.getDate() + cycleDays);
 
 			await updateSubscription(subscription._id, {
 				category,
