@@ -1,6 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNotifications } from '@/context/NotificationContext';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import {
+	Card,
+	CardHeader,
+	CardTitle,
+	CardContent,
+	CardDescription,
+	CardFooter,
+} from '@/components/ui/card';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -232,8 +239,8 @@ export default function Subscription() {
 											</div>
 										</CardHeader>
 
-										<CardContent>
-											<div className="flex justify-between items-end">
+										<CardFooter>
+											<div className="flex w-full justify-between items-center">
 												<div className="font-semibold flex flex-col gap-2">
 													&#8377; {sub.amount}
 													{sub.status !== 'ACTIVE' && (
@@ -265,7 +272,7 @@ export default function Subscription() {
 													/>
 												</div>
 											</div>
-										</CardContent>
+										</CardFooter>
 									</Card>
 								);
 							})
