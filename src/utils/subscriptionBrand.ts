@@ -209,8 +209,13 @@ const brandsInCategory: Record<string, { name: string; src: string; alt: string 
 	CLOUD: [
 		{
 			name: 'google cloud',
-			src: `ttps://img.logo.dev/name/Google%20Cloud?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: `https://img.logo.dev/name/Google%20Cloud?token=${LOGO_API_KEY}&format=png&retina=true`,
 			alt: 'Google Cloud logo',
+		},
+		{
+			name: 'google play',
+			src: `https://img.logo.dev/google.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Google logo',
 		},
 		{
 			name: 'aws',

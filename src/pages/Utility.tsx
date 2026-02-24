@@ -1,7 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { apiRequest } from '@/api/client';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import {
+	Card,
+	CardHeader,
+	CardTitle,
+	CardDescription,
+	CardContent,
+	CardFooter,
+} from '@/components/ui/card';
 import { formatDate, formatTimeLocal, round } from '@/utils/format';
 import { getCurrentLocation } from '@/utils/location';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -58,8 +65,8 @@ interface NewsResponse {
 }
 
 interface QuoteResponse {
-	q: string;
-	a: string;
+	quote: string;
+	author: string;
 }
 
 export default function Utility() {
@@ -106,6 +113,7 @@ export default function Utility() {
 			const data = await apiRequest<QuoteResponse>('/api/utility/quote');
 			setQuote(data);
 		} catch (error) {
+			console.error(error);
 			setQuoteError(error instanceof Error ? error.message : 'Failed to load quote');
 		}
 	};
@@ -659,9 +667,8 @@ export default function Utility() {
 						<CardContent>
 							{quote ? (
 								<div className="text-center grid gap-4">
-									<p className="italic text-xl font-medium ">"{quote.q}" — </p>
-									<p className="text-[var(--omkraft-mint-700)] italic text-xl font-medium">
-										{quote.a}
+									<p className="italic text-xl font-medium ">
+										"{quote.quote}" —{' '}
 									</p>
 								</div>
 							) : (
@@ -687,6 +694,13 @@ export default function Utility() {
 								</>
 							)}
 						</CardContent>
+						<CardFooter className="flex justify-center">
+							{quote && (
+								<p className="text-[var(--omkraft-mint-700)] italic text-xl font-medium">
+									{quote.author}
+								</p>
+							)}
+						</CardFooter>
 					</Card>
 				</div>
 			</section>
