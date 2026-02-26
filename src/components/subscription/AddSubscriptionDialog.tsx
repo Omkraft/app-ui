@@ -32,7 +32,7 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 	const [name, setName] = useState('');
 	const [provider, setProvider] = useState('');
 	const [price, setPrice] = useState('');
-	const [billingCycleDays, setBillingCycleDays] = useState('30');
+	const [billingCycleDays, setBillingCycleDays] = useState('31');
 	const [category, setCategory] = useState('');
 	const [startDate, setStartDate] = useState<Date>();
 	const [error, setError] = useState<string | null>(null);
@@ -215,10 +215,19 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 
 									<SelectContent className="bg-[var(--omkraft-blue-700)] text-foreground">
 										<SelectItem value="28" className="focus:text-background">
-											28 days (Mobile)
+											28 calendar days (Mobile)
 										</SelectItem>
 										<SelectItem value="30" className="focus:text-background">
+											30 calendar days
+										</SelectItem>
+										<SelectItem value="31" className="focus:text-background">
 											Monthly
+										</SelectItem>
+										<SelectItem value="84" className="focus:text-background">
+											84 calendar days
+										</SelectItem>
+										<SelectItem value="90" className="focus:text-background">
+											Quarterly
 										</SelectItem>
 										<SelectItem value="365" className="focus:text-background">
 											Yearly

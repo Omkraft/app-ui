@@ -51,6 +51,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Link } from 'react-router-dom';
 import { getNext5Hours } from '@/utils/weatherHelpers';
+import { Avatar, AvatarImage } from '@/components/ui/avatar';
 
 interface NewsArticle {
 	title: string;
@@ -67,6 +68,8 @@ interface NewsResponse {
 interface QuoteResponse {
 	quote: string;
 	author: string;
+	authorImage: string | null;
+	authorImageThumb: string | null;
 }
 
 export default function Utility() {
@@ -248,7 +251,7 @@ export default function Utility() {
 														})}
 													</div>
 
-													<div>
+													<div className="text-center">
 														{(() => {
 															const Icon = getWeatherIcon(
 																hour.weather_code,
@@ -694,11 +697,27 @@ export default function Utility() {
 								</>
 							)}
 						</CardContent>
-						<CardFooter className="flex justify-center">
-							{quote && (
-								<p className="text-[var(--omkraft-mint-700)] italic text-xl font-medium">
-									{quote.author}
-								</p>
+						<CardFooter className="flex flex-col gap-2 justify-center">
+							{quote && Object.keys(quote).length !== 0 && (
+								<>
+									<p className="text-[var(--omkraft-mint-700)] italic text-xl font-medium">
+										{quote.author}
+									</p>
+
+									{(quote.authorImageThumb || quote.authorImage) && (
+										<Avatar className="h-12 w-12 border-2 p-0.5 border-background box-content">
+											<AvatarImage
+												className="rounded-full"
+												src={
+													quote.authorImageThumb ||
+													quote.authorImage ||
+													undefined
+												}
+												alt={quote.author}
+											/>
+										</Avatar>
+									)}
+								</>
 							)}
 						</CardFooter>
 					</Card>
