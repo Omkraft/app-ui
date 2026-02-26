@@ -211,11 +211,11 @@ export default function Subscription() {
 														<img
 															src={logo.src}
 															alt={logo.alt}
-															className="w-8 h-8 object-contain"
+															className="w-10 h-10 object-contain"
 														/>
 													) : (
 														logo.Icon && (
-															<logo.Icon className="w-6 h-6 text-primary" />
+															<logo.Icon className="w-8 h-8 text-primary" />
 														)
 													)}
 

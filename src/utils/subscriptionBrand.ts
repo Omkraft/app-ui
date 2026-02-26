@@ -180,6 +180,11 @@ const brandsInCategory: Record<string, { name: string; src: string; alt: string 
 	],
 	DTH: [
 		{
+			name: 'tata play binge',
+			src: `https://img.logo.dev/tataplaybinge.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			alt: 'Tata Play Binge logo',
+		},
+		{
 			name: 'tata play',
 			src: `https://img.logo.dev/tataplay.com?token=${LOGO_API_KEY}&format=png&retina=true`,
 			alt: 'Tata Play logo',
