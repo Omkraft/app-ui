@@ -20,8 +20,16 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
-  deploy:
+  release:
     needs: lint
+    permissions:
+      contents: write
+      pull-requests: read
+    uses: Omkraft/.github/.github/workflows/release.yml@main
+    secrets:
+      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+  deploy:
+    needs: release
     runs-on: ubuntu-latest
 
     steps:
@@ -45,12 +53,3 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: '--prod'
           working-directory: .
-
-  release:
-    needs: lint
-    permissions:
-      contents: write
-      pull-requests: read
-    uses: Omkraft/.github/.github/workflows/release.yml@main
-    secrets:
-      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
