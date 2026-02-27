@@ -1,4 +1,6 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
+import { isIosSafari } from '@/utils/isIos';
+import { omkraftToast } from '@/lib/toast';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Header } from './components/Header';
 import Loading from './components/Loading';
@@ -10,8 +12,10 @@ import Footer from './components/Footer';
 import Maintenance from './pages/Maintenance';
 import { PWAUpdateToast } from './components/pwa/PWAUpdateToast';
 import { ConnectionToast } from './components/pwa/ConnectionToast';
+import { isStandalone } from '@/utils/isStandalone';
 
 import './App.css';
+import { Save } from 'lucide-react';
 
 const Welcome = lazy(() => import('./pages/Welcome'));
 const Login = lazy(() => import('./pages/Login'));
@@ -23,6 +27,26 @@ const Utility = lazy(() => import('./pages/Utility'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 
 export default function App() {
+	useEffect(() => {
+		// Only for iOS Safari
+		if (!isIosSafari()) return;
+
+		// Do not show if already installed
+		if (isStandalone()) return;
+
+		// Do not show if already shown before
+		const lastShown = localStorage.getItem('omkraft-install-toast-shown');
+
+		if (lastShown && Date.now() - Number(lastShown) < 7 * 24 * 60 * 60 * 1000) return;
+
+		omkraftToast.info('Install Omkraft', {
+			description: 'Tap Share → Add to Home Screen',
+			icon: <Save size={18} strokeWidth={2.5} />,
+			duration: Infinity,
+		});
+
+		localStorage.setItem('omkraft-install-toast-shown', Date.now().toString());
+	}, []);
 	return (
 		<div className="flex flex-col">
 			<ConnectionToast />
