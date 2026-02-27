@@ -9,6 +9,17 @@ import { AuthProvider } from './context/auth/AuthContext';
 import { NotificationProvider } from '@/context/NotificationContext';
 import './index.scss'; // Tailwind
 import './styles/global.scss'; // Omkraft styles
+import { registerSW } from 'virtual:pwa-register';
+import { Toaster } from '@/components/ui/sonner';
+
+registerSW({
+	onNeedRefresh() {
+		console.log('New content available');
+	},
+	onOfflineReady() {
+		console.log('App ready to work offline');
+	},
+});
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
@@ -16,6 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 			<NotificationProvider>
 				<BrowserRouter>
 					<App />
+					<Toaster />
 				</BrowserRouter>
 			</NotificationProvider>
 		</AuthProvider>
