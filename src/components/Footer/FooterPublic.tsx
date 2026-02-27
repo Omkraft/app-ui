@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
+import { useVersion } from '@/hooks/useVersion';
 
 export function FooterPublic() {
+	const version = useVersion();
 	const year = new Date().getFullYear();
 	const logo = 'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-small.svg';
 
 	return (
 		<footer className="border-t border-border bg-background text-foreground">
-			<div className="app-container py-4 flex flex-col gap-2 lg:flex-row items-center lg:justify-between">
+			<div className="app-container py-4 flex flex-col gap-3 lg:flex-row items-center justify-around">
 				{/* Left */}
 				<img src={logo} alt="Omkraft Inc." className="footer__logo" />
 				<p className="text-sm text-muted-foreground">
@@ -37,6 +39,7 @@ export function FooterPublic() {
 						Sign up
 					</Link>
 				</div>
+				{version && <p className="text-xs text-muted-foreground">{version}</p>}
 			</div>
 		</footer>
 	);

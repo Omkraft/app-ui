@@ -152,7 +152,6 @@ export default function Utility() {
 	}, []);
 
 	useEffect(() => {
-		console.log('Build:', __APP_BUILD_TIME__);
 		fetchNews('india');
 		fetchQuote();
 		fetchOnThisDay();
