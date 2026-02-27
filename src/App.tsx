@@ -8,6 +8,10 @@ import PublicRoute from './routes/PublicRoute';
 import { isAuthenticated } from './utils/auth';
 import Footer from './components/Footer';
 import Maintenance from './pages/Maintenance';
+import { PWAUpdateToast } from './components/pwa/PWAUpdateToast';
+import { ConnectionToast } from './components/pwa/ConnectionToast';
+
+import './App.css';
 
 const Welcome = lazy(() => import('./pages/Welcome'));
 const Login = lazy(() => import('./pages/Login'));
@@ -21,6 +25,8 @@ const Subscription = lazy(() => import('./pages/Subscription'));
 export default function App() {
 	return (
 		<div className="flex flex-col">
+			<ConnectionToast />
+			<PWAUpdateToast />
 			<Header />
 
 			<div className="flex-1">

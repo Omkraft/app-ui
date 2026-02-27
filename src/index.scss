@@ -2,23 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========================= */
+/* Base */
+/* ========================= */
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
-@layer components {
-    .auth-container {
-    @apply min-h-screen flex items-center justify-center;
-    }
+/* ========================= */
+/* Layout Components */
+/* ========================= */
 
-    .auth-card {
+@layer components {
+  .auth-container {
+    @apply min-h-screen flex items-center justify-center;
+  }
+
+  .auth-card {
     @apply card w-full max-w-sm;
-    }
+  }
 }
 
 /* ========================= */
@@ -26,64 +35,141 @@
 /* ========================= */
 
 @layer components {
-    .btn-primary {
-    @apply inline-flex items-center justify-center
-        rounded-md
-        bg-primary
-        px-4 py-2
-        text-sm font-medium
-        text-primary-foreground
-        transition-colors
-        focus:outline-none
-        focus:ring-2 focus:ring-ring focus:ring-offset-2;
 
-        &:hover {
-            filter: brightness(0.92);
-        }
-    }
-
-    .btn-secondary {
+  .btn-base {
     @apply inline-flex items-center justify-center
-        rounded-md
-        border border-border
-        bg-background
-        px-4 py-2
-        text-sm font-medium
-        text-secondary-foreground
-        transition-colors
-        hover:bg-[var(--omkraft-navy-600)]
-        hover:text-secondary-foreground
-        focus:outline-none
-        focus:ring-2 focus:ring-ring focus:ring-offset-2;
-    }
+      rounded-md
+      px-4 py-2
+      text-sm font-medium
+      transition-colors
+      focus:outline-none
+      focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
 
-    .btn-accent {
-    @apply inline-flex items-center justify-center
-        rounded-md
-        border border-border
-        bg-accent
-        px-4 py-2
-        text-sm font-medium
-        text-accent-foreground
-        transition-colors
-        hover:bg-[var(--omkraft-mint-600)]
-        hover:text-foreground
-        focus:outline-none
-        focus:ring-2 focus:ring-ring focus:ring-offset-2;
-    }
+  .btn-primary {
+    @apply btn-base bg-primary text-primary-foreground;
 
-    .btn-destructive {
-    @apply inline-flex items-center justify-center
-        rounded-md
-        bg-destructive
-        px-4 py-2
-        text-sm font-medium
-        text-white
-        transition-colors
-        
-        &:hover {
-            filter: brightness(0.92);
-        }
+    &:hover {
+      filter: brightness(0.92);
     }
+  }
+
+  .btn-secondary {
+    @apply btn-base border border-border bg-background text-secondary-foreground;
+
+    &:hover {
+      background: var(--omkraft-navy-600);
+    }
+  }
+
+  .btn-accent {
+    @apply btn-base border border-border bg-accent text-accent-foreground;
+
+    &:hover {
+      background: var(--omkraft-mint-600);
+      color: var(--foreground);
+    }
+  }
+
+  .btn-destructive {
+    @apply btn-base bg-destructive text-white;
+
+    &:hover {
+      filter: brightness(0.92);
+    }
+  }
+
 }
 
+/* ========================= */
+/* Sonner — Omkraft Theme */
+/* ========================= */
+
+/* ---------- Base font sizing ---------- */
+
+[data-sonner-toast][data-styled=true] {
+  font-size: var(--font-body-size);
+}
+
+[data-sonner-toast][data-styled=true] [data-title],
+[data-sonner-toast][data-styled=true] [data-description],
+html [data-sonner-toast][data-styled=true] [data-button],
+html [data-sonner-toast][data-styled=true] [data-close-button] {
+  font-size: var(--font-body-size);
+}
+
+/* ---------- Button sizing ---------- */
+
+html [data-sonner-toast][data-styled=true] [data-button] {
+  height: auto;
+  padding: theme('spacing.2');
+}
+
+/* ---------- Theme variables ---------- */
+
+[data-sonner-toast] {
+  --normal-bg: var(--omkraft-blue-100);
+  --normal-text: var(--omkraft-blue-800);
+  --normal-border: var(--omkraft-blue-200);
+}
+
+[data-sonner-toast][data-type="success"] {
+  --normal-bg: var(--omkraft-mint-100);
+  --normal-text: var(--omkraft-mint-800);
+  --normal-border: var(--omkraft-mint-800);
+}
+
+[data-sonner-toast][data-type="error"] {
+  --normal-bg: var(--omkraft-red-100);
+  --normal-text: var(--omkraft-red-800);
+  --normal-border: var(--omkraft-red-800);
+}
+
+[data-sonner-toast][data-type="info"] {
+  --normal-bg: var(--omkraft-blue-100);
+  --normal-text: var(--omkraft-blue-800);
+  --normal-border: var(--omkraft-blue-800);
+}
+
+/* ---------- Description color ---------- */
+
+html [data-sonner-toast][data-styled=true] [data-description] {
+  color: var(--normal-text);
+}
+
+/* ---------- Close button color ---------- */
+
+html [data-sonner-toast][data-styled=true][data-type="info"] [data-close-button] {
+  color: var(--omkraft-blue-800);
+  border-color: var(--omkraft-blue-800);
+}
+
+html [data-sonner-toast][data-styled=true][data-type="success"] [data-close-button] {
+  color: var(--omkraft-mint-800);
+  border-color: var(--omkraft-mint-800);
+}
+
+html [data-sonner-toast][data-styled=true][data-type="error"] [data-close-button] {
+  color: var(--omkraft-red-800);
+  border-color: var(--omkraft-red-800);
+}
+
+/* ---------- Close button hover ---------- */
+
+html [data-sonner-toast][data-styled=true][data-type="info"]:hover [data-close-button]:hover {
+  background: var(--omkraft-blue-800);
+  border-color: var(--omkraft-blue-800);
+  color: var(--primary-foreground);
+}
+
+html [data-sonner-toast][data-styled=true][data-type="success"]:hover [data-close-button]:hover {
+  background: var(--omkraft-mint-800);
+  border-color: var(--omkraft-mint-800);
+  color: var(--foreground);
+}
+
+html [data-sonner-toast][data-styled=true][data-type="error"]:hover [data-close-button]:hover {
+  background: var(--omkraft-red-800);
+  border-color: var(--omkraft-red-800);
+  color: var(--destructive-foreground);
+}
