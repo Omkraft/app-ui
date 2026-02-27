@@ -15,6 +15,7 @@ export function FooterApp() {
 						A growing collection of thoughtfully crafted tools designed to simplify
 						everyday life. Built with care, experimentation, and community feedback.
 					</p>
+					<p className="text-xs text-muted-foreground">v{__APP_BUILD_TIME__}</p>
 				</div>
 
 				{/* Contact */}

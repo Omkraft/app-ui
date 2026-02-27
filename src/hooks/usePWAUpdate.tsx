@@ -6,19 +6,29 @@ export function usePWAUpdate() {
 
 	const [updateSW] = useState(() =>
 		registerSW({
-			immediate: true, // IMPORTANT FIX
+			immediate: true,
+
+			onRegisteredSW(swUrl) {
+				console.log('SW registered:', swUrl);
+			},
 
 			onNeedRefresh() {
+				console.log('New version detected');
+
 				setUpdateAvailable(true);
+			},
+
+			onOfflineReady() {
+				console.log('Offline ready');
 			},
 		})
 	);
 
-	// 🔥 Automatically check for updates every 60 seconds
+	// check every 30 seconds
 	useEffect(() => {
 		const interval = setInterval(() => {
 			updateSW(false);
-		}, 60 * 1000);
+		}, 30000);
 
 		return () => clearInterval(interval);
 	}, [updateSW]);
@@ -29,6 +39,7 @@ export function usePWAUpdate() {
 
 	return {
 		updateAvailable,
+
 		updateApp,
 	};
 }
