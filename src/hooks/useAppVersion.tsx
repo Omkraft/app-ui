@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { fetchLatestVersion } from '@/lib/version';
 import { getStoredVersion, setStoredVersion } from '@/lib/versionStore';
 import { omkraftToast } from '@/lib/toast';
-import { CircleArrowUp } from 'lucide-react';
 
 export function useAppVersion() {
 	useEffect(() => {
@@ -10,23 +9,23 @@ export function useAppVersion() {
 	}, []);
 
 	async function checkVersion() {
+		const storedVersion = getStoredVersion();
+
 		const latestVersion = await fetchLatestVersion();
 
 		if (!latestVersion) return;
 
-		const storedVersion = getStoredVersion();
-
+		// FIRST TIME INSTALL
 		if (!storedVersion) {
 			setStoredVersion(latestVersion);
 
 			return;
 		}
 
+		// VERSION UPDATED
 		if (storedVersion !== latestVersion) {
 			omkraftToast.success(`Updated to ${latestVersion}`, {
-				description: 'A new version of the app is now available.',
-				icon: <CircleArrowUp size={18} strokeWidth={2.5} />,
-				duration: 10000,
+				duration: 6000,
 			});
 
 			setStoredVersion(latestVersion);
