@@ -6,6 +6,8 @@ export function usePWAUpdate() {
 
 	const [updateSW] = useState(() =>
 		registerSW({
+			immediate: true, // IMPORTANT FIX
+
 			onNeedRefresh() {
 				setUpdateAvailable(true);
 			},
@@ -16,5 +18,8 @@ export function usePWAUpdate() {
 		updateSW(true);
 	};
 
-	return { updateAvailable, updateApp };
+	return {
+		updateAvailable,
+		updateApp,
+	};
 }
