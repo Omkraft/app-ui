@@ -1,4 +1,7 @@
+import { omkraftToast } from '@/lib/toast';
 import { apiRequest } from './client';
+import { addToSyncQueue } from '@/lib/syncQueue';
+import { Save } from 'lucide-react';
 
 export interface SubscriptionData {
 	category: string;
@@ -21,7 +24,19 @@ export interface Subscription {
 	category: string;
 }
 
-export function addSubscription(subscriptionData: SubscriptionData) {
+export async function addSubscription(subscriptionData: SubscriptionData) {
+	if (!navigator.onLine) {
+		await addToSyncQueue({
+			url: '/api/subscriptions',
+			method: 'POST',
+			body: subscriptionData,
+		});
+
+		omkraftToast.info('Saved offline. Will sync when online.', {
+			icon: <Save size={18} strokeWidth={2.5} />,
+		});
+		return;
+	}
 	return apiRequest('/api/subscription', {
 		method: 'POST',
 		body: JSON.stringify({

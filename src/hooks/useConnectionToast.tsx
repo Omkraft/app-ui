@@ -1,7 +1,9 @@
 import { omkraftToast } from '@/lib/toast';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
-import { RefreshCw, WifiOff } from 'lucide-react';
+import { WifiOff } from 'lucide-react';
+import { processSyncQueue } from '@/lib/processSyncQueue';
+import { retryFailedServices } from '@/lib/retryFailedServices';
 
 export function useConnectionToast() {
 	const offlineToastId = useRef<string | number | null>(null);
@@ -18,20 +20,15 @@ export function useConnectionToast() {
 			});
 		};
 
-		const handleOnline = () => {
-			// close offline toast if exists
+		const handleOnline = async () => {
 			if (offlineToastId.current) {
 				toast.dismiss(offlineToastId.current);
 
 				offlineToastId.current = null;
 			}
 
-			// show online toast
-			omkraftToast.success('Back online', {
-				description: 'Syncing your data...',
-				duration: 5000,
-				icon: <RefreshCw size={18} strokeWidth={2.5} className="animate-spin" />,
-			});
+			await processSyncQueue();
+			retryFailedServices();
 		};
 
 		window.addEventListener('offline', handleOffline);

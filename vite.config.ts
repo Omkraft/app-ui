@@ -11,11 +11,11 @@ export default defineConfig({
 		includeAssets: ['favicon.svg'],
 
 		manifest: {
-			name: 'Omkraft',
+			name: 'Omkraft Inc.',
 			short_name: 'Omkraft',
 			description: 'Systems, Crafted.',
-			theme_color: '#0b1c3d',
-			background_color: '#0b1c3d',
+			theme_color: '#041459',
+			background_color: '#041459',
 			display: 'standalone',
 			orientation: 'portrait',
 			scope: '/',

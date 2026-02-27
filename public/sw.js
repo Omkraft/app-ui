@@ -1,5 +1,7 @@
 /* global self */
 
+import { processSyncQueue } from '../src/lib/processSyncQueue';
+
 self.addEventListener('push', function (event) {
 	const data = event.data.json();
 
@@ -9,3 +11,14 @@ self.addEventListener('push', function (event) {
 		badge: '/badge.png',
 	});
 });
+
+self.addEventListener(
+	'sync',
+		event => {
+		if (event.tag === 'omkraft-sync') {
+			event.waitUntil(
+				processSyncQueue()
+			);
+		}
+	}
+);
