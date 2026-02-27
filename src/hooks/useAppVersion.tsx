@@ -5,12 +5,7 @@ import { CircleArrowUp } from 'lucide-react';
 
 export function useAppVersion() {
 	useEffect(() => {
-		// Delay execution slightly to allow SW update to complete
-		const timer = setTimeout(() => {
-			checkVersion();
-		}, 1500);
-
-		return () => clearTimeout(timer);
+		checkVersion();
 	}, []);
 
 	async function checkVersion() {
@@ -20,13 +15,11 @@ export function useAppVersion() {
 
 		const storedVersion = getStoredVersion();
 
-		// First install
 		if (!storedVersion) {
 			setStoredVersion(latestVersion);
 			return;
 		}
 
-		// Version changed → show toast
 		if (storedVersion !== latestVersion) {
 			omkraftToast.success(`Updated to ${latestVersion}`, {
 				description: 'A new version is available.',
