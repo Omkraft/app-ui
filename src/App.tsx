@@ -13,6 +13,7 @@ import Maintenance from './pages/Maintenance';
 import { PWAUpdateToast } from './components/pwa/PWAUpdateToast';
 import { ConnectionToast } from './components/pwa/ConnectionToast';
 import { isStandalone } from '@/utils/isStandalone';
+import { useAppVersion } from '@/hooks/useAppVersion';
 
 import './App.css';
 import { Save } from 'lucide-react';
@@ -27,6 +28,7 @@ const Utility = lazy(() => import('./pages/Utility'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 
 export default function App() {
+	useAppVersion();
 	useEffect(() => {
 		// Only for iOS Safari
 		if (!isIosSafari()) return;
@@ -52,7 +54,6 @@ export default function App() {
 			<ConnectionToast />
 			<PWAUpdateToast />
 			<Header />
-
 			<div className="flex-1">
 				<Suspense fallback={<Loading />}>
 					<Routes>
@@ -148,7 +149,6 @@ export default function App() {
 					</Routes>
 				</Suspense>
 			</div>
-
 			<Footer />
 		</div>
 	);

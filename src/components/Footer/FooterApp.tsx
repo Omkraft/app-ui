@@ -1,7 +1,9 @@
 import { useAuth } from '@/context/auth/AuthContext';
+import { useVersion } from '@/hooks/useVersion';
 
 export function FooterApp() {
 	const { user } = useAuth();
+	const version = useVersion();
 	const year = new Date().getFullYear();
 	const logo = 'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-small.svg';
 
@@ -15,7 +17,7 @@ export function FooterApp() {
 						A growing collection of thoughtfully crafted tools designed to simplify
 						everyday life. Built with care, experimentation, and community feedback.
 					</p>
-					<p className="text-xs text-muted-foreground">v{__APP_BUILD_TIME__}</p>
+					{version && <p className="text-xs text-muted-foreground">{version}</p>}
 				</div>
 
 				{/* Contact */}

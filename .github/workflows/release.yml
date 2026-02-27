@@ -47,7 +47,7 @@ jobs:
           working-directory: .
 
   release:
-    needs: deploy
+    needs: lint
     permissions:
       contents: write
       pull-requests: read
