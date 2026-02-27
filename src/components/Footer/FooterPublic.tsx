@@ -18,7 +18,7 @@ export function FooterPublic() {
 				{/* Left */}
 				<img src={logo} alt="Omkraft Inc." className="footer__logo" />
 				<p className="text-sm text-muted-foreground">
-					&copy; {year} <span className="font-bold">Omkraft</span> Inc.{' '}
+					&copy; {year} <span className="font-semibold">Omkraft</span> Inc.{' '}
 					<em>Systems, Crafted.</em>
 				</p>
 
