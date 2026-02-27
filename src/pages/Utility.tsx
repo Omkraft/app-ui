@@ -152,10 +152,15 @@ export default function Utility() {
 	}, []);
 
 	useEffect(() => {
-		fetchWeather();
 		fetchNews('india');
 		fetchQuote();
 		fetchOnThisDay();
+		fetchWeather();
+		const retryHandler = () => fetchWeather();
+		window.addEventListener('omkraft:retry-services', retryHandler);
+		return () => {
+			window.removeEventListener('omkraft:retry-services', retryHandler);
+		};
 	}, [fetchWeather, fetchNews]);
 
 	return (
