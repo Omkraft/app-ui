@@ -10,6 +10,7 @@ module.exports = [
 		ignores: [
 			'eslint.config.cjs',
 			'vite.config.ts',
+			'dev-dist/**',
 			'dist/**',
 			'node_modules/**',
 		],
