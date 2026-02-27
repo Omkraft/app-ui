@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { registerSW } from 'virtual:pwa-register';
 
 export function usePWAUpdate() {
@@ -13,6 +13,15 @@ export function usePWAUpdate() {
 			},
 		})
 	);
+
+	// 🔥 Automatically check for updates every 60 seconds
+	useEffect(() => {
+		const interval = setInterval(() => {
+			updateSW(false);
+		}, 60 * 1000);
+
+		return () => clearInterval(interval);
+	}, [updateSW]);
 
 	const updateApp = () => {
 		updateSW(true);
