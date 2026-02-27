@@ -1,9 +1,17 @@
 import { useAuth } from '@/context/auth/AuthContext';
-import { useVersion } from '@/hooks/useVersion';
+import { fetchLatestVersion } from '@/lib/version';
+import { useEffect, useState } from 'react';
 
 export function FooterApp() {
+	const [version, setVersion] = useState<string | null>(null);
+
+	useEffect(() => {
+		fetchLatestVersion().then((v) => {
+			if (v) setVersion(v);
+		});
+	}, []);
+
 	const { user } = useAuth();
-	const version = useVersion();
 	const year = new Date().getFullYear();
 	const logo = 'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-small.svg';
 

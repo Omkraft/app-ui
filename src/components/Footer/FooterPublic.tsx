@@ -1,8 +1,14 @@
+import { fetchLatestVersion } from '@/lib/version';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useVersion } from '@/hooks/useVersion';
 
 export function FooterPublic() {
-	const version = useVersion();
+	const [version, setVersion] = useState<string | null>(null);
+	useEffect(() => {
+		fetchLatestVersion().then((v) => {
+			if (v) setVersion(v);
+		});
+	}, []);
 	const year = new Date().getFullYear();
 	const logo = 'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-small.svg';
 
