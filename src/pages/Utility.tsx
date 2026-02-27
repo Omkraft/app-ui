@@ -34,6 +34,7 @@ import {
 	Quote,
 	CalendarClock,
 	Umbrella,
+	CircleUser,
 } from 'lucide-react';
 import { getWeatherTheme } from '@/utils/weatherTheme';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -704,7 +705,7 @@ export default function Utility() {
 										{quote.author}
 									</p>
 
-									{(quote.authorImageThumb || quote.authorImage) && (
+									{quote.authorImageThumb || quote.authorImage ? (
 										<Avatar className="h-12 w-12 border-2 p-0.5 border-background box-content">
 											<AvatarImage
 												className="rounded-full"
@@ -715,6 +716,10 @@ export default function Utility() {
 												}
 												alt={quote.author}
 											/>
+										</Avatar>
+									) : (
+										<Avatar className="h-12 w-12 border-2 p-0.5 box-content">
+											<CircleUser className="w-full h-full" />
 										</Avatar>
 									)}
 								</>
