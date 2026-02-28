@@ -17,7 +17,7 @@ export default function UpcomingRenewals({ data }: Props) {
 			<CardHeader>
 				<CardTitle>
 					<h3 className="text-2xl font-semibold flex flex-col lg:flex-row gap-2 items-start lg:items-center">
-						Upcoming Renewals<p className="text-xl">(30 Days)</p>
+						Upcoming Renewals<p className="text-xl">(Next 7 Days)</p>
 					</h3>
 				</CardTitle>
 			</CardHeader>
@@ -38,7 +38,7 @@ export default function UpcomingRenewals({ data }: Props) {
 						))}
 					</ul>
 				) : (
-					<div className="opacity-70">No active subscriptions</div>
+					<div className="text-muted-foreground">No upcoming renewals</div>
 				)}
 			</CardContent>
 		</Card>

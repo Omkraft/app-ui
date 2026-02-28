@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNotifications } from '@/context/NotificationContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -21,7 +22,7 @@ import {
 	type Subscription,
 } from '@/api/subscription';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon, CircleCheckBig } from 'lucide-react';
+import { AlertCircleIcon, CircleCheckBig, ChevronDown } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { resolveLogo } from '@/utils/subscriptionBrand';
 import { Button } from '@/components/ui/button';
@@ -40,6 +41,7 @@ export default function Subscription() {
 	const [analytics, setAnalytics] = useState<DashboardAnalytics | null>(null);
 	const [analyticsLoading, setAnalyticsLoading] = useState(false);
 	const [analyticsError, setAnalyticsError] = useState<string | null>(null);
+	const [analyticsOpen, setAnalyticsOpen] = useState(window.innerWidth >= 1024);
 	const { refreshNotifications } = useNotifications();
 
 	useEffect(() => {
@@ -141,17 +143,67 @@ export default function Subscription() {
 								totalMonthly={analytics.totalMonthly}
 								yearlyProjection={analytics.yearlyProjection}
 							/>
-
-							{/* Charts */}
-							<CategoryDonutChart data={analytics.categoryBreakdown} />
-
-							<MonthlyTrendChart data={analytics.monthlyTrend} />
 						</div>
 						<div>
 							{/* Upcoming Renewals */}
-
 							<UpcomingRenewals data={analytics.upcomingRenewals} />
 						</div>
+						<Collapsible
+							open={analyticsOpen}
+							onOpenChange={setAnalyticsOpen}
+							className="w-full text-foreground"
+						>
+							{/* Trigger */}
+
+							<CollapsibleTrigger asChild>
+								<button
+									className="
+										w-full
+										flex
+										items-center
+										justify-between
+										bg-card
+										border
+										border-border
+										rounded-xl
+										p-4
+										text-left
+										hover:bg-muted/50
+										transition-colors
+									"
+								>
+									<div className="flex flex-col gap-6">
+										<h3 className="text-2xl font-semibold">
+											Spending Insights
+										</h3>
+
+										<span className="text-muted-foreground">
+											See trends, projections, and category breakdown
+										</span>
+									</div>
+
+									<ChevronDown
+										className={`
+											size-5
+											text-muted-foreground
+											transition-transform
+											duration-200
+											${analyticsOpen ? 'rotate-180' : ''}
+										`}
+									/>
+								</button>
+							</CollapsibleTrigger>
+
+							{/* Content */}
+
+							<CollapsibleContent className="mt-2 border-t border-foreground pt-4">
+								<div className="grid lg:grid-cols-2 gap-6 min-w-0">
+									<CategoryDonutChart data={analytics.categoryBreakdown} />
+
+									<MonthlyTrendChart data={analytics.monthlyTrend} />
+								</div>
+							</CollapsibleContent>
+						</Collapsible>
 					</div>
 				</section>
 			)}
