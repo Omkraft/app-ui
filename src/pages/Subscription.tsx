@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNotifications } from '@/context/NotificationContext';
-import {
-	Card,
-	CardHeader,
-	CardTitle,
-	CardContent,
-	CardDescription,
-	CardFooter,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -33,14 +26,25 @@ import { Spinner } from '@/components/ui/spinner';
 import { resolveLogo } from '@/utils/subscriptionBrand';
 import { Button } from '@/components/ui/button';
 
+import { getDashboardAnalytics, type DashboardAnalytics } from '@/api/analytics';
+
+import CategoryDonutChart from '@/components/analytics/CategoryDonutChart';
+import MonthlyTrendChart from '@/components/analytics/MonthlyTrendChart';
+import AnalyticsKpis from '@/components/analytics/AnalyticsKpis';
+import UpcomingRenewals from '@/components/analytics/UpcomingRenewals';
+
 export default function Subscription() {
 	const [subs, setSubs] = useState<Subscription[] | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [subsError, setSubsError] = useState<string | null>(null);
+	const [analytics, setAnalytics] = useState<DashboardAnalytics | null>(null);
+	const [analyticsLoading, setAnalyticsLoading] = useState(false);
+	const [analyticsError, setAnalyticsError] = useState<string | null>(null);
 	const { refreshNotifications } = useNotifications();
 
 	useEffect(() => {
 		fetchSubscriptions();
+		fetchAnalytics();
 	}, []);
 
 	async function fetchSubscriptions() {
@@ -59,29 +63,20 @@ export default function Subscription() {
 		}
 	}
 
-	function getMonthlyEquivalent(subscription: Subscription) {
-		const amount = subscription.amount;
-		const billingDays = Number(subscription.cycleInDays);
+	async function fetchAnalytics() {
+		setAnalytics(null);
+		try {
+			setAnalyticsLoading(true);
+			const data = await getDashboardAnalytics();
 
-		if (!billingDays || billingDays <= 0) return amount;
-
-		if (billingDays === 30) return amount;
-
-		return (amount * 365) / billingDays / 12;
+			setAnalytics(data);
+		} catch (err) {
+			setAnalyticsError(err instanceof Error ? err.message : 'Failed to get analytics');
+			console.error('Analytics fetch failed:', err);
+		} finally {
+			setAnalyticsLoading(false);
+		}
 	}
-
-	const totalMonthly =
-		subs?.reduce((sum, s) => {
-			if (s.status !== 'ACTIVE') return sum;
-			return sum + getMonthlyEquivalent(s);
-		}, 0) ?? 0;
-	const totalMonthlyRounded = Math.round(totalMonthly * 100) / 100;
-
-	const nextRenewal = subs
-		?.filter((s) => s.status === 'ACTIVE')
-		.sort(
-			(a, b) => new Date(a.nextBillingDate).getTime() - new Date(b.nextBillingDate).getTime()
-		)[0];
 
 	return (
 		<main className="min-h-[calc(100vh-178px)] bg-[var(--omkraft-blue-200)]">
@@ -120,55 +115,59 @@ export default function Subscription() {
 							Track all your prepaid plans and subscriptions
 						</p>
 						{!loading && !subsError && (
-							<AddSubscriptionDialog onSuccess={fetchSubscriptions} />
+							<AddSubscriptionDialog
+								onSuccess={() => {
+									fetchSubscriptions();
+									fetchAnalytics();
+								}}
+							/>
 						)}
 					</header>
 				</div>
 			</section>
-			{!subsError && !loading && (
-				<section className="flex items-center py-6 bg-accent">
+			{/* ========================= */}
+			{/* Analytics Charts */}
+			{/* ========================= */}
+
+			{analytics && !analyticsLoading && !analyticsError && (
+				<section className="flex items-center py-6 bg-accent text-accent-foreground">
 					<div className="app-container grid gap-6 items-center">
 						<h2 className="text-3xl font-semibold">Summary</h2>
-						{/* Summary cards */}
-						<div className="grid lg:grid-cols-2 gap-6">
-							<Card className="border-foreground">
-								<CardHeader>
-									<CardTitle>
-										<h3 className="text-2xl font-semibold">
-											Total Monthly Spend
-										</h3>
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<div className="text-xl font-semibold text-accent">
-										&#8377; {totalMonthlyRounded.toFixed(2)}
-									</div>
-								</CardContent>
-							</Card>
 
-							<Card className="border-foreground">
-								<CardHeader>
-									<CardTitle>
-										<h3 className="text-2xl font-semibold">Next Renewal</h3>
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									{nextRenewal ? (
-										<div className="flex flex-col gap-2">
-											<div className="text-xl">{nextRenewal.name}</div>
-											<div className="text-lg text-accent font-medium">
-												&#8377; {nextRenewal.amount}
-											</div>
-											<div className="text-sm text-muted-foreground">
-												{formatDate(nextRenewal.nextBillingDate)}
-											</div>
-										</div>
-									) : (
-										<div className="opacity-70">No active subscriptions</div>
-									)}
-								</CardContent>
-							</Card>
+						<div className="grid lg:grid-cols-2 gap-6 min-w-0">
+							{/* KPI Cards */}
+
+							<AnalyticsKpis
+								totalMonthly={analytics.totalMonthly}
+								yearlyProjection={analytics.yearlyProjection}
+							/>
+
+							{/* Charts */}
+							<CategoryDonutChart data={analytics.categoryBreakdown} />
+
+							<MonthlyTrendChart data={analytics.monthlyTrend} />
 						</div>
+						<div>
+							{/* Upcoming Renewals */}
+
+							<UpcomingRenewals data={analytics.upcomingRenewals} />
+						</div>
+					</div>
+				</section>
+			)}
+			{analyticsError && (
+				<section className="flex items-center py-6 bg-accent text-accent-foreground">
+					<div className="app-container grid gap-6 items-center">
+						<h2 className="text-3xl font-semibold">Summary</h2>
+						<Alert variant="destructive" className="flex flex-col gap-2">
+							<AlertTitle className="flex gap-2 items-center">
+								<AlertCircleIcon />
+								Error while fetching analytics
+							</AlertTitle>
+							<AlertDescription className="text-sm">
+								{analyticsError}
+							</AlertDescription>
+						</Alert>
 					</div>
 				</section>
 			)}
@@ -250,6 +249,7 @@ export default function Subscription() {
 																	sub._id
 																);
 																await fetchSubscriptions();
+																await fetchAnalytics();
 																await refreshNotifications();
 															}}
 															className="btn-primary flex gap-2"
@@ -263,12 +263,18 @@ export default function Subscription() {
 												<div className="flex gap-2">
 													<EditSubscriptionDialog
 														subscription={sub}
-														onSuccess={fetchSubscriptions}
+														onSuccess={() => {
+															fetchSubscriptions();
+															fetchAnalytics();
+														}}
 													/>
 
 													<DeleteSubscriptionDialog
 														id={sub._id}
-														onSuccess={fetchSubscriptions}
+														onSuccess={() => {
+															fetchSubscriptions();
+															fetchAnalytics();
+														}}
 													/>
 												</div>
 											</div>
