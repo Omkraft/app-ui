@@ -21,13 +21,13 @@ export default function CategoryDonutChart({ data }: Props) {
 		<Card className="border-foreground min-w-0">
 			<CardHeader>
 				<CardTitle>
-					<h3 className="text-2xl font-semibold">Spending by Category</h3>
+					<h4 className="text-xl font-semibold">Spending by Category</h4>
 				</CardTitle>
 			</CardHeader>
 
-			<CardContent className="flex items-center justify-center">
-				<ChartContainer config={{}} className="w-full min-w-0 min-h-[320px]">
-					<ResponsiveContainer width="100%" height="100%">
+			<CardContent className="p-4 sm:p-6">
+				<ChartContainer config={{}} className="w-full min-w-0 h-[320px]">
+					<ResponsiveContainer width="100%" height={320}>
 						<PieChart>
 							<Pie
 								data={data}

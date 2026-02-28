@@ -10,28 +10,31 @@ export function PWAUpdateToast() {
 	useEffect(() => {
 		if (!updateAvailable) return;
 
-		handleUpdate();
-	}, [updateAvailable]);
+		let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-	async function handleUpdate() {
-		const newVersion = await checkAndUpdateVersion();
+		(async () => {
+			const newVersion = await checkAndUpdateVersion();
+			const versionText = newVersion ? `Update available ${newVersion}` : 'Update available';
 
-		const versionText = newVersion ? `Update available ${newVersion}` : 'Update available';
+			omkraftToast.success(versionText, {
+				description: 'Please wait while we update the app to the latest version.',
+				icon: <CircleArrowUp size={18} strokeWidth={2.5} />,
+				duration: 10000,
+				action: {
+					label: 'Refresh now',
+					onClick: applyUpdate,
+				},
+			});
 
-		omkraftToast.success(versionText, {
-			description: 'Please wait while we update the app to the latest version.',
-			icon: <CircleArrowUp size={18} strokeWidth={2.5} />,
-			duration: 10000,
-			action: {
-				label: 'Refresh now',
-				onClick: applyUpdate,
-			},
-		});
+			timeoutId = setTimeout(() => {
+				applyUpdate();
+			}, 10000);
+		})();
 
-		setTimeout(() => {
-			applyUpdate();
-		}, 10000);
-	}
+		return () => {
+			if (timeoutId) clearTimeout(timeoutId);
+		};
+	}, [updateAvailable, applyUpdate]);
 
 	return null;
 }

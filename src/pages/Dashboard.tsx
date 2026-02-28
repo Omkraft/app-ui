@@ -48,28 +48,44 @@ export default function Dashboard() {
 								<br />
 								<span className="text-[var(--omkraft-mint-900)]">Utility Hub</span>
 							</h2>
-							<p className="text-accent-foreground">
-								Daily essentials, in one calm place.
-							</p>
+							{/* Mobile copy */}
+							<div className="lg:hidden space-y-3">
+								<p className="text-accent-foreground">
+									Daily essentials, in one calm place.
+								</p>
 
-							<p>
-								The Personal Utility Hub is designed to reduce daily friction.
-								Instead of jumping between multiple apps for small but important
-								tasks, this space brings everything together in a clean,
-								distraction-free experience.
-							</p>
+								<p>
+									Check the weather, stay updated with essential news, and see
+									what matters today — without clutter or distractions.
+								</p>
+							</div>
 
-							<p>
-								Check the weather before stepping out. Stay informed with essential
-								news. Glance at what matters today — without noise, ads, or clutter.
-							</p>
+							{/* Desktop copy */}
+							<div className="hidden lg:block space-y-4">
+								<p className="text-accent-foreground">
+									Daily essentials, in one calm place.
+								</p>
 
-							<p>
-								This is your lightweight, always-ready dashboard for everyday
-								awareness.
-							</p>
+								<p>
+									The Personal Utility Hub is designed to reduce daily friction.
+									Instead of jumping between multiple apps for small but important
+									tasks, this space brings everything together in a clean,
+									distraction-free experience.
+								</p>
 
-							<ul className="list-disc pl-5 space-y-2 text-accent-foreground">
+								<p>
+									Check the weather before stepping out. Stay informed with
+									essential news. Glance at what matters today — without noise,
+									ads, or clutter.
+								</p>
+
+								<p>
+									This is your lightweight, always-ready dashboard for everyday
+									awareness.
+								</p>
+							</div>
+
+							<ul className="list-disc pl-5 space-y-2 text-accent-foreground hidden lg:block">
 								<li>Local weather & conditions</li>
 								<li>Essential news (curated, not overwhelming)</li>
 								<li>Quick daily insights at a glance</li>
@@ -109,28 +125,41 @@ export default function Dashboard() {
 							/>
 						</div>
 						{/* Text */}
-						<div className="space-y-4 lg:text-right lg:justify-items-end">
+						<div className="space-y-4">
 							<h2 className="text-3xl">
 								Subscription
 								<br />
 								<span className="text-[var(--omkraft-bg)]">Tracker</span>
 							</h2>
-							<p>Know what you're paying for — always.</p>
+							{/* Mobile copy */}
+							<div className="lg:hidden space-y-3">
+								<p>Know what you're paying for — always.</p>
 
-							<p>
-								Subscriptions are easy to start — and easy to forget. Over time,
-								small recurring charges quietly add up.
-							</p>
+								<p>
+									Track subscriptions, monitor monthly costs, and get renewal
+									reminders before you’re charged.
+								</p>
+							</div>
 
-							<p>
-								Subscription Tracker gives you a clear view of every service you're
-								paying for, how often you’re billed, and what it actually costs you
-								over time.
-							</p>
+							{/* Desktop copy */}
+							<div className="hidden lg:block space-y-4">
+								<p>Know what you're paying for — always.</p>
 
-							<p>No spreadsheets. No guesswork. Just clarity and control.</p>
+								<p>
+									Subscriptions are easy to start — and easy to forget. Over time,
+									small recurring charges quietly add up.
+								</p>
 
-							<ul className="list-disc pl-5 space-y-2 lg:justify-items-start">
+								<p>
+									Subscription Tracker gives you a clear view of every service
+									you're paying for, how often you’re billed, and what it actually
+									costs you over time.
+								</p>
+
+								<p>No spreadsheets. No guesswork. Just clarity and control.</p>
+							</div>
+
+							<ul className="list-disc pl-5 space-y-2 lg:justify-items-start hidden lg:block">
 								<li>Track all active subscriptions</li>
 								<li>Monthly and yearly cost breakdown</li>
 								<li>Renewal reminders before you're charged</li>
