@@ -74,6 +74,7 @@ interface QuoteResponse {
 }
 
 export default function Utility() {
+	const weatherAccordionItems = ['forecast', 'metrix', 'sunriseset'];
 	const [weather, setWeather] = useState<WeatherData | null>(null);
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
 	const [quoteError, setQuoteError] = useState<string | null>(null);
@@ -84,6 +85,9 @@ export default function Utility() {
 	const [visibleCount, setVisibleCount] = useState(10);
 	const [onThisDay, setOnThisDay] = useState<OnThisDayResponse | null>(null);
 	const [onThisDayError, setOnThisDayError] = useState<string | null>(null);
+	const [weatherDefaultOpenItems] = useState<string[]>(
+		window.innerWidth >= 1024 ? weatherAccordionItems : []
+	);
 
 	const newsSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -282,6 +286,7 @@ export default function Utility() {
 
 							<Accordion
 								type="multiple"
+								defaultValue={weatherDefaultOpenItems}
 								className={`rounded-xl border border-foreground${(!weather.current.weather_code || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? ' bg-[var(--omkraft-blue-700)]' : ' bg-muted'}`}
 							>
 								<AccordionItem

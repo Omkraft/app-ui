@@ -1,14 +1,8 @@
-import { fetchLatestVersion } from '@/lib/version';
-import { useEffect, useState } from 'react';
+import { getBuildVersionLabel } from '@/lib/version';
 import { Link } from 'react-router-dom';
 
 export function FooterPublic() {
-	const [version, setVersion] = useState<string | null>(null);
-	useEffect(() => {
-		fetchLatestVersion().then((v) => {
-			if (v) setVersion(v);
-		});
-	}, []);
+	const version = getBuildVersionLabel();
 	const year = new Date().getFullYear();
 	const logo = 'https://raw.githubusercontent.com/Omkraft/.github/main/brand/logo-small.svg';
 
@@ -45,7 +39,7 @@ export function FooterPublic() {
 						Sign up
 					</Link>
 				</div>
-				{version && <p className="text-xs text-muted-foreground">{version}</p>}
+				<p className="text-xs text-muted-foreground">{version}</p>
 			</div>
 		</footer>
 	);

@@ -1,15 +1,8 @@
 import { useAuth } from '@/context/auth/AuthContext';
-import { fetchLatestVersion } from '@/lib/version';
-import { useEffect, useState } from 'react';
+import { getBuildVersionLabel } from '@/lib/version';
 
 export function FooterApp() {
-	const [version, setVersion] = useState<string | null>(null);
-
-	useEffect(() => {
-		fetchLatestVersion().then((v) => {
-			if (v) setVersion(v);
-		});
-	}, []);
+	const version = getBuildVersionLabel();
 
 	const { user } = useAuth();
 	const year = new Date().getFullYear();
@@ -25,7 +18,7 @@ export function FooterApp() {
 						A growing collection of thoughtfully crafted tools designed to simplify
 						everyday life. Built with care, experimentation, and community feedback.
 					</p>
-					{version && <p className="text-xs text-muted-foreground">{version}</p>}
+					<p className="text-xs text-muted-foreground">{version}</p>
 				</div>
 
 				{/* Contact */}
