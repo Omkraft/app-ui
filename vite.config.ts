@@ -3,17 +3,31 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
 
+function resolveAppVersion(): string {
+	const releaseVersion = process.env.APP_RELEASE_VERSION?.trim();
+	if (releaseVersion) return releaseVersion;
+
+	const commitSha = process.env.VERCEL_GIT_COMMIT_SHA || process.env.GITHUB_SHA;
+	if (commitSha) return commitSha.slice(0, 12);
+
+	const pkgVersion = process.env.npm_package_version;
+	if (pkgVersion) return `v${pkgVersion}`;
+
+	return 'dev';
+}
+
+const appVersion = resolveAppVersion();
+
 export default defineConfig({
+	define: {
+		'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion),
+	},
 	plugins: [
 		react(),
 		VitePWA({
 			registerType: 'prompt',
 			injectRegister: 'auto',
-			includeAssets: [
-				'favicon.svg',
-				'icons/pwa-192.png',
-				'icons/pwa-512.png',
-			],
+			includeAssets: ['favicon.svg', 'icons/pwa-192.png', 'icons/pwa-512.png'],
 			manifest: {
 				name: 'Omkraft Inc.',
 				short_name: 'Omkraft',
@@ -43,7 +57,6 @@ export default defineConfig({
 					},
 				],
 			},
-
 			workbox: {
 				clientsClaim: false,
 				skipWaiting: false,
@@ -51,16 +64,14 @@ export default defineConfig({
 				navigateFallback: '/index.html',
 				runtimeCaching: [
 					{
-						urlPattern:
-							/^https:\/\/app-api\.fly\.dev\/api\/.*/i,
+						urlPattern: /^https:\/\/app-api\.fly\.dev\/api\/.*/i,
 						handler: 'NetworkFirst',
 						options: {
 							cacheName: 'omkraft-api-cache',
 							networkTimeoutSeconds: 10,
 							expiration: {
 								maxEntries: 50,
-								maxAgeSeconds:
-									60 * 60 * 24,
+								maxAgeSeconds: 60 * 60 * 24,
 							},
 							cacheableResponse: {
 								statuses: [0, 200],
@@ -68,27 +79,21 @@ export default defineConfig({
 							backgroundSync: {
 								name: 'omkraft-api-sync',
 								options: {
-									maxRetentionTime:
-										24 * 60,
+									maxRetentionTime: 24 * 60,
 								},
 							},
 						},
 					},
 				],
 			},
-
 			devOptions: {
 				enabled: true,
 			},
 		}),
 	],
-
 	resolve: {
 		alias: {
-			'@': path.resolve(
-				__dirname,
-				'./src'
-			),
+			'@': path.resolve(__dirname, './src'),
 		},
 	},
 });
