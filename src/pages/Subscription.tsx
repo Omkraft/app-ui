@@ -162,11 +162,12 @@ export default function Subscription() {
 										flex
 										items-center
 										justify-between
-										bg-card
+										bg-background
 										border
-										border-border
+										border-foreground
 										rounded-xl
-										p-4
+										p-6
+										gap-2
 										text-left
 										hover:bg-muted/50
 										transition-colors
@@ -184,8 +185,7 @@ export default function Subscription() {
 
 									<ChevronDown
 										className={`
-											size-5
-											text-muted-foreground
+											size-6
 											transition-transform
 											duration-200
 											${analyticsOpen ? 'rotate-180' : ''}
@@ -196,7 +196,7 @@ export default function Subscription() {
 
 							{/* Content */}
 
-							<CollapsibleContent className="mt-2 border-t border-foreground pt-4">
+							<CollapsibleContent className="mt-2 border-t border-accent-foreground pt-4">
 								<div className="grid lg:grid-cols-2 gap-6 min-w-0">
 									<CategoryDonutChart data={analytics.categoryBreakdown} />
 

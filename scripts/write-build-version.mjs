@@ -10,7 +10,7 @@ function resolveAppVersion() {
 	if (commitSha) return commitSha.slice(0, 12);
 
 	const pkgVersion = process.env.npm_package_version;
-	if (pkgVersion) return `v${pkgVersion}`;
+	if (pkgVersion && pkgVersion !== '0.0.0') return `v${pkgVersion}`;
 
 	return 'dev';
 }

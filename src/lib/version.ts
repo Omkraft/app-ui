@@ -8,6 +8,11 @@ export function getCurrentBuildVersion(): string {
 	return import.meta.env.VITE_APP_VERSION || 'dev';
 }
 
+export function getBuildVersionLabel(): string {
+	const version = getCurrentBuildVersion();
+	return version === 'dev' ? 'Version: dev' : version;
+}
+
 export async function fetchLatestVersion(): Promise<string | null> {
 	try {
 		const res = await fetch(`${VERSION_ENDPOINT}?t=${Date.now()}`, {
