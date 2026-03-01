@@ -1,31 +1,29 @@
-const STORAGE_KEY = 'omkraft-app-version';
+const VERSION_ENDPOINT = '/version.json';
+
+interface VersionPayload {
+	version?: string;
+}
+
+export function getCurrentBuildVersion(): string {
+	return import.meta.env.VITE_APP_VERSION || 'dev';
+}
 
 export async function fetchLatestVersion(): Promise<string | null> {
 	try {
-		const res = await fetch(
-			`https://api.github.com/repos/Omkraft/app-ui/releases/latest?t=${Date.now()}`,
-			{
-				cache: 'no-store',
-				headers: {
-					Accept: 'application/vnd.github+json',
-				},
-			}
-		);
+		const res = await fetch(`${VERSION_ENDPOINT}?t=${Date.now()}`, {
+			cache: 'no-store',
+			headers: {
+				Accept: 'application/json',
+			},
+		});
 
 		if (!res.ok) return null;
 
-		const data = await res.json();
+		const data = (await res.json()) as VersionPayload;
+		if (!data.version || typeof data.version !== 'string') return null;
 
-		return data.tag_name ?? null;
+		return data.version;
 	} catch {
 		return null;
 	}
-}
-
-export function getStoredVersion(): string | null {
-	return localStorage.getItem(STORAGE_KEY);
-}
-
-export function setStoredVersion(version: string): void {
-	localStorage.setItem(STORAGE_KEY, version);
 }

@@ -1,21 +1,11 @@
-import { fetchLatestVersion, getStoredVersion, setStoredVersion } from '@/lib/version';
+import { fetchLatestVersion, getCurrentBuildVersion } from '@/lib/version';
 
-export async function checkAndUpdateVersion(): Promise<string | null> {
+export async function getAvailableUpdateVersion(): Promise<string | null> {
 	const latestVersion = await fetchLatestVersion();
-
 	if (!latestVersion) return null;
 
-	const storedVersion = getStoredVersion();
+	const currentVersion = getCurrentBuildVersion();
+	if (latestVersion === currentVersion) return null;
 
-	if (!storedVersion) {
-		setStoredVersion(latestVersion);
-		return null;
-	}
-
-	if (storedVersion !== latestVersion) {
-		setStoredVersion(latestVersion);
-		return latestVersion;
-	}
-
-	return null;
+	return latestVersion;
 }

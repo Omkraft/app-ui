@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { usePWAUpdate } from '@/hooks/usePWAUpdate';
-import { checkAndUpdateVersion } from '@/hooks/useAppVersion';
+import { getAvailableUpdateVersion } from '@/hooks/useAppVersion';
 import { omkraftToast } from '@/lib/toast';
 import { CircleArrowUp } from 'lucide-react';
 
@@ -13,7 +13,7 @@ export function PWAUpdateToast() {
 		let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
 		(async () => {
-			const newVersion = await checkAndUpdateVersion();
+			const newVersion = await getAvailableUpdateVersion();
 			const versionText = newVersion ? `Update available ${newVersion}` : 'Update available';
 
 			omkraftToast.success(versionText, {

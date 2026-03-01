@@ -34,11 +34,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
+      - name: Resolve release tag for this commit
+        id: release_tag
+        shell: bash
+        run: |
+          tag="$(git tag --points-at "$GITHUB_SHA" | sort -V | tail -n 1)"
+          if [ -n "$tag" ]; then
+            echo "APP_RELEASE_VERSION=$tag" >> "$GITHUB_ENV"
+            echo "value=$tag" >> "$GITHUB_OUTPUT"
+            echo "Using release tag: $tag"
+          else
+            echo "No release tag found on commit $GITHUB_SHA. Build will use fallback version."
+          fi
 
       - run: npm ci
       - run: npm run build
