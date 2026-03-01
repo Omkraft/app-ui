@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { isIosSafari } from '@/utils/isIos';
 import { omkraftToast } from '@/lib/toast';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Header } from './components/Header';
 import Loading from './components/Loading';
 
@@ -26,6 +26,20 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Utility = lazy(() => import('./pages/Utility'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 
+function ScrollToTopOnRouteChange() {
+	const { pathname } = useLocation();
+
+	useEffect(() => {
+		window.scrollTo({
+			top: 0,
+			left: 0,
+			behavior: 'auto',
+		});
+	}, [pathname]);
+
+	return null;
+}
+
 export default function App() {
 	useEffect(() => {
 		// Only for iOS Safari
@@ -49,6 +63,7 @@ export default function App() {
 	}, []);
 	return (
 		<div className="flex flex-col">
+			<ScrollToTopOnRouteChange />
 			<ConnectionToast />
 			<PWAUpdateToast />
 			<Header />
