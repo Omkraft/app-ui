@@ -61,6 +61,7 @@ export default defineConfig({
 				clientsClaim: false,
 				skipWaiting: false,
 				cleanupOutdatedCaches: true,
+				importScripts: ['sw-push.js'],
 				navigateFallback: '/index.html',
 				runtimeCaching: [
 					{

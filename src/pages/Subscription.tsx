@@ -43,6 +43,7 @@ export default function Subscription() {
 	const [analyticsError, setAnalyticsError] = useState<string | null>(null);
 	const [analyticsOpen, setAnalyticsOpen] = useState(window.innerWidth >= 1024);
 	const { refreshNotifications } = useNotifications();
+	const hasSubscriptions = Boolean(subs?.length);
 
 	useEffect(() => {
 		fetchSubscriptions();
@@ -131,7 +132,7 @@ export default function Subscription() {
 			{/* Analytics Charts */}
 			{/* ========================= */}
 
-			{analytics && !analyticsLoading && !analyticsError && (
+			{hasSubscriptions && analytics && !analyticsLoading && !analyticsError && (
 				<section className="flex items-center py-6 bg-accent text-accent-foreground">
 					<div className="app-container grid gap-6 items-center">
 						<h2 className="text-3xl font-semibold">Summary</h2>
@@ -169,7 +170,7 @@ export default function Subscription() {
 										p-6
 										gap-2
 										text-left
-										hover:bg-muted/50
+										hover:bg-[var(--omkraft-navy-600)]
 										transition-colors
 									"
 								>
@@ -207,7 +208,7 @@ export default function Subscription() {
 					</div>
 				</section>
 			)}
-			{analyticsError && (
+			{hasSubscriptions && analyticsError && (
 				<section className="flex items-center py-6 bg-accent text-accent-foreground">
 					<div className="app-container grid gap-6 items-center">
 						<h2 className="text-3xl font-semibold">Summary</h2>
