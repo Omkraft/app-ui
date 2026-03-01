@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { usePWAUpdate } from '@/hooks/usePWAUpdate';
 import { getAvailableUpdateVersion } from '@/hooks/useAppVersion';
 import { omkraftToast } from '@/lib/toast';
-import { CircleArrowUp } from 'lucide-react';
+import { Rocket } from 'lucide-react';
 
 export function PWAUpdateToast() {
 	const { updateAvailable, applyUpdate } = usePWAUpdate();
@@ -18,10 +18,10 @@ export function PWAUpdateToast() {
 
 			omkraftToast.success(versionText, {
 				description: 'Please wait while we update the app to the latest version.',
-				icon: <CircleArrowUp size={18} strokeWidth={2.5} />,
+				icon: <Rocket size={18} strokeWidth={2.5} className="pwa-update-icon-attention" />,
 				duration: 10000,
 				action: {
-					label: 'Refresh now',
+					label: 'Refresh',
 					onClick: applyUpdate,
 				},
 			});
