@@ -47,13 +47,13 @@ jobs:
         shell: bash
         run: |
           tag="$(git tag --points-at "$GITHUB_SHA" | sort -V | tail -n 1)"
-          if [ -n "$tag" ]; then
-            echo "APP_RELEASE_VERSION=$tag" >> "$GITHUB_ENV"
-            echo "value=$tag" >> "$GITHUB_OUTPUT"
-            echo "Using release tag: $tag"
-          else
-            echo "No release tag found on commit $GITHUB_SHA. Build will use fallback version."
+          if [ -z "$tag" ]; then
+            echo "No release tag found on commit $GITHUB_SHA. Aborting deploy to prevent incorrect version in app." >&2
+            exit 1
           fi
+          echo "APP_RELEASE_VERSION=$tag" >> "$GITHUB_ENV"
+          echo "value=$tag" >> "$GITHUB_OUTPUT"
+          echo "Using release tag: $tag"
 
       - run: npm ci
       - run: npm run build
@@ -66,5 +66,5 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: '--prod --build-env APP_RELEASE_VERSION=${{ steps.release_tag.outputs.value }}'
           working-directory: .

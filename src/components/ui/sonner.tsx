@@ -9,7 +9,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 	return (
 		<Sonner
 			theme={theme as ToasterProps['theme']}
-			position="bottom-center"
+			position="bottom-right"
 			closeButton
 			expand
 			duration={5000}
