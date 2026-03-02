@@ -49,14 +49,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 		socketRef.current = socket;
 
 		socket.on('connect', () => {
-			console.log('Socket connected:', socket.id);
-
 			// CRITICAL: join user room
 			socket.emit('join', userId);
-		});
-
-		socket.on('disconnect', (reason) => {
-			console.log('Notification socket disconnected:', reason);
 		});
 
 		socket.on('connect_error', (error) => {

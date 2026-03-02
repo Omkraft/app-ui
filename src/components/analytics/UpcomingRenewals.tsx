@@ -25,7 +25,7 @@ export default function UpcomingRenewals({ data }: Props) {
 				{data && data.length > 0 ? (
 					<ul className="space-y-3">
 						{data.map((item, index) => (
-							<React.Fragment key={index}>
+							<React.Fragment key={`${item.name}-${item.nextBillingDate}`}>
 								<li className="flex justify-between flex-col sm:flex-row gap-2">
 									<span className="text-foreground">{item.name}</span>
 									<span className="text-muted-foreground flex items-center">

@@ -16,23 +16,30 @@
 
 ## 🧭 Overview
 
-This repository contains the **frontend UI** for the Omkraft platform.  
-It is a modern React + TypeScript application designed to consume the `app-api` backend and provide secure, authenticated, and scalable user experiences.
+`app-ui` is the React + TypeScript frontend for Omkraft.
 
-Built with clarity, structure, and long-term maintainability in mind.
+It includes:
+- Auth flows (register, login, forgot/reset password, email verification)
+- Protected app routes (Dashboard, Utility Hub, Subscription Tracker)
+- PWA support (install/update prompts, offline-friendly caching)
+- Push notification registration
+- Real-time notification updates via Socket.IO
+- Build-version surfaced in footer and update toast
 
 ---
 
 ## 🧱 Tech Stack
 
-- **Framework:** React
-- **Language:** TypeScript
-- **Build Tool:** Vite
-- **Routing:** React Router
-- **Authentication:** JWT (via `app-api`)
-- **Linting:** ESLint (Flat Config)
-- **Formatting:** Tabs-based indentation
-- **CI:** GitHub Actions (Lint Check on PRs)
+- React 19
+- TypeScript
+- Vite 7
+- React Router 7
+- Tailwind CSS + SCSS
+- Radix UI primitives + custom UI components
+- Lucide icons
+- Recharts (analytics charts)
+- Socket.IO client
+- vite-plugin-pwa (Workbox)
 
 ---
 
@@ -40,112 +47,148 @@ Built with clarity, structure, and long-term maintainability in mind.
 
 ```text
 app-ui/
-├── src/
-│   ├── api/              # API client & backend integration
-│   ├── auth/             # Auth context, guards, helpers
-│   ├── components/       # Reusable UI components
-│   ├── pages/            # Route-level pages (Login, Dashboard, etc.)
-│   ├── routes/           # Public & protected routes
-│   ├── styles/           # Global styles & theme tokens
-│   ├── App.tsx           # Root application component
-│   └── main.tsx          # Application entry point
-├── public/               # Static assets
-├── index.html
-├── eslint.config.cjs
-├── package.json
-├── vite.config.ts
-└── README.md
+|-- public/                    # Static files (including version.json, sw-push.js)
+|-- scripts/
+|   `-- write-build-version.mjs
+|-- src/
+|   |-- api/                   # API layer
+|   |-- components/            # Reusable UI + feature components
+|   |-- context/               # Auth + notifications context
+|   |-- hooks/                 # App hooks (PWA update/version, etc.)
+|   |-- lib/                   # Shared utilities (version, toast, sync queue, etc.)
+|   |-- pages/                 # Route pages
+|   |-- routes/                # Route guards
+|   |-- services/              # Push and other services
+|   |-- styles/                # Global styles + variables
+|   |-- utils/                 # Helpers
+|   |-- App.tsx
+|   `-- main.tsx
+|-- package.json
+|-- vite.config.ts
+`-- README.md
 ```
-
-The structure is intentionally modular to support scaling, feature isolation, and future design-system extraction.
 
 ---
 
-## 🚀 Getting Started
-### Prerequisites
-- Node.js **18+**
-- npm (or pnpm)
-- Running instance of app-api (local or deployed)
+## 🛣️ Routes
 
-### Clone the repository
+Public routes:
+- `/welcome`
+- `/login`
+- `/register`
+- `/forgot-password`
+- `/verify-email`
+
+Protected routes:
+- `/dashboard`
+- `/utility`
+- `/subscription`
+
+Utility routes:
+- `/maintenance`
+
+---
+
+## 🔐 Environment Variables
+
+Create `.env` in `app-ui/`.
+
+```env
+VITE_API_BASE_URL=http://localhost:3000
+VITE_VAPID_PUBLIC_KEY=<your_web_push_vapid_public_key>
+```
+
+Build/deploy-time variable (in CI/platform env):
+
+```env
+APP_RELEASE_VERSION=<github_release_tag>
+```
+
+Notes:
+- `APP_RELEASE_VERSION` is injected at build time and written to `public/version.json`.
+- If not set, version falls back to commit SHA (if available), then package version, then `dev`.
+
+---
+
+## 🏷️ Versioning Behavior
+
+Version resolution source of truth:
+1. `APP_RELEASE_VERSION`
+2. `VERCEL_GIT_COMMIT_SHA` or `GITHUB_SHA`
+3. `npm_package_version` (if not `0.0.0`)
+4. `dev`
+
+Where version is used:
+- Footer (public + app)
+- Update toast (`PWAUpdateToast` compares current build vs latest `/version.json`)
+
+---
+
+## 📲 PWA and Push
+
+PWA setup:
+- Managed by `vite-plugin-pwa`
+- `registerType: 'prompt'`
+- Runtime caching configured for Omkraft API endpoints
+- Push SW handlers are loaded via `public/sw-push.js` through Workbox `importScripts`
+
+Push setup:
+- Browser subscribes with `VITE_VAPID_PUBLIC_KEY`
+- Subscription payload is sent to `POST /api/push/subscribe`
+
+---
+
+## 🧪 Scripts
+
+```bash
+npm run dev        # predev runs write-build-version, then starts Vite
+npm run build      # prebuild runs write-build-version, then typecheck + Vite build
+npm run preview    # preview production build
+npm run lint       # ESLint
+npm run lint:fix   # ESLint auto-fix
+```
+
+---
+
+## 🚀 Local Development
+
 ```bash
 git clone https://github.com/Omkraft/app-ui.git
 cd app-ui
-```
-
-### Install dependencies
-```bash
 npm install
-```
-
-### Environment variables
-Create a `.env` file in the project root:
-```env
-VITE_API_BASE_URL=http://localhost:3000
-```
-Replace with the deployed API URL for production.
-
-### Start the development server
-```bash
 npm run dev
 ```
-The app will be available at:
-```arduino
-http://localhost:5173
+
+Default dev URL:
+- `http://localhost:5173`
+
+---
+
+## 🌐 Deployment Notes
+
+- Designed for Vercel deployment
+- `APP_RELEASE_VERSION` should be set in deploy environment to display exact release tag in UI
+- Ensure `VITE_API_BASE_URL` points to deployed `app-api`
+- Ensure `VITE_VAPID_PUBLIC_KEY` is set for push registration
+
+---
+
+## ✅ Quality Checks
+
+Recommended before merge/deploy:
+
+```bash
+npm run lint
+npm run build
 ```
-
----
-
-## 🔐 Authentication & Protected Routes
-- Authentication is handled using **JWT tokens** issued by `app-api`
-- Tokens are attached to API requests automatically
-- Protected routes are enforced at the router level
-- Unauthorized users are redirected to login
-The architecture mirrors production-ready auth flows and is designed to evolve (refresh tokens, RBAC, etc.).
-
----
-
-## 🧪 Available Scripts
-| Script            | Description                    |
-| ----------------- | ------------------------------ |
-| `npm run dev`     | Start local development server |
-| `npm run build`   | Build production assets        |
-| `npm run preview` | Preview production build       |
-| `npm run lint`    | Run ESLint checks              |
-
----
-
-## 🧹 Code Quality
-- ESLint enforced locally and in CI
-- Tabs preferred over spaces
-- CI lint checks run on every pull request
-- Pull requests cannot be merged unless lint passes (org-level ruleset)
-
----
-
-## 🌐 Deployment
-The UI is designed for deployment on platforms such as:
-- **Vercel**
-- **Netlify**
-In production:
-- API base URL is injected via environment variables
-- The UI communicates securely with `app-api` over HTTPS
-
----
-
-## 🔮 Roadmap
-- Omkraft design system integration
-- Token refresh handling
-- Role-based access control (RBAC)
-- Shared UI components package
-- End-to-end testing
 
 ---
 
 ## 🏷️ License
+
 MIT
 
 ---
 
-<p align="center"> Built by<br/><strong>Omkraft Inc.</strong><br/>Systems, Crafted.</p>
+<p align="center">Built by<br/><strong>Omkraft Inc.</strong><br/>Systems, Crafted.</p>
 <p align="center"><img src="https://raw.githubusercontent.com/Omkraft/.github/main/assets/logo-small.svg" alt="Omkraft Logo Small" width="48" height="48" /></p>

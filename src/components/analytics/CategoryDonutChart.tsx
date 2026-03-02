@@ -88,7 +88,7 @@ export default function CategoryDonutChart({ data }: Props) {
 									<div className="flex flex-wrap gap-2 mt-4 justify-center">
 										{payload?.map((entry, index) => (
 											<div
-												key={index}
+												key={`${String(entry.value)}-${String(entry.color)}-${index}`}
 												className="flex items-center gap-2 text-foreground text-sm"
 											>
 												<div

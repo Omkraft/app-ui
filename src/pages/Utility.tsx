@@ -88,6 +88,7 @@ export default function Utility() {
 	const [weatherDefaultOpenItems] = useState<string[]>(
 		window.innerWidth >= 1024 ? weatherAccordionItems : []
 	);
+	const nextFiveHours = weather ? getNext5Hours(weather) : [];
 
 	const newsSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -151,7 +152,7 @@ export default function Utility() {
 			});
 		} catch (error) {
 			console.error(error);
-			setNewsError(error instanceof Error ? error.message : 'Failed to fetch weather.');
+			setNewsError(error instanceof Error ? error.message : 'Failed to fetch news.');
 		}
 	}, []);
 
@@ -251,8 +252,8 @@ export default function Utility() {
 									</div>
 
 									<div className="grid grid-cols-1 lg:grid-cols-5 gap-4 p-6">
-										{getNext5Hours(weather).map((hour, index) => (
-											<React.Fragment key={index}>
+										{nextFiveHours.map((hour, index) => (
+											<React.Fragment key={hour.time.toISOString()}>
 												<div className="flex justify-around lg:block space-y-2 text-center justify-items-center items-center">
 													<div className="text-sm opacity-80">
 														{hour.time.toLocaleTimeString('en-IN', {
@@ -275,7 +276,7 @@ export default function Utility() {
 														{Math.round(hour.temperature)}°
 													</div>
 												</div>
-												{index !== getNext5Hours(weather).length - 1 && (
+												{index !== nextFiveHours.length - 1 && (
 													<Separator className="lg:hidden border" />
 												)}
 											</React.Fragment>
@@ -528,14 +529,16 @@ export default function Utility() {
 											</AlertDescription>
 										</Alert>
 									)}
-									;
 								</>
 							) : (
 								<>
 									<div ref={newsSectionRef} className="grid gap-8 lg:grid-cols-2">
 										{news.articles.slice(0, visibleCount).map((item, index) => (
 											<Card
-												key={index}
+												key={
+													item.url ||
+													`${item.source}-${item.publishedAt}-${index}`
+												}
 												className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
 											>
 												<CardHeader>
