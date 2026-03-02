@@ -1,6 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { ChartContainer, ChartTooltip } from '@/components/ui/chart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { IndianRupee } from 'lucide-react';
 
 type Props = {
 	data: { month: string; total: number }[];
@@ -43,7 +44,10 @@ export default function MonthlyTrendChart({ data }: Props) {
 										>
 											<div className="font-semibold">{item.name}</div>
 
-											<div>&#8377; {Number(item.value).toFixed(2)}</div>
+											<div className="flex items-center gap-1">
+												<IndianRupee size={14} strokeWidth={2.5} />
+												{Number(item.value).toFixed(2)}
+											</div>
 										</div>
 									);
 								}}

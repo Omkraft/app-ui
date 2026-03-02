@@ -1,5 +1,6 @@
 import { useAuth } from '@/context/auth/AuthContext';
 import { getBuildVersionLabel } from '@/lib/version';
+import { Copyright } from 'lucide-react';
 
 export function FooterApp() {
 	const version = getBuildVersionLabel();
@@ -52,9 +53,12 @@ export function FooterApp() {
 			{/* Bottom Bar */}
 			<div className="border-t border-border">
 				<div className="app-container py-4 text-xs text-muted-foreground flex flex-col lg:flex-row gap-2 items-center">
-					<img src={logo} alt="Omkraft Inc." className="footer__logo" />
-					<p>
-						&copy; {year} <span className="font-bold">Omkraft</span> Inc.
+					<a href="https://omkraft.vercel.app" aria-label="Open Omkraft website">
+						<img src={logo} alt="Omkraft Inc." className="footer__logo" />
+					</a>
+					<p className="flex items-center gap-1">
+						<Copyright size={14} strokeWidth={2.5} />
+						{year} <span className="font-bold">Omkraft</span> Inc.
 					</p>
 					<p>
 						<em>Systems, Crafted.</em>

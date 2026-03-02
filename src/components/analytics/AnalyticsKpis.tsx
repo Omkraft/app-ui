@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { IndianRupee } from 'lucide-react';
 
 type Props = {
 	totalMonthly: number;
@@ -15,8 +16,9 @@ export default function AnalyticsKpis({ totalMonthly, yearlyProjection }: Props)
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<p className="text-xl font-semibold text-accent">
-						&#8377; {totalMonthly.toFixed(2)}
+					<p className="text-xl font-semibold text-accent flex items-center gap-1">
+						<IndianRupee size={18} strokeWidth={2.5} />
+						{totalMonthly.toFixed(2)}
 					</p>
 				</CardContent>
 			</Card>
@@ -28,8 +30,9 @@ export default function AnalyticsKpis({ totalMonthly, yearlyProjection }: Props)
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<p className="text-xl font-semibold text-accent">
-						&#8377; {yearlyProjection.toFixed(2)}
+					<p className="text-xl font-semibold text-accent flex items-center gap-1">
+						<IndianRupee size={18} strokeWidth={2.5} />
+						{yearlyProjection.toFixed(2)}
 					</p>
 				</CardContent>
 			</Card>
