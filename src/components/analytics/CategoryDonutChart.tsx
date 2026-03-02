@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { CATEGORY_COLORS, FALLBACK_COLORS } from './categoryColors';
 import { ResponsiveContainer } from 'recharts';
 import { getCategoryLabel } from './categoryLabels';
+import { IndianRupee } from 'lucide-react';
 
 type Props = {
 	data: {
@@ -71,7 +72,10 @@ export default function CategoryDonutChart({ data }: Props) {
 												{getCategoryLabel(item.name as string)}
 											</div>
 
-											<div>₹{Number(item.value).toFixed(2)}</div>
+											<div className="flex items-center gap-1">
+												<IndianRupee size={14} strokeWidth={2.5} />
+												{Number(item.value).toFixed(2)}
+											</div>
 										</div>
 									);
 								}}

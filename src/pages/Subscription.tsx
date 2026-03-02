@@ -22,7 +22,7 @@ import {
 	type Subscription,
 } from '@/api/subscription';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon, CircleCheckBig, ChevronDown } from 'lucide-react';
+import { AlertCircleIcon, CircleCheckBig, ChevronDown, IndianRupee } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { resolveLogo } from '@/utils/subscriptionBrand';
 import { Button } from '@/components/ui/button';
@@ -294,7 +294,10 @@ export default function Subscription() {
 										<CardFooter>
 											<div className="flex w-full justify-between items-center">
 												<div className="font-semibold flex flex-col gap-2">
-													&#8377; {sub.amount}
+													<p className="flex items-center gap-1">
+														<IndianRupee size={16} strokeWidth={2.5} />
+														{sub.amount}
+													</p>
 													{sub.status !== 'ACTIVE' && (
 														<Button
 															onClick={async () => {

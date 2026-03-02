@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Dot } from 'lucide-react';
+import { Dot, IndianRupee } from 'lucide-react';
 import React from 'react';
 
 type Props = {
@@ -29,7 +29,8 @@ export default function UpcomingRenewals({ data }: Props) {
 								<li className="flex justify-between flex-col sm:flex-row gap-2">
 									<span className="text-foreground">{item.name}</span>
 									<span className="text-muted-foreground flex items-center">
-										&#8377; {item.amount} <Dot size={26} />
+										<IndianRupee size={14} strokeWidth={2.5} />
+										{item.amount} <Dot size={26} />
 										{new Date(item.nextBillingDate).toLocaleDateString()}
 									</span>
 								</li>

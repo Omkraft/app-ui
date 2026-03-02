@@ -21,7 +21,7 @@ import { FieldGroup, Field, FieldLabel } from '@/components/ui/field';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
 import { StartDatePicker } from './StartDatePicker';
 import { Spinner } from '@/components/ui/spinner';
-import { AlertCircleIcon } from 'lucide-react';
+import { AlertCircleIcon, IndianRupee } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { isPositiveNumeric } from '@/utils/format';
 import { addSubscription } from '@/api/subscription';
@@ -196,7 +196,9 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 											onChange={(e) => setPrice(e.target.value)}
 											required
 										/>
-										<InputGroupAddon>&#8377;</InputGroupAddon>
+										<InputGroupAddon>
+											<IndianRupee size={14} strokeWidth={2.5} />
+										</InputGroupAddon>
 									</InputGroup>
 								</div>
 							</Field>

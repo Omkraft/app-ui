@@ -1,4 +1,5 @@
 import { getBuildVersionLabel } from '@/lib/version';
+import { Copyright } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function FooterPublic() {
@@ -10,9 +11,12 @@ export function FooterPublic() {
 		<footer className="border-t border-border bg-background text-foreground">
 			<div className="app-container py-4 flex flex-col gap-3 lg:flex-row items-center justify-around">
 				{/* Left */}
-				<img src={logo} alt="Omkraft Inc." className="footer__logo" />
-				<p className="text-sm text-muted-foreground">
-					&copy; {year} <span className="font-semibold">Omkraft</span> Inc.{' '}
+				<a href="https://omkraft.vercel.app" aria-label="Open Omkraft website">
+					<img src={logo} alt="Omkraft Inc." className="footer__logo" />
+				</a>
+				<p className="text-sm text-muted-foreground flex items-center gap-1">
+					<Copyright size={14} strokeWidth={2.5} />
+					{year} <span className="font-semibold">Omkraft</span> Inc.{' '}
 					<em>Systems, Crafted.</em>
 				</p>
 
