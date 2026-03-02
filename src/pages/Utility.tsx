@@ -551,7 +551,7 @@ export default function Utility() {
 															</CardTitle>
 															<NewsSourceLogo
 																source={item.source}
-																className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'CNN' ? 'h-4 ' : ''}`}
+																className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'The Hindu' ? 'h-4 ' : ''}`}
 															/>
 														</div>
 													</a>

@@ -2,7 +2,7 @@ import toi from '@/assets/media/toi.svg';
 import ie from '@/assets/media/indian-express.svg';
 import ht from '@/assets/media/hindustan-times.svg';
 import bbc from '@/assets/media/bbc.svg';
-import cnn from '@/assets/media/cnn.svg';
+import theHindu from '@/assets/media/the-hindu.svg';
 
 import { cn } from '@/lib/utils';
 
@@ -16,7 +16,7 @@ const logoMap: Record<string, string> = {
 	'Indian Express': ie,
 	'Hindustan Times': ht,
 	'BBC News': bbc,
-	CNN: cnn,
+	'The Hindu': theHindu,
 };
 
 export function NewsSourceLogo({ source, className }: Props) {
