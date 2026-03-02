@@ -18,10 +18,11 @@ export interface Subscription {
 	amount: number;
 	currency: string;
 	provider: string;
-	status: 'ACTIVE' | 'DUE' | 'EXPIRED';
+	status: 'ACTIVE' | 'DUE' | 'OVERDUE' | 'INACTIVE' | 'PAUSED';
 	nextBillingDate: string;
 	cycleInDays: number;
 	category: string;
+	inactiveReason?: string | null;
 }
 
 export async function addSubscription(subscriptionData: SubscriptionData) {
@@ -56,9 +57,12 @@ export function getSubscriptions() {
 	});
 }
 
-export function confirmSubscriptionPayment(id: string) {
+export function confirmSubscriptionPayment(id: string, amount?: number) {
 	return apiRequest(`/api/subscription/${id}/confirm-payment`, {
 		method: 'POST',
+		body: JSON.stringify({
+			amount,
+		}),
 	});
 }
 
@@ -76,8 +80,12 @@ export async function updateSubscription(id: string, subscriptionData: Subscript
 	});
 }
 
-export async function deleteSubscription(id: string) {
+export async function deleteSubscription(
+	id: string,
+	payload: { mode: 'mistake' | 'inactive'; reason: string }
+) {
 	return apiRequest(`/api/subscription/${id}`, {
 		method: 'DELETE',
+		body: JSON.stringify(payload),
 	});
 }

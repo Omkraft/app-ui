@@ -16,16 +16,12 @@ import { Link } from 'react-router-dom';
 import AddSubscriptionDialog from '@/components/subscription/AddSubscriptionDialog';
 import EditSubscriptionDialog from '@/components/subscription/EditSubscriptionDialog';
 import DeleteSubscriptionDialog from '@/components/subscription/DeleteSubscriptionDialog';
-import {
-	confirmSubscriptionPayment,
-	getSubscriptions,
-	type Subscription,
-} from '@/api/subscription';
+import ConfirmPaymentPopover from '@/components/subscription/ConfirmPaymentPopover';
+import { getSubscriptions, type Subscription } from '@/api/subscription';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon, CircleCheckBig, ChevronDown, IndianRupee } from 'lucide-react';
+import { AlertCircleIcon, ChevronDown, IndianRupee } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { resolveLogo } from '@/utils/subscriptionBrand';
-import { Button } from '@/components/ui/button';
 
 import { getDashboardAnalytics, type DashboardAnalytics } from '@/api/analytics';
 
@@ -42,8 +38,11 @@ export default function Subscription() {
 	const [analyticsLoading, setAnalyticsLoading] = useState(false);
 	const [analyticsError, setAnalyticsError] = useState<string | null>(null);
 	const [analyticsOpen, setAnalyticsOpen] = useState(window.innerWidth >= 1024);
+	const [inactiveOpen, setInactiveOpen] = useState(window.innerWidth >= 1024);
 	const { refreshNotifications } = useNotifications();
-	const hasSubscriptions = Boolean(subs?.length);
+	const activeSubs = (subs ?? []).filter((sub) => sub.status !== 'INACTIVE');
+	const inactiveSubs = (subs ?? []).filter((sub) => sub.status === 'INACTIVE');
+	const hasSubscriptions = activeSubs.length + inactiveSubs.length > 0;
 
 	useEffect(() => {
 		fetchSubscriptions();
@@ -226,7 +225,7 @@ export default function Subscription() {
 			)}
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
-					<h2 className="text-3xl font-semibold">Current Subscriptions</h2>
+					<h2 className="text-3xl font-semibold">Active Subscriptions</h2>
 					{/* List */}
 					<div className="grid gap-6">
 						{loading && (
@@ -245,14 +244,14 @@ export default function Subscription() {
 							</Alert>
 						)}
 
-						{subs && subs.length ? (
-							subs.map((sub) => {
+						{activeSubs.length ? (
+							activeSubs.map((sub) => {
 								const logo = resolveLogo(sub.category, sub.provider);
 
 								return (
 									<Card
 										key={sub._id}
-										className="bg-foreground border-background text-background"
+										className="bg-foreground border-background text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
 									>
 										<CardHeader>
 											<div className="flex justify-between items-start gap-4">
@@ -298,21 +297,16 @@ export default function Subscription() {
 														<IndianRupee size={16} strokeWidth={2.5} />
 														{sub.amount}
 													</p>
-													{sub.status !== 'ACTIVE' && (
-														<Button
-															onClick={async () => {
-																await confirmSubscriptionPayment(
-																	sub._id
-																);
+													{(sub.status === 'DUE' ||
+														sub.status === 'OVERDUE') && (
+														<ConfirmPaymentPopover
+															subscription={sub}
+															onSuccess={async () => {
 																await fetchSubscriptions();
 																await fetchAnalytics();
 																await refreshNotifications();
 															}}
-															className="btn-primary flex gap-2"
-														>
-															<CircleCheckBig size={20} /> Mark as
-															Paid
-														</Button>
+														/>
 													)}
 												</div>
 
@@ -357,6 +351,123 @@ export default function Subscription() {
 					</div>
 				</div>
 			</section>
+			{inactiveSubs.length > 0 && (
+				<section className="flex items-center py-6 bg-[var(--omkraft-navy-300)] text-background">
+					<div className="app-container grid gap-6 items-center">
+						<Collapsible
+							open={inactiveOpen}
+							onOpenChange={setInactiveOpen}
+							className="w-full text-background"
+						>
+							<CollapsibleTrigger asChild>
+								<button
+									className="
+											w-full
+											flex
+											items-center
+											justify-between
+											rounded-xl
+											gap-2
+											text-left
+											transition-colors
+											hover:text-foreground
+										"
+								>
+									<div className="flex flex-col gap-2">
+										<h2 className="text-3xl font-semibold">
+											Inactive Subscriptions
+										</h2>
+										<span>
+											These subscriptions are no longer active, but payment
+											history is retained.
+										</span>
+									</div>
+
+									<ChevronDown
+										className={`
+												size-6
+												transition-transform
+												duration-200
+												${inactiveOpen ? 'rotate-180' : ''}
+											`}
+									/>
+								</button>
+							</CollapsibleTrigger>
+
+							<CollapsibleContent className="mt-2 border-t border-accent-foreground pt-4">
+								<div className="grid gap-6">
+									{inactiveSubs.map((sub) => {
+										const logo = resolveLogo(sub.category, sub.provider);
+
+										return (
+											<Card
+												key={sub._id}
+												className="bg-foreground border-background text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
+											>
+												<CardHeader>
+													<div className="flex justify-between items-start gap-4">
+														<div className="flex items-center gap-4">
+															{logo.type === 'image' ? (
+																<img
+																	src={logo.src}
+																	alt={logo.alt}
+																	className="w-10 h-10 object-contain"
+																/>
+															) : (
+																logo.Icon && (
+																	<logo.Icon className="w-8 h-8 text-primary" />
+																)
+															)}
+
+															<div className="flex flex-col gap-1">
+																<CardTitle>
+																	<h3>
+																		{sub.name.toUpperCase()}
+																	</h3>
+																</CardTitle>
+
+																<CardDescription className="text-primary">
+																	Last cycle date{' '}
+																	{formatDate(
+																		sub.nextBillingDate
+																	)}
+																</CardDescription>
+															</div>
+														</div>
+
+														<Badge
+															className={getBadgeVariant(sub.status)}
+														>
+															{sub.status}
+														</Badge>
+													</div>
+												</CardHeader>
+
+												<CardFooter>
+													<div className="font-semibold flex flex-col gap-2">
+														<p className="flex items-center gap-1">
+															<IndianRupee
+																size={16}
+																strokeWidth={2.5}
+															/>
+															{sub.amount}
+														</p>
+														{sub.inactiveReason && (
+															<p className="text-xs text-muted-foreground">
+																Reason: {sub.inactiveReason}
+															</p>
+														)}
+													</div>
+												</CardFooter>
+											</Card>
+										);
+									})}
+								</div>
+							</CollapsibleContent>
+						</Collapsible>
+					</div>
+				</section>
+			)}
 		</main>
 	);
 }
@@ -381,6 +492,9 @@ function getBadgeVariant(status: string) {
 
 		case 'OVERDUE':
 			return 'bg-destructive text-destructive-foreground';
+
+		case 'INACTIVE':
+			return 'bg-gray-600 text-foreground';
 
 		default:
 			return 'bg-gray-500';
