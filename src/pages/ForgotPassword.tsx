@@ -10,12 +10,12 @@ import { forgotPassword, resetPassword } from '@/api/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Loading from '../components/Loading';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { Field, FieldLabel, FieldDescription, FieldGroup } from '@/components/ui/field';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import ErrorAlert from '@/components/ui/error-alert';
 
 export default function ForgotPassword() {
 	const [sent, setSent] = useState(false);
@@ -26,7 +26,7 @@ export default function ForgotPassword() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<unknown | null>(null);
 	const [loading, setLoading] = useState(false);
 	const handleForgotPassword = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -40,7 +40,7 @@ export default function ForgotPassword() {
 			setLoading(true);
 			await forgotPassword(email);
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to send OTP. Please try again.';
+			error = err instanceof Error ? err : 'Failed to send OTP. Please try again.';
 			setError(error);
 		} finally {
 			if (!error) {
@@ -69,8 +69,7 @@ export default function ForgotPassword() {
 			setLoading(true);
 			await resetPassword(email, otp, password);
 		} catch (err) {
-			error =
-				err instanceof Error ? err.message : 'Failed to reset password. Please try again.';
+			error = err instanceof Error ? err : 'Failed to reset password. Please try again.';
 			setError(error);
 		} finally {
 			if (!error) {
@@ -183,15 +182,10 @@ export default function ForgotPassword() {
 													required
 												/>
 											</Field>
-											{error && (
-												<Alert variant="destructive" className="max-w-md">
-													<AlertCircleIcon />
-													<AlertTitle>Password reset failed</AlertTitle>
-													<AlertDescription className="text-sm">
-														{error}
-													</AlertDescription>
-												</Alert>
-											)}
+											<ErrorAlert
+												error={error}
+												fallbackTitle="Password reset failed"
+											/>
 											<Button type="submit" className="w-full">
 												Send OTP
 											</Button>
@@ -338,20 +332,10 @@ export default function ForgotPassword() {
 														</InputGroup>
 													</Field>
 												</FieldGroup>
-												{error && (
-													<Alert
-														variant="destructive"
-														className="max-w-md"
-													>
-														<AlertCircleIcon />
-														<AlertTitle>
-															Password reset failed
-														</AlertTitle>
-														<AlertDescription className="text-sm">
-															{error}
-														</AlertDescription>
-													</Alert>
-												)}
+												<ErrorAlert
+													error={error}
+													fallbackTitle="Password reset failed"
+												/>
 												<Button type="submit" className="w-full">
 													Submit
 												</Button>

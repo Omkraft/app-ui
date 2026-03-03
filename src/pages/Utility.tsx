@@ -30,14 +30,12 @@ import {
 	Sunrise,
 	Sunset,
 	Gauge,
-	AlertCircleIcon,
 	Quote,
 	CalendarClock,
 	Umbrella,
 	CircleUser,
 } from 'lucide-react';
 import { getWeatherTheme } from '@/utils/weatherTheme';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import type { OnThisDayResponse } from '@/types/insights';
 import { Separator } from '@radix-ui/react-separator';
@@ -53,6 +51,7 @@ import {
 import { Link } from 'react-router-dom';
 import { getNext5Hours } from '@/utils/weatherHelpers';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
+import ErrorAlert from '@/components/ui/error-alert';
 
 interface NewsArticle {
 	title: string;
@@ -77,14 +76,14 @@ export default function Utility() {
 	const weatherAccordionItems = ['forecast', 'metrix', 'sunriseset'];
 	const [weather, setWeather] = useState<WeatherData | null>(null);
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
-	const [quoteError, setQuoteError] = useState<string | null>(null);
+	const [quoteError, setQuoteError] = useState<unknown | null>(null);
 	const [news, setNews] = useState<NewsResponse | null>(null);
-	const [newsError, setNewsError] = useState<string | null>(null);
+	const [newsError, setNewsError] = useState<unknown | null>(null);
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
-	const [weatherError, setWeatherError] = useState<string | null>(null);
+	const [weatherError, setWeatherError] = useState<unknown | null>(null);
 	const [visibleCount, setVisibleCount] = useState(10);
 	const [onThisDay, setOnThisDay] = useState<OnThisDayResponse | null>(null);
-	const [onThisDayError, setOnThisDayError] = useState<string | null>(null);
+	const [onThisDayError, setOnThisDayError] = useState<unknown | null>(null);
 	const [weatherDefaultOpenItems] = useState<string[]>(
 		window.innerWidth >= 1024 ? weatherAccordionItems : []
 	);
@@ -111,7 +110,7 @@ export default function Utility() {
 			setWeather(weather);
 		} catch (error) {
 			console.error(error);
-			setWeatherError(error instanceof Error ? error.message : 'Failed to fetch weather.');
+			setWeatherError(error instanceof Error ? error : 'Failed to fetch weather.');
 		}
 	}, []);
 
@@ -123,7 +122,7 @@ export default function Utility() {
 			setQuote(data);
 		} catch (error) {
 			console.error(error);
-			setQuoteError(error instanceof Error ? error.message : 'Failed to load quote');
+			setQuoteError(error instanceof Error ? error : 'Failed to load quote');
 		}
 	};
 
@@ -135,9 +134,7 @@ export default function Utility() {
 
 			setOnThisDay(data);
 		} catch (error) {
-			setOnThisDayError(
-				error instanceof Error ? error.message : 'Failed to fetch historical events'
-			);
+			setOnThisDayError(error instanceof Error ? error : 'Failed to fetch historical events');
 		}
 	};
 
@@ -152,7 +149,7 @@ export default function Utility() {
 			});
 		} catch (error) {
 			console.error(error);
-			setNewsError(error instanceof Error ? error.message : 'Failed to fetch news.');
+			setNewsError(error instanceof Error ? error : 'Failed to fetch news.');
 		}
 	}, []);
 
@@ -465,15 +462,10 @@ export default function Utility() {
 									<Spinner className="inline size-6" /> Loading weather...
 								</p>
 							) : (
-								<Alert variant="destructive" className="flex flex-col gap-2">
-									<AlertTitle className="flex gap-2 items-center">
-										<AlertCircleIcon />
-										Weather unavailable
-									</AlertTitle>
-									<AlertDescription className="text-sm">
-										{weatherError}
-									</AlertDescription>
-								</Alert>
+								<ErrorAlert
+									error={weatherError}
+									fallbackTitle="Weather unavailable"
+								/>
 							)}
 						</>
 					)}
@@ -516,18 +508,10 @@ export default function Utility() {
 											))}
 										</div>
 									) : (
-										<Alert
-											variant="destructive"
-											className="flex flex-col gap-2"
-										>
-											<AlertTitle className="flex gap-2 items-center">
-												<AlertCircleIcon />
-												News unavailable
-											</AlertTitle>
-											<AlertDescription className="text-sm">
-												{newsError}
-											</AlertDescription>
-										</Alert>
+										<ErrorAlert
+											error={newsError}
+											fallbackTitle="News unavailable"
+										/>
 									)}
 								</>
 							) : (
@@ -628,18 +612,10 @@ export default function Utility() {
 											events...
 										</p>
 									) : (
-										<Alert
-											variant="destructive"
-											className="flex flex-col gap-2"
-										>
-											<AlertTitle className="flex gap-2 items-center">
-												<AlertCircleIcon />
-												Error occured
-											</AlertTitle>
-											<AlertDescription className="text-sm">
-												{onThisDayError}
-											</AlertDescription>
-										</Alert>
+										<ErrorAlert
+											error={onThisDayError}
+											fallbackTitle="Could not load historical events"
+										/>
 									)}
 								</>
 							) : (
@@ -691,18 +667,10 @@ export default function Utility() {
 							) : (
 								<>
 									{quoteError ? (
-										<Alert
-											variant="destructive"
-											className="flex flex-col gap-2"
-										>
-											<AlertTitle className="flex gap-2 items-center">
-												<AlertCircleIcon />
-												Quote unavailable
-											</AlertTitle>
-											<AlertDescription className="text-sm">
-												{quoteError}
-											</AlertDescription>
-										</Alert>
+										<ErrorAlert
+											error={quoteError}
+											fallbackTitle="Quote unavailable"
+										/>
 									) : (
 										<p className="text-sm text-center">
 											<Spinner className="inline size-6" /> Loading quote...
