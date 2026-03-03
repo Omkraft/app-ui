@@ -207,7 +207,7 @@ export default function Subscription() {
 					</div>
 				</section>
 			)}
-			{hasSubscriptions && analyticsError && (
+			{hasSubscriptions && Boolean(analyticsError) && (
 				<section className="flex items-center py-6 bg-accent text-accent-foreground">
 					<div className="app-container grid gap-6 items-center">
 						<h2 className="text-3xl font-semibold">Summary</h2>
