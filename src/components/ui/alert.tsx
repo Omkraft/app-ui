@@ -9,12 +9,13 @@ const alertVariants = cva(
 		variants: {
 			variant: {
 				default: 'bg-muted text-muted-foreground [&>svg]:text-muted-foreground',
-				info: 'bg-[var(--omkraft-blue-100)] border-[var(--omkraft-blue-800)] text-[var(--omkraft-blue-800)] [&>svg]:text-[var(--omkraft-blue-800)]',
-				warning: 'bg-amber-100 border-amber-800 text-amber-800 [&>svg]:text-amber-800',
+				info: 'bg-[var(--info-bg)] border-[var(--info-border)] text-[var(--info-foreground)] [&>svg]:text-[var(--info-foreground)]',
+				warning:
+					'bg-[var(--warning-bg)] border-[var(--warning-border)] text-[var(--warning-foreground)] [&>svg]:text-[var(--warning-foreground)]',
 				success:
-					'bg-[var(--omkraft-mint-100)] border-[var(--omkraft-mint-800)] text-[var(--omkraft-mint-800)] [&>svg]:text-[var(--omkraft-mint-800)]',
+					'bg-[var(--success-bg)] border-[var(--success-border)] text-[var(--success-foreground)] [&>svg]:text-[var(--success-foreground)]',
 				destructive:
-					'bg-[var(--omkraft-red-200)] border-[var(--omkraft-red-800)] text-[var(--omkraft-red-800)] dark:border-destructive [&>svg]:text-[var(--omkraft-red-800)]',
+					'bg-[var(--omkraft-red-100)] border-[var(--omkraft-red-800)] text-[var(--omkraft-red-800)] dark:border-destructive [&>svg]:text-[var(--omkraft-red-800)]',
 			},
 		},
 		defaultVariants: {

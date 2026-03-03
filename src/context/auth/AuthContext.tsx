@@ -2,17 +2,19 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { registerPush } from '@/services/push';
 
-type User = {
+export type User = {
 	firstName: string;
 	lastName: string;
 	email: string;
 	phone: string;
+	id?: string;
 };
 
 type AuthContextType = {
 	user: User | null;
 	isAuthenticated: boolean;
 	login: (token: string, user: User) => void;
+	updateUser: (user: User) => void;
 	logout: () => void;
 };
 
@@ -38,6 +40,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		await registerPush();
 	}
 
+	function updateUser(nextUser: User) {
+		localStorage.setItem('auth', JSON.stringify(nextUser));
+		setUser(nextUser);
+	}
+
 	function logout() {
 		localStorage.removeItem('token');
 		localStorage.removeItem('auth');
@@ -50,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				user,
 				isAuthenticated: Boolean(user),
 				login,
+				updateUser,
 				logout,
 			}}
 		>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -25,7 +25,7 @@ import { IndianRupee, Pencil } from 'lucide-react';
 import { isPositiveNumeric } from '@/utils/format';
 import { updateSubscription } from '@/api/subscription';
 import type { Subscription } from '@/api/subscription';
-import ErrorAlert from '@/components/ui/error-alert';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 function subtractMonthsSafe(date: Date, months: number) {
 	const d = new Date(date);
@@ -296,7 +296,7 @@ export default function EditSubscriptionDialog({
 						</Field>
 					</FieldGroup>
 
-					<ErrorAlert error={error} fallbackTitle="Could not update subscription" />
+					<OmkraftAlert error={error} fallbackTitle="Could not update subscription" />
 
 					{loading ? (
 						<div className="flex gap-2">

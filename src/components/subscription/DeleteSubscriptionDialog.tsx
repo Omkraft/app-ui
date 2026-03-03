@@ -1,4 +1,4 @@
-import {
+﻿import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { deleteSubscription } from '@/api/subscription';
 import { Spinner } from '@/components/ui/spinner';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import ErrorAlert from '@/components/ui/error-alert';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 type RemovalMode = 'mistake' | 'inactive';
 
@@ -113,7 +113,7 @@ export default function DeleteSubscriptionDialog({
 						</div>
 					</RadioGroup>
 
-					<ErrorAlert error={error} fallbackTitle="Could not remove subscription" />
+					<OmkraftAlert error={error} fallbackTitle="Could not remove subscription" />
 
 					<div className="flex gap-4">
 						<Button variant="outline" onClick={() => setOpen(false)}>

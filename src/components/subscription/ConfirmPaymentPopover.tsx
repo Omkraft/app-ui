@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { CircleCheckBig, IndianRupee } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Spinner } from '@/components/ui/spinner';
 import { isPositiveNumeric } from '@/utils/format';
 import { confirmSubscriptionPayment, type Subscription } from '@/api/subscription';
-import ErrorAlert from '@/components/ui/error-alert';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 type PaymentMode = 'total' | 'custom';
 
@@ -113,7 +113,7 @@ export default function ConfirmPaymentPopover({
 					</div>
 				</div>
 
-				<ErrorAlert error={error} fallbackTitle="Could not save payment" />
+				<OmkraftAlert error={error} fallbackTitle="Could not save payment" />
 
 				<div className="flex justify-end gap-2">
 					<Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
