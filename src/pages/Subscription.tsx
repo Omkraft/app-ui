@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNotifications } from '@/context/NotificationContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -28,7 +28,7 @@ import CategoryDonutChart from '@/components/analytics/CategoryDonutChart';
 import MonthlyTrendChart from '@/components/analytics/MonthlyTrendChart';
 import AnalyticsKpis from '@/components/analytics/AnalyticsKpis';
 import UpcomingRenewals from '@/components/analytics/UpcomingRenewals';
-import ErrorAlert from '@/components/ui/error-alert';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 export default function Subscription() {
 	const [subs, setSubs] = useState<Subscription[] | null>(null);
@@ -211,7 +211,10 @@ export default function Subscription() {
 				<section className="flex items-center py-6 bg-accent text-accent-foreground">
 					<div className="app-container grid gap-6 items-center">
 						<h2 className="text-3xl font-semibold">Summary</h2>
-						<ErrorAlert error={analyticsError} fallbackTitle="Could not load summary" />
+						<OmkraftAlert
+							error={analyticsError}
+							fallbackTitle="Could not load summary"
+						/>
 					</div>
 				</section>
 			)}
@@ -226,7 +229,7 @@ export default function Subscription() {
 							</p>
 						)}
 
-						<ErrorAlert
+						<OmkraftAlert
 							error={subsError}
 							fallbackTitle="Could not load subscriptions"
 						/>

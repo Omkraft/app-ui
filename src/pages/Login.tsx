@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/context/auth/AuthContext';
@@ -12,7 +12,7 @@ import Loading from '../components/Loading';
 import { Eye, EyeOff } from 'lucide-react';
 import { FieldGroup, Field, FieldLabel } from '@/components/ui/field';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
-import ErrorAlert from '@/components/ui/error-alert';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 export default function Login() {
 	const [email, setEmail] = useState('');
@@ -134,7 +134,7 @@ export default function Login() {
 										</Field>
 									</FieldGroup>
 
-									<ErrorAlert error={error} fallbackTitle="Login failed" />
+									<OmkraftAlert error={error} fallbackTitle="Login failed" />
 
 									<Button type="submit" className="w-full">
 										Login

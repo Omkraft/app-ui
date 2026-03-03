@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
@@ -15,7 +15,7 @@ import { Field, FieldLabel, FieldDescription, FieldGroup } from '@/components/ui
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import ErrorAlert from '@/components/ui/error-alert';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 export default function ForgotPassword() {
 	const [sent, setSent] = useState(false);
@@ -182,7 +182,7 @@ export default function ForgotPassword() {
 													required
 												/>
 											</Field>
-											<ErrorAlert
+											<OmkraftAlert
 												error={error}
 												fallbackTitle="Password reset failed"
 											/>
@@ -332,7 +332,7 @@ export default function ForgotPassword() {
 														</InputGroup>
 													</Field>
 												</FieldGroup>
-												<ErrorAlert
+												<OmkraftAlert
 													error={error}
 													fallbackTitle="Password reset failed"
 												/>

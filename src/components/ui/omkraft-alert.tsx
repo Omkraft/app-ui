@@ -1,6 +1,7 @@
-import { AlertCircleIcon, AlertTriangleIcon, CheckCircle2Icon, InfoIcon } from 'lucide-react';
+﻿import { AlertCircleIcon, AlertTriangleIcon, CheckCircle2Icon, InfoIcon } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getErrorAlertDetails } from '@/lib/errorAlert';
+import { cn } from '@/lib/utils';
 
 type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
 
@@ -11,7 +12,7 @@ type Props = {
 	fallbackMessage?: string;
 };
 
-export default function ErrorAlert({
+export default function OmkraftAlert({
 	error,
 	severity = 'error',
 	fallbackTitle,
@@ -59,9 +60,17 @@ export default function ErrorAlert({
 				: severity === 'success'
 					? 'success'
 					: 'destructive';
+	const borderClass =
+		severity === 'warning'
+			? 'border-[var(--warning-border)]'
+			: severity === 'info'
+				? 'border-[var(--info-border)]'
+				: severity === 'success'
+					? 'border-[var(--success-border)]'
+					: 'border-[var(--omkraft-red-800)]';
 
 	return (
-		<Alert variant={variant} className="flex flex-col gap-2">
+		<Alert variant={variant} className={cn('flex flex-col gap-2', borderClass)}>
 			<AlertTitle className="flex gap-2 items-center">
 				{icon}
 				{details.title}

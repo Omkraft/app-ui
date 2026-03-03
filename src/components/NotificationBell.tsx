@@ -12,8 +12,8 @@ export default function NotificationBell() {
 
 	return (
 		<Popover>
-			<PopoverTrigger asChild>
-				<button className="relative" aria-label="Notifications">
+			<PopoverTrigger asChild className="justify-items-center hover:bg-muted">
+				<button className="relative h-9 w-9" aria-label="Notifications">
 					<Bell />
 					{unreadCount > 0 && (
 						<Badge
@@ -38,7 +38,7 @@ export default function NotificationBell() {
 				</button>
 			</PopoverTrigger>
 
-			<PopoverContent className="bg-primary border-primary-foreground">
+			<PopoverContent className="bg-primary border-muted-foreground">
 				<div className="space-y-2">
 					{notifications.length === 0 ? (
 						<p>No notifications</p>

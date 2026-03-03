@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -11,7 +11,7 @@ import { register } from '@/api/auth';
 import Loading from '../components/Loading';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { isPositiveNumeric } from '@/utils/format';
-import ErrorAlert from '@/components/ui/error-alert';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 export default function Register() {
 	const [firstName, setFirstName] = useState('');
@@ -251,7 +251,7 @@ export default function Register() {
 												</Field>
 											</FieldGroup>
 
-											<ErrorAlert
+											<OmkraftAlert
 												error={error}
 												fallbackTitle="Registration failed"
 											/>
@@ -269,7 +269,7 @@ export default function Register() {
 								<>
 									<CardHeader className="text-center sapce-y-2">
 										<CardTitle>
-											<h2 className="text-accent">Welcome to Omkraft 🎉</h2>
+											<h2 className="text-accent">Welcome to Omkraft ðŸŽ‰</h2>
 										</CardTitle>
 										<CardDescription className="mt-2">
 											Your account has been created successfully.
@@ -312,7 +312,7 @@ export default function Register() {
 								<img
 									src={registerIllustration}
 									alt="Register illustration"
-									className="w-full max-w-md opacity-90"
+									className="w-full opacity-90"
 								/>
 							</div>
 						</div>

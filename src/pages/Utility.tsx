@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { apiRequest } from '@/api/client';
 import {
@@ -51,7 +51,7 @@ import {
 import { Link } from 'react-router-dom';
 import { getNext5Hours } from '@/utils/weatherHelpers';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
-import ErrorAlert from '@/components/ui/error-alert';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 interface NewsArticle {
 	title: string;
@@ -314,7 +314,7 @@ export default function Utility() {
 															)}
 														</p>
 														<p className="font-semibold flex items-center justify-center gap-1">
-															<Sun className="w-5 h-5 text-yellow-400" />
+															<Sun className="w-5 h-5 text-[var(--omkraft-yellow-500)]" />
 															{round(
 																weather.daily.temperature_2m_max[
 																	index
@@ -324,7 +324,7 @@ export default function Utility() {
 															°
 														</p>
 														<p className="opacity-70 flex items-center justify-center gap-1">
-															<Moon className="w-5 h-5 text-blue-300" />
+															<Moon className="w-5 h-5 text-[var(--omkraft-blue-300)]" />
 															{round(
 																weather.daily.temperature_2m_min[
 																	index
@@ -414,7 +414,7 @@ export default function Utility() {
 									<AccordionContent className="pb-6">
 										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
-												<Sunrise className="w-7 h-7 text-yellow-400" />
+												<Sunrise className="w-7 h-7 text-[var(--omkraft-yellow-500)]" />
 												<div>
 													<p className="text-sm opacity-70">Sunrise</p>
 													<p className="text-lg font-semibold">
@@ -427,7 +427,7 @@ export default function Utility() {
 											</Card>
 
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
-												<Sunset className="w-7 h-7 text-orange-400" />
+												<Sunset className="w-7 h-7 text-[var(--omkraft-orange-500)]" />
 												<div>
 													<p className="text-sm opacity-70">Sunset</p>
 													<p className="text-lg font-semibold">
@@ -462,7 +462,7 @@ export default function Utility() {
 									<Spinner className="inline size-6" /> Loading weather...
 								</p>
 							) : (
-								<ErrorAlert
+								<OmkraftAlert
 									error={weatherError}
 									fallbackTitle="Weather unavailable"
 								/>
@@ -508,7 +508,7 @@ export default function Utility() {
 											))}
 										</div>
 									) : (
-										<ErrorAlert
+										<OmkraftAlert
 											error={newsError}
 											fallbackTitle="News unavailable"
 										/>
@@ -612,7 +612,7 @@ export default function Utility() {
 											events...
 										</p>
 									) : (
-										<ErrorAlert
+										<OmkraftAlert
 											error={onThisDayError}
 											fallbackTitle="Could not load historical events"
 										/>
@@ -667,7 +667,7 @@ export default function Utility() {
 							) : (
 								<>
 									{quoteError ? (
-										<ErrorAlert
+										<OmkraftAlert
 											error={quoteError}
 											fallbackTitle="Quote unavailable"
 										/>

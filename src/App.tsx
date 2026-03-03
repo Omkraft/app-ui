@@ -25,6 +25,7 @@ const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Utility = lazy(() => import('./pages/Utility'));
 const Subscription = lazy(() => import('./pages/Subscription'));
+const EditProfile = lazy(() => import('./pages/EditProfile'));
 
 function ScrollToTopOnRouteChange() {
 	const { pathname } = useLocation();
@@ -143,6 +144,15 @@ export default function App() {
 							element={
 								<ProtectedRoute>
 									<Subscription />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path="/profile/edit"
+							element={
+								<ProtectedRoute>
+									<EditProfile />
 								</ProtectedRoute>
 							}
 						/>
