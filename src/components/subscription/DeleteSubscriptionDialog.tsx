@@ -7,12 +7,12 @@ import {
 } from '@/components/ui/dialog';
 
 import { Button } from '@/components/ui/button';
-import { AlertCircleIcon, Trash } from 'lucide-react';
+import { Trash } from 'lucide-react';
 import { useState } from 'react';
 import { deleteSubscription } from '@/api/subscription';
 import { Spinner } from '@/components/ui/spinner';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import ErrorAlert from '@/components/ui/error-alert';
 
 type RemovalMode = 'mistake' | 'inactive';
 
@@ -26,7 +26,7 @@ export default function DeleteSubscriptionDialog({
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [mode, setMode] = useState<RemovalMode>('inactive');
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<unknown | null>(null);
 
 	async function handleDelete() {
 		setError(null);
@@ -44,7 +44,7 @@ export default function DeleteSubscriptionDialog({
 			setOpen(false);
 			onSuccess();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to remove subscription');
+			setError(err instanceof Error ? err : 'Failed to remove subscription');
 		} finally {
 			setLoading(false);
 		}
@@ -113,15 +113,7 @@ export default function DeleteSubscriptionDialog({
 						</div>
 					</RadioGroup>
 
-					{error && (
-						<Alert variant="destructive" className="flex flex-col gap-2">
-							<AlertTitle className="flex gap-2 items-center">
-								<AlertCircleIcon />
-								Error occured
-							</AlertTitle>
-							<AlertDescription className="text-sm">{error}</AlertDescription>
-						</Alert>
-					)}
+					<ErrorAlert error={error} fallbackTitle="Could not remove subscription" />
 
 					<div className="flex gap-4">
 						<Button variant="outline" onClick={() => setOpen(false)}>

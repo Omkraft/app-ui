@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, EyeOff, AlertCircleIcon } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -9,9 +9,9 @@ import { Input } from '@/components/ui/input';
 import registerIllustration from '@/assets/register-illustration.svg';
 import { register } from '@/api/auth';
 import Loading from '../components/Loading';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { isPositiveNumeric } from '@/utils/format';
+import ErrorAlert from '@/components/ui/error-alert';
 
 export default function Register() {
 	const [firstName, setFirstName] = useState('');
@@ -22,7 +22,7 @@ export default function Register() {
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<unknown | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [submitted, setSubmitted] = useState(false);
 
@@ -57,7 +57,7 @@ export default function Register() {
 			const phoneNumber = `+91${phone}`;
 			await register(firstName, lastName, email, phoneNumber, password);
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Registration failed. Please try again.';
+			error = err instanceof Error ? err : 'Registration failed. Please try again.';
 			setError(error);
 		} finally {
 			setLoading(false);
@@ -251,15 +251,10 @@ export default function Register() {
 												</Field>
 											</FieldGroup>
 
-											{error && (
-												<Alert variant="destructive">
-													<AlertCircleIcon />
-													<AlertTitle>Registration failed</AlertTitle>
-													<AlertDescription className="text-sm">
-														{error}
-													</AlertDescription>
-												</Alert>
-											)}
+											<ErrorAlert
+												error={error}
+												fallbackTitle="Registration failed"
+											/>
 										</form>
 
 										<p className="text-sm text-center text-muted-foreground mt-4">

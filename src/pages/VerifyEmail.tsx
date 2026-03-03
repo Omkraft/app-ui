@@ -1,9 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import emailVerifiedIllustration from '@/assets/email-verified-illustration.svg';
 import emailVerifyFailedIllustration from '@/assets/email-verify-failed-illustration.svg';
 import Loading from '../components/Loading';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,20 +19,28 @@ export default function VerifyEmail() {
 	useEffect(() => {
 		if (!token) {
 			setStatus('error');
-			setMessage('Invalid verification link');
+			setMessage('This verification link is invalid or incomplete.');
 			return;
 		}
 
-		fetch(`${API_BASE_URL}/api/auth/verify-email?token=${token}`)
+		fetch(`${API_BASE_URL}/api/auth/verify-email?token=${encodeURIComponent(token)}`)
 			.then(async (res) => {
-				const data = await res.json();
+				const data = await res.json().catch(() => ({}));
 				if (!res.ok) throw new Error(data.message);
 				setStatus('success');
-				setMessage('Your email has been verified successfully.');
+				setMessage(
+					typeof data?.message === 'string' && data.message
+						? data.message
+						: 'Your email has been verified successfully.'
+				);
 			})
 			.catch((err) => {
 				setStatus('error');
-				setMessage(err.message || 'Verification failed');
+				setMessage(
+					err instanceof Error && err.message
+						? err.message
+						: 'We could not verify your email with this link.'
+				);
 			});
 	}, [token]);
 
@@ -40,41 +50,75 @@ export default function VerifyEmail() {
 
 	return (
 		<div className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
-			<div className="app-container grid gap-12 items-center py-6 justify-items-center">
-				<Card className="w-full text-center">
-					<CardHeader>
+			<div className="app-container grid gap-12 lg:grid-cols-2 items-center py-6">
+				<Card className="w-full">
+					<CardHeader className="space-y-3">
 						<CardTitle>
 							<h1
-								className={`text-4xl font-semibold leading-tight ${
+								className={`text-3xl sm:text-4xl font-semibold leading-tight ${
 									status === 'success' ? 'text-accent' : 'text-destructive'
 								}`}
 							>
-								{status === 'success' ? 'Email Verified' : 'Verification Failed'}
+								{status === 'success'
+									? 'Email verification complete'
+									: 'Email verification failed'}
 							</h1>
 						</CardTitle>
-						<CardDescription>
-							<p>{message}</p>
+						<CardDescription className="text-base">
+							{status === 'success'
+								? 'Your Omkraft account is now active and ready to use.'
+								: 'This link may be expired or already used.'}
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="space-y-3">
-						<Link to="/login" className="btn-primary">
-							Go to Login
-						</Link>
-						{status === 'error' ? (
-							<img
-								src={emailVerifyFailedIllustration}
-								alt="Email verified illustration"
-								className="w-full max-w-md mx-auto opacity-90"
-							/>
+
+					<CardContent className="space-y-4 gap-4 grid">
+						{status === 'success' ? (
+							<Alert variant="success">
+								<AlertDescription>
+									<p className="text-sm">{message}</p>
+								</AlertDescription>
+							</Alert>
 						) : (
-							<img
-								src={emailVerifiedIllustration}
-								alt="Email verified illustration"
-								className="w-full max-w-md mx-auto opacity-90"
-							/>
+							<Alert variant="destructive">
+								<AlertDescription>
+									<p className="text-sm">{message}</p>
+								</AlertDescription>
+							</Alert>
 						)}
+
+						<div className="flex flex-wrap gap-3">
+							<Button asChild className="text-sm w-full lg:w-auto">
+								<Link to="/login">Go to Login</Link>
+							</Button>
+
+							{status === 'error' && (
+								<Button
+									variant="outline"
+									asChild
+									className="text-sm w-full lg:w-auto"
+								>
+									<Link to="/register">Create account again</Link>
+								</Button>
+							)}
+						</div>
 					</CardContent>
 				</Card>
+
+				<div className="hidden lg:flex justify-center">
+					<img
+						src={
+							status === 'error'
+								? emailVerifyFailedIllustration
+								: emailVerifiedIllustration
+						}
+						alt={
+							status === 'error'
+								? 'Email verification failed'
+								: 'Email verification success'
+						}
+						className="w-full max-w-md mx-auto opacity-90"
+					/>
+				</div>
 			</div>
 		</div>
 	);

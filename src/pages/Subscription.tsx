@@ -18,8 +18,7 @@ import EditSubscriptionDialog from '@/components/subscription/EditSubscriptionDi
 import DeleteSubscriptionDialog from '@/components/subscription/DeleteSubscriptionDialog';
 import ConfirmPaymentPopover from '@/components/subscription/ConfirmPaymentPopover';
 import { getSubscriptions, type Subscription } from '@/api/subscription';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { AlertCircleIcon, ChevronDown, IndianRupee } from 'lucide-react';
+import { ChevronDown, IndianRupee } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { resolveLogo } from '@/utils/subscriptionBrand';
 
@@ -29,14 +28,15 @@ import CategoryDonutChart from '@/components/analytics/CategoryDonutChart';
 import MonthlyTrendChart from '@/components/analytics/MonthlyTrendChart';
 import AnalyticsKpis from '@/components/analytics/AnalyticsKpis';
 import UpcomingRenewals from '@/components/analytics/UpcomingRenewals';
+import ErrorAlert from '@/components/ui/error-alert';
 
 export default function Subscription() {
 	const [subs, setSubs] = useState<Subscription[] | null>(null);
 	const [loading, setLoading] = useState(false);
-	const [subsError, setSubsError] = useState<string | null>(null);
+	const [subsError, setSubsError] = useState<unknown | null>(null);
 	const [analytics, setAnalytics] = useState<DashboardAnalytics | null>(null);
 	const [analyticsLoading, setAnalyticsLoading] = useState(false);
-	const [analyticsError, setAnalyticsError] = useState<string | null>(null);
+	const [analyticsError, setAnalyticsError] = useState<unknown | null>(null);
 	const [analyticsOpen, setAnalyticsOpen] = useState(window.innerWidth >= 1024);
 	const [inactiveOpen, setInactiveOpen] = useState(window.innerWidth >= 1024);
 	const { refreshNotifications } = useNotifications();
@@ -58,7 +58,7 @@ export default function Subscription() {
 			setSubs(data);
 		} catch (err) {
 			console.error(err);
-			error = err instanceof Error ? err.message : 'Failed to get subscriptions';
+			error = err instanceof Error ? err : 'Failed to get subscriptions';
 			setSubsError(error);
 		} finally {
 			setLoading(false);
@@ -73,7 +73,7 @@ export default function Subscription() {
 
 			setAnalytics(data);
 		} catch (err) {
-			setAnalyticsError(err instanceof Error ? err.message : 'Failed to get analytics');
+			setAnalyticsError(err instanceof Error ? err : 'Failed to get analytics');
 			console.error('Analytics fetch failed:', err);
 		} finally {
 			setAnalyticsLoading(false);
@@ -207,19 +207,11 @@ export default function Subscription() {
 					</div>
 				</section>
 			)}
-			{hasSubscriptions && analyticsError && (
+			{hasSubscriptions && Boolean(analyticsError) && (
 				<section className="flex items-center py-6 bg-accent text-accent-foreground">
 					<div className="app-container grid gap-6 items-center">
 						<h2 className="text-3xl font-semibold">Summary</h2>
-						<Alert variant="destructive" className="flex flex-col gap-2">
-							<AlertTitle className="flex gap-2 items-center">
-								<AlertCircleIcon />
-								Error while fetching analytics
-							</AlertTitle>
-							<AlertDescription className="text-sm">
-								{analyticsError}
-							</AlertDescription>
-						</Alert>
+						<ErrorAlert error={analyticsError} fallbackTitle="Could not load summary" />
 					</div>
 				</section>
 			)}
@@ -234,15 +226,10 @@ export default function Subscription() {
 							</p>
 						)}
 
-						{subsError && (
-							<Alert variant="destructive" className="flex flex-col gap-2">
-								<AlertTitle className="flex gap-2 items-center">
-									<AlertCircleIcon />
-									Error occured
-								</AlertTitle>
-								<AlertDescription className="text-sm">{subsError}</AlertDescription>
-							</Alert>
-						)}
+						<ErrorAlert
+							error={subsError}
+							fallbackTitle="Could not load subscriptions"
+						/>
 
 						{activeSubs.length ? (
 							activeSubs.map((sub) => {

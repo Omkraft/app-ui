@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { CircleCheckBig, IndianRupee, AlertCircleIcon } from 'lucide-react';
+import { CircleCheckBig, IndianRupee } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
 import { isPositiveNumeric } from '@/utils/format';
 import { confirmSubscriptionPayment, type Subscription } from '@/api/subscription';
+import ErrorAlert from '@/components/ui/error-alert';
 
 type PaymentMode = 'total' | 'custom';
 
@@ -23,7 +23,7 @@ export default function ConfirmPaymentPopover({
 	const [mode, setMode] = useState<PaymentMode>('total');
 	const [customAmount, setCustomAmount] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<unknown | null>(null);
 
 	async function handleSubmit() {
 		setError(null);
@@ -44,7 +44,7 @@ export default function ConfirmPaymentPopover({
 			setCustomAmount('');
 			await onSuccess();
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to confirm payment');
+			setError(err instanceof Error ? err : 'Failed to confirm payment');
 		} finally {
 			setLoading(false);
 		}
@@ -113,15 +113,7 @@ export default function ConfirmPaymentPopover({
 					</div>
 				</div>
 
-				{error && (
-					<Alert variant="destructive" className="flex flex-col gap-2">
-						<AlertTitle className="flex gap-2 items-center">
-							<AlertCircleIcon />
-							Error occured
-						</AlertTitle>
-						<AlertDescription className="text-sm">{error}</AlertDescription>
-					</Alert>
-				)}
+				<ErrorAlert error={error} fallbackTitle="Could not save payment" />
 
 				<div className="flex justify-end gap-2">
 					<Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>

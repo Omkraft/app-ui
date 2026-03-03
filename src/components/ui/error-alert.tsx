@@ -1,0 +1,72 @@
+import { AlertCircleIcon, AlertTriangleIcon, CheckCircle2Icon, InfoIcon } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { getErrorAlertDetails } from '@/lib/errorAlert';
+
+type AlertSeverity = 'error' | 'warning' | 'info' | 'success';
+
+type Props = {
+	error: unknown;
+	severity?: AlertSeverity;
+	fallbackTitle?: string;
+	fallbackMessage?: string;
+};
+
+export default function ErrorAlert({
+	error,
+	severity = 'error',
+	fallbackTitle,
+	fallbackMessage,
+}: Props) {
+	if (!error) return null;
+
+	const defaultBySeverity: Record<AlertSeverity, { title: string; message: string }> = {
+		error: { title: 'Action failed', message: 'Something went wrong. Please try again.' },
+		warning: { title: 'Heads up', message: 'Please review this warning before continuing.' },
+		info: { title: 'For your information', message: 'Please review this information.' },
+		success: { title: 'Success', message: 'The action completed successfully.' },
+	};
+	const title = fallbackTitle ?? defaultBySeverity[severity].title;
+	const message = fallbackMessage ?? defaultBySeverity[severity].message;
+
+	const details =
+		severity === 'error'
+			? getErrorAlertDetails(error, title, message)
+			: {
+					title,
+					message:
+						error instanceof Error
+							? error.message
+							: typeof error === 'string'
+								? error
+								: message,
+				};
+
+	const icon =
+		severity === 'warning' ? (
+			<AlertTriangleIcon />
+		) : severity === 'info' ? (
+			<InfoIcon />
+		) : severity === 'success' ? (
+			<CheckCircle2Icon />
+		) : (
+			<AlertCircleIcon />
+		);
+	const variant =
+		severity === 'warning'
+			? 'warning'
+			: severity === 'info'
+				? 'info'
+				: severity === 'success'
+					? 'success'
+					: 'destructive';
+
+	return (
+		<Alert variant={variant} className="flex flex-col gap-2">
+			<AlertTitle className="flex gap-2 items-center">
+				{icon}
+				{details.title}
+			</AlertTitle>
+			<AlertDescription className="text-sm">{details.message}</AlertDescription>
+		</Alert>
+	);
+}

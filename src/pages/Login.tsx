@@ -9,16 +9,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 
 import loginIllustration from '@/assets/login-illustration.svg';
 import Loading from '../components/Loading';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircleIcon, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { FieldGroup, Field, FieldLabel } from '@/components/ui/field';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
+import ErrorAlert from '@/components/ui/error-alert';
 
 export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<unknown | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	const { login } = useAuth();
@@ -39,7 +39,7 @@ export default function Login() {
 			const { token, user } = await loginApi(email, password);
 			login(token, user);
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Login failed. Please try again.';
+			error = err instanceof Error ? err : 'Login failed. Please try again.';
 			setError(error);
 		} finally {
 			setLoading(false);
@@ -93,6 +93,7 @@ export default function Login() {
 											</FieldLabel>
 											<Input
 												id="email"
+												type="email"
 												placeholder="you@omkraft.io"
 												value={email}
 												onChange={(e) => setEmail(e.target.value)}
@@ -133,15 +134,7 @@ export default function Login() {
 										</Field>
 									</FieldGroup>
 
-									{error && (
-										<Alert variant="destructive" className="max-w-md">
-											<AlertCircleIcon />
-											<AlertTitle>Login failed</AlertTitle>
-											<AlertDescription className="text-sm">
-												{error}
-											</AlertDescription>
-										</Alert>
-									)}
+									<ErrorAlert error={error} fallbackTitle="Login failed" />
 
 									<Button type="submit" className="w-full">
 										Login

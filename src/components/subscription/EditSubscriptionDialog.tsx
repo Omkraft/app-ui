@@ -21,11 +21,11 @@ import { FieldGroup, Field, FieldLabel } from '@/components/ui/field';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/input-group';
 import { StartDatePicker } from './StartDatePicker';
 import { Spinner } from '@/components/ui/spinner';
-import { AlertCircleIcon, IndianRupee, Pencil } from 'lucide-react';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { IndianRupee, Pencil } from 'lucide-react';
 import { isPositiveNumeric } from '@/utils/format';
 import { updateSubscription } from '@/api/subscription';
 import type { Subscription } from '@/api/subscription';
+import ErrorAlert from '@/components/ui/error-alert';
 
 function subtractMonthsSafe(date: Date, months: number) {
 	const d = new Date(date);
@@ -90,7 +90,7 @@ export default function EditSubscriptionDialog({
 
 	const [startDate, setStartDate] = useState<Date>(derivedStartDate);
 
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<unknown | null>(null);
 	const [loading, setLoading] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -128,7 +128,7 @@ export default function EditSubscriptionDialog({
 			});
 		} catch (err) {
 			console.error(err);
-			error = err instanceof Error ? err.message : 'Failed to add subscription';
+			error = err instanceof Error ? err : 'Failed to update subscription';
 			setError(error);
 		} finally {
 			setLoading(false);
@@ -296,15 +296,7 @@ export default function EditSubscriptionDialog({
 						</Field>
 					</FieldGroup>
 
-					{error && (
-						<Alert variant="destructive" className="flex flex-col gap-2">
-							<AlertTitle className="flex gap-2 items-center">
-								<AlertCircleIcon />
-								Error occured
-							</AlertTitle>
-							<AlertDescription className="text-sm">{error}</AlertDescription>
-						</Alert>
-					)}
+					<ErrorAlert error={error} fallbackTitle="Could not update subscription" />
 
 					{loading ? (
 						<div className="flex gap-2">
