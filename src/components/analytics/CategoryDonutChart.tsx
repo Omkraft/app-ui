@@ -1,4 +1,4 @@
-import { PieChart, Pie, Cell } from 'recharts';
+﻿import { PieChart, Pie, Cell } from 'recharts';
 import { ChartContainer, ChartTooltip, ChartLegend } from '@/components/ui/chart';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { CATEGORY_COLORS, FALLBACK_COLORS } from './categoryColors';
@@ -46,8 +46,6 @@ export default function CategoryDonutChart({ data }: Props) {
 								))}
 							</Pie>
 
-							{/* TOOLTIP */}
-
 							<ChartTooltip
 								content={({ active, payload }) => {
 									if (!active || !payload?.length) return null;
@@ -81,8 +79,6 @@ export default function CategoryDonutChart({ data }: Props) {
 								}}
 							/>
 
-							{/* LEGEND */}
-
 							<ChartLegend
 								content={({ payload }) => (
 									<div className="flex flex-wrap gap-2 mt-4 justify-center">
@@ -97,7 +93,6 @@ export default function CategoryDonutChart({ data }: Props) {
 														backgroundColor: entry.color,
 													}}
 												/>
-
 												{getCategoryLabel(entry.value as string)}
 											</div>
 										))}

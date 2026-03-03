@@ -27,6 +27,8 @@ export default function MonthlyTrendChart({ data }: Props) {
 									if (!active || !payload?.length) return null;
 
 									const item = payload[0];
+									const row = item.payload as { month?: string; total?: number };
+									const monthLabel = row.month || 'Month';
 
 									return (
 										<div
@@ -42,9 +44,10 @@ export default function MonthlyTrendChart({ data }: Props) {
 											text-sm
 										"
 										>
-											<div className="font-semibold">{item.name}</div>
+											<div className="font-semibold">{monthLabel}</div>
 
 											<div className="flex items-center gap-1">
+												<span className="font-medium mr-1">Total</span>
 												<IndianRupee size={14} strokeWidth={2.5} />
 												{Number(item.value).toFixed(2)}
 											</div>
@@ -57,7 +60,18 @@ export default function MonthlyTrendChart({ data }: Props) {
 								dataKey="total"
 								stroke="var(--omkraft-primary)"
 								strokeWidth={3}
-								dot={false}
+								dot={{
+									r: 4,
+									fill: 'var(--omkraft-primary)',
+									stroke: 'var(--color-background)',
+									strokeWidth: 2,
+								}}
+								activeDot={{
+									r: 6,
+									fill: 'var(--omkraft-accent)',
+									stroke: 'var(--color-background)',
+									strokeWidth: 2,
+								}}
 							/>
 						</LineChart>
 					</ResponsiveContainer>
