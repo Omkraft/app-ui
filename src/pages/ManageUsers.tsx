@@ -131,8 +131,11 @@ export default function ManageUsers() {
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>
-
-					<header className="space-y-2">
+				</div>
+			</section>
+			<section className="flex items-center py-6">
+				<div className="app-container grid gap-6 items-center">
+					<header className="space-y-4">
 						<h1 className="text-4xl font-semibold">
 							Manage <span className="text-primary">Users</span>
 						</h1>

@@ -4,8 +4,8 @@ import welcomeIllustration from '@/assets/welcome-illustration.svg';
 
 export default function Welcome() {
 	return (
-		<div className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
-			<div className="app-container max-w-4xl py-6 grid gap-12 lg:grid-cols-2 items-center">
+		<main className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
+			<section className="app-container max-w-4xl py-6 grid gap-12 lg:grid-cols-2 items-center">
 				<div className="space-y-8 text-center lg:text-left">
 					{/* Heading */}
 					<h1 className="text-4xl font-semibold leading-tight">
@@ -71,7 +71,7 @@ export default function Welcome() {
 						/>
 					</div>
 				</div>
-			</div>
-		</div>
+			</section>
+		</main>
 	);
 }

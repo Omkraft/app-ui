@@ -49,8 +49,8 @@ export default function VerifyEmail() {
 	}
 
 	return (
-		<div className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
-			<div className="app-container grid gap-12 lg:grid-cols-2 items-center py-6">
+		<main className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
+			<section className="app-container grid gap-12 lg:grid-cols-2 items-center py-6">
 				<Card className="w-full">
 					<CardHeader className="space-y-3">
 						<CardTitle>
@@ -119,7 +119,7 @@ export default function VerifyEmail() {
 						className="w-full max-w-md mx-auto opacity-90"
 					/>
 				</div>
-			</div>
-		</div>
+			</section>
+		</main>
 	);
 }

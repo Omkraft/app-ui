@@ -82,8 +82,8 @@ export default function ForgotPassword() {
 	return (
 		<>
 			{!loading ? (
-				<div className="min-h-[calc(100vh-178px)] flex items-center justify-center bg-background">
-					<div className="app-container grid gap-12 lg:grid-cols-2 py-6 items-center justify-items-center">
+				<main className="min-h-[calc(100vh-178px)] flex items-center justify-center bg-background">
+					<section className="app-container grid gap-12 lg:grid-cols-2 py-6 items-center justify-items-center">
 						{/* Left visual panel */}
 						<div className="hidden lg:block relative">
 							<div className="relative space-y-6">
@@ -364,8 +364,8 @@ export default function ForgotPassword() {
 								</Link>
 							</CardContent>
 						</Card>
-					</div>
-				</div>
+					</section>
+				</main>
 			) : (
 				<Loading />
 			)}
