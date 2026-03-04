@@ -150,8 +150,8 @@ export default function EditProfile() {
 	if (loading) return <Loading />;
 
 	return (
-		<div className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
-			<div className="app-container grid gap-12 py-6 lg:grid-cols-2 items-center justify-items-center">
+		<main className="min-h-[calc(100vh-178px)] bg-background text-foreground flex items-center">
+			<section className="app-container grid gap-12 py-6 lg:grid-cols-2 items-center justify-items-center">
 				<div className="hidden lg:block relative">
 					<div className="relative space-y-6">
 						<h1 className="text-4xl font-semibold text-foreground leading-tight">
@@ -332,7 +332,7 @@ export default function EditProfile() {
 						</p>
 					</CardContent>
 				</Card>
-			</div>
-		</div>
+			</section>
+		</main>
 	);
 }
