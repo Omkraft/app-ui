@@ -89,12 +89,12 @@ export function Header() {
 										<DropdownMenuItem
 											onSelect={() => {
 												setMenuOpen(false);
-												navigate('/admin/users');
+												navigate('/admin/dashboard');
 											}}
 											className="cursor-pointer"
 										>
 											<ShieldUser size={16} />
-											Manage users
+											Admin dashboard
 										</DropdownMenuItem>
 									)}
 									<DropdownMenuItem

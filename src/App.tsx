@@ -158,12 +158,16 @@ export default function App() {
 							}
 						/>
 						<Route
-							path="/admin/users"
+							path="/admin/dashboard"
 							element={
 								<ProtectedRoute>
 									<ManageUsers />
 								</ProtectedRoute>
 							}
+						/>
+						<Route
+							path="/admin/users"
+							element={<Navigate to="/admin/dashboard" replace />}
 						/>
 
 						<Route path="/verify-email" element={<VerifyEmail />} />

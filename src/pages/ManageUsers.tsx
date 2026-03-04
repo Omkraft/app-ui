@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
+import { ArrowUpDown, IndianRupee, Pencil, Trash } from 'lucide-react';
+import { useAuth } from '@/context/auth/AuthContext';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -8,29 +14,6 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Spinner } from '@/components/ui/spinner';
-import OmkraftAlert from '@/components/ui/omkraft-alert';
-import type { AdminUser, UserRole } from '@/api/adminUsers';
-import { deleteAdminUser, listUsers, updateAdminUser } from '@/api/adminUsers';
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
-import { Trash, Pencil, ArrowUpDown, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '@/context/auth/AuthContext';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
 	Table,
 	TableBody,
@@ -39,70 +22,208 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { StartDatePicker } from '@/components/subscription/StartDatePicker';
+import type { AdminUser, UserRole } from '@/api/adminUsers';
+import { deleteAdminUser, listUsers, updateAdminUser } from '@/api/adminUsers';
+import type { AdminSubscription } from '@/api/adminSubscriptions';
+import {
+	type AdminSubscriptionRemovalMode,
+	deleteAdminSubscription,
+	listAdminSubscriptions,
+	updateAdminSubscription,
+} from '@/api/adminSubscriptions';
+import { isPositiveNumeric } from '@/utils/format';
 
-type SortBy = 'firstName' | 'lastName' | 'email' | 'createdAt' | 'role';
+type UserSortBy = 'firstName' | 'lastName' | 'email' | 'createdAt' | 'role';
+type SubscriptionSortBy =
+	| 'name'
+	| 'user'
+	| 'provider'
+	| 'amount'
+	| 'status'
+	| 'nextBillingDate'
+	| 'createdAt';
 type SortOrder = 'asc' | 'desc';
+
+function formatDate(dateLike: string | Date) {
+	const d = new Date(dateLike);
+	if (Number.isNaN(d.getTime())) return '-';
+	return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function subtractMonthsSafe(date: Date, months: number) {
+	const d = new Date(date);
+	const originalDay = d.getDate();
+
+	d.setDate(1);
+	d.setMonth(d.getMonth() - months);
+
+	const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+
+	d.setDate(Math.min(originalDay, lastDay));
+
+	return d;
+}
+
+function subtractYearsSafe(date: Date, years: number) {
+	const d = new Date(date);
+	const originalDay = d.getDate();
+
+	d.setDate(1);
+	d.setFullYear(d.getFullYear() - years);
+
+	const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+
+	d.setDate(Math.min(originalDay, lastDay));
+
+	return d;
+}
+
+function calculateLastChargedDate(nextBillingDate: Date, cycleInDays: number) {
+	if (cycleInDays === 30) {
+		return subtractMonthsSafe(nextBillingDate, 1);
+	}
+
+	if (cycleInDays === 365) {
+		return subtractYearsSafe(nextBillingDate, 1);
+	}
+
+	const prev = new Date(nextBillingDate);
+	prev.setDate(prev.getDate() - cycleInDays);
+	return prev;
+}
 
 export default function ManageUsers() {
 	const { user } = useAuth();
-	const [rows, setRows] = useState<AdminUser[]>([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<unknown | null>(null);
-	const [searchInput, setSearchInput] = useState('');
-	const [search, setSearch] = useState('');
-	const [page, setPage] = useState(1);
-	const [limit] = useState(10);
-	const [sortBy, setSortBy] = useState<SortBy>('createdAt');
-	const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-	const [totalPages, setTotalPages] = useState(1);
-	const [total, setTotal] = useState(0);
+	const [tab, setTab] = useState<'users' | 'subscriptions'>('users');
 
-	const canGoPrev = page > 1;
-	const canGoNext = page < totalPages;
+	const [users, setUsers] = useState<AdminUser[]>([]);
+	const [usersLoading, setUsersLoading] = useState(false);
+	const [usersError, setUsersError] = useState<unknown | null>(null);
+	const [userSearchInput, setUserSearchInput] = useState('');
+	const [userSearch, setUserSearch] = useState('');
+	const [userPage, setUserPage] = useState(1);
+	const [userTotalPages, setUserTotalPages] = useState(1);
+	const [userTotal, setUserTotal] = useState(0);
+	const [userSortBy, setUserSortBy] = useState<UserSortBy>('createdAt');
+	const [userSortOrder, setUserSortOrder] = useState<SortOrder>('desc');
+
+	const [subscriptions, setSubscriptions] = useState<AdminSubscription[]>([]);
+	const [subscriptionsLoading, setSubscriptionsLoading] = useState(false);
+	const [subscriptionsError, setSubscriptionsError] = useState<unknown | null>(null);
+	const [subscriptionSearchInput, setSubscriptionSearchInput] = useState('');
+	const [subscriptionSearch, setSubscriptionSearch] = useState('');
+	const [subscriptionPage, setSubscriptionPage] = useState(1);
+	const [subscriptionTotalPages, setSubscriptionTotalPages] = useState(1);
+	const [subscriptionTotal, setSubscriptionTotal] = useState(0);
+	const [subscriptionSortBy, setSubscriptionSortBy] =
+		useState<SubscriptionSortBy>('nextBillingDate');
+	const [subscriptionSortOrder, setSubscriptionSortOrder] = useState<SortOrder>('asc');
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			setPage(1);
-			setSearch(searchInput.trim());
+			setUserPage(1);
+			setUserSearch(userSearchInput.trim());
 		}, 350);
-
 		return () => clearTimeout(timer);
-	}, [searchInput]);
+	}, [userSearchInput]);
 
 	useEffect(() => {
-		void fetchUsers();
-	}, [page, search, sortBy, sortOrder]);
+		const timer = setTimeout(() => {
+			setSubscriptionPage(1);
+			setSubscriptionSearch(subscriptionSearchInput.trim());
+		}, 350);
+		return () => clearTimeout(timer);
+	}, [subscriptionSearchInput]);
+
+	useEffect(() => {
+		if (tab === 'users') {
+			void fetchUsers();
+		}
+	}, [tab, userPage, userSearch, userSortBy, userSortOrder]);
+
+	useEffect(() => {
+		if (tab === 'subscriptions') {
+			void fetchSubscriptions();
+		}
+	}, [tab, subscriptionPage, subscriptionSearch, subscriptionSortBy, subscriptionSortOrder]);
 
 	async function fetchUsers() {
-		setError(null);
+		setUsersError(null);
 		try {
-			setLoading(true);
-			const response = await listUsers({
-				page,
-				limit,
-				search,
-				sortBy,
-				sortOrder,
+			setUsersLoading(true);
+			const res = await listUsers({
+				page: userPage,
+				limit: 10,
+				search: userSearch,
+				sortBy: userSortBy,
+				sortOrder: userSortOrder,
 			});
-			setRows(response.data);
-			setTotalPages(response.pagination.totalPages);
-			setTotal(response.pagination.total);
+			setUsers(res.data);
+			setUserTotalPages(res.pagination.totalPages);
+			setUserTotal(res.pagination.total);
 		} catch (err) {
-			setError(err instanceof Error ? err : 'Failed to load users');
+			setUsersError(err instanceof Error ? err : 'Failed to load users');
 		} finally {
-			setLoading(false);
+			setUsersLoading(false);
 		}
 	}
 
-	function onSort(column: SortBy) {
-		if (sortBy === column) {
-			setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+	async function fetchSubscriptions() {
+		setSubscriptionsError(null);
+		try {
+			setSubscriptionsLoading(true);
+			const res = await listAdminSubscriptions({
+				page: subscriptionPage,
+				limit: 10,
+				search: subscriptionSearch,
+				sortBy: subscriptionSortBy,
+				sortOrder: subscriptionSortOrder,
+			});
+			setSubscriptions(res.data);
+			setSubscriptionTotalPages(res.pagination.totalPages);
+			setSubscriptionTotal(res.pagination.total);
+		} catch (err) {
+			setSubscriptionsError(err instanceof Error ? err : 'Failed to load subscriptions');
+		} finally {
+			setSubscriptionsLoading(false);
+		}
+	}
+
+	function onUserSort(column: UserSortBy) {
+		if (userSortBy === column) {
+			setUserSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
 			return;
 		}
-		setSortBy(column);
-		setSortOrder('asc');
+		setUserSortBy(column);
+		setUserSortOrder('asc');
+	}
+
+	function onSubscriptionSort(column: SubscriptionSortBy) {
+		if (subscriptionSortBy === column) {
+			setSubscriptionSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+			return;
+		}
+		setSubscriptionSortBy(column);
+		setSubscriptionSortOrder('asc');
 	}
 
 	if (user?.role !== 'ADMIN') {
@@ -126,262 +247,339 @@ export default function ManageUsers() {
 							<BreadcrumbSeparator className="text-background" />
 							<BreadcrumbItem>
 								<BreadcrumbPage className="text-background">
-									Manage Users
+									Admin Dashboard
 								</BreadcrumbPage>
 							</BreadcrumbItem>
 						</BreadcrumbList>
 					</Breadcrumb>
 				</div>
 			</section>
+
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<header className="space-y-4">
 						<h1 className="text-4xl font-semibold">
-							Manage <span className="text-primary">Users</span>
+							Admin <span className="text-primary">Dashboard</span>
 						</h1>
 						<p className="text-background">
-							Admin console for user search, sorting, updates, and removal
+							Manage users and subscriptions from one place
 						</p>
 					</header>
 
-					<div className="bg-[var(--omkraft-surface-0)] text-background rounded-lg border border-background p-4 space-y-4">
-						<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-							<div className="w-full lg:max-w-sm">
-								<Input
-									value={searchInput}
-									onChange={(e) => setSearchInput(e.target.value)}
-									placeholder="Search by name, email, phone"
-									className="bg-[var(--omkraft-surface-0)] text-background border-background placeholder:text-background"
+					<Tabs
+						value={tab}
+						onValueChange={(value) => setTab(value as 'users' | 'subscriptions')}
+						className="space-y-4"
+					>
+						<TabsList className="grid h-auto w-full grid-cols-2 border border-primary bg-[var(--omkraft-blue-50)] p-1">
+							<TabsTrigger
+								value="users"
+								className="text-primary data-[state=active]:text-primary-foreground data-[state=active]:bg-primary"
+							>
+								User Management
+							</TabsTrigger>
+							<TabsTrigger
+								value="subscriptions"
+								className="text-primary data-[state=active]:text-primary-foreground data-[state=active]:bg-primary"
+							>
+								Subscription Management
+							</TabsTrigger>
+						</TabsList>
+
+						<div className="bg-[var(--omkraft-surface-0)] text-background rounded-lg border border-background p-4">
+							<TabsContent value="users" className="space-y-4 mt-0">
+								<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+									<Input
+										value={userSearchInput}
+										onChange={(e) => setUserSearchInput(e.target.value)}
+										placeholder="Search by name, email, phone"
+										className="w-full lg:max-w-sm bg-[var(--omkraft-surface-0)] text-background border-background placeholder:text-background"
+									/>
+									<p className="text-xs text-background">
+										Sorted by {userSortBy} ({userSortOrder}) | Total:{' '}
+										{userTotal}
+									</p>
+								</div>
+
+								<OmkraftAlert
+									error={usersError}
+									fallbackTitle="Could not load users"
 								/>
-							</div>
-							<p className="text-xs text-background">
-								Sorted by {sortBy} (
-								{sortOrder === 'asc' ? 'ascending' : 'descending'}) | Total: {total}
-							</p>
-						</div>
-
-						<OmkraftAlert error={error} fallbackTitle="Could not load users" />
-
-						<div className="lg:hidden space-y-4">
-							{loading ? (
-								<div className="rounded-md border border-background px-3 py-4 text-sm text-background">
-									<Spinner className="inline size-5 mr-2" />
-									Loading users...
-								</div>
-							) : rows.length ? (
-								rows.map((row) => (
-									<Card
-										key={row.id}
-										className={`border border-background transition-colors ${
-											row.role === 'ADMIN'
-												? 'bg-background hover:bg-[var(--omkraft-navy-600)]'
-												: 'bg-[var(--omkraft-surface-0)] hover:bg-[var(--omkraft-blue-50)]'
-										}`}
-									>
-										<CardContent className="p-3 space-y-2">
-											<div
-												className={`text-base font-semibold ${
-													row.role === 'ADMIN'
-														? 'text-foreground'
-														: 'text-background'
-												}`}
-											>
-												{row.firstName} {row.lastName}
-											</div>
-											<p
-												className={`text-sm break-all ${
-													row.role === 'ADMIN'
-														? 'text-muted-foreground'
-														: 'text-background'
-												}`}
-											>
-												{row.email}
-											</p>
-											<p
-												className={`text-sm ${
-													row.role === 'ADMIN'
-														? 'text-muted-foreground'
-														: 'text-background'
-												}`}
-											>
-												{row.phone}
-											</p>
-											<p
-												className={`text-sm ${
-													row.role === 'ADMIN'
-														? 'text-muted-foreground'
-														: 'text-background'
-												}`}
-											>
-												{row.role}
-											</p>
-											<div className="flex gap-2 pt-1">
-												<EditUserDialog user={row} onSuccess={fetchUsers} />
-												<DeleteUserDialog
-													user={row}
-													onSuccess={fetchUsers}
-													disableDelete={row.id === user?.id}
-												/>
-											</div>
-										</CardContent>
-									</Card>
-								))
-							) : (
-								<div className="rounded-md border border-background px-3 py-4 text-sm text-background text-center">
-									No users found
-								</div>
-							)}
-						</div>
-
-						<div className="hidden lg:block bg-[var(--omkraft-surface-0)] rounded-lg border border-background overflow-x-auto">
-							<Table className="text-background bg-[var(--omkraft-surface-0)]">
-								<TableHeader className="bg-[var(--omkraft-blue-50)]">
-									<TableRow className="rounded-lg">
-										<TableHead className="px-3 py-2 text-background">
-											<button
-												type="button"
-												className="inline-flex items-center gap-1 text-primary hover:text-[var(--omkraft-blue-700)]"
-												onClick={() => onSort('firstName')}
-											>
-												Name <ArrowUpDown size={14} />
-											</button>
-										</TableHead>
-										<TableHead className="px-3 py-2 text-background">
-											<button
-												type="button"
-												className="inline-flex items-center gap-1 text-primary hover:text-[var(--omkraft-blue-700)]"
-												onClick={() => onSort('email')}
-											>
-												Email <ArrowUpDown size={14} />
-											</button>
-										</TableHead>
-										<TableHead className="px-3 py-2 text-background">
-											Phone
-										</TableHead>
-										<TableHead className="px-3 py-2 text-background">
-											<button
-												type="button"
-												className="inline-flex items-center gap-1 text-primary hover:text-[var(--omkraft-blue-700)]"
-												onClick={() => onSort('role')}
-											>
-												Role <ArrowUpDown size={14} />
-											</button>
-										</TableHead>
-										<TableHead className="text-right px-3 py-2 text-background">
-											Actions
-										</TableHead>
-									</TableRow>
-								</TableHeader>
-								<TableBody>
-									{loading ? (
-										<TableRow>
-											<TableCell
-												colSpan={5}
-												className="px-3 py-6 text-center"
-											>
-												<Spinner className="inline size-5 mr-2" />
-												Loading users...
-											</TableCell>
-										</TableRow>
-									) : rows.length ? (
-										rows.map((row) => (
-											<TableRow
-												key={row.id}
-												className={`border-t border-[var(--omkraft-blue-100)] ${
-													row.role === 'ADMIN'
-														? 'bg-background hover:bg-[var(--omkraft-navy-600)]'
-														: 'bg-[var(--omkraft-surface-0)] hover:bg-[var(--omkraft-blue-50)]'
-												}`}
-											>
-												<TableCell
-													className={`px-3 py-3 ${
-														row.role === 'ADMIN'
-															? 'text-foreground font-semibold'
-															: 'text-background'
-													}`}
-												>
-													{row.firstName} {row.lastName}
-												</TableCell>
-												<TableCell
-													className={`px-3 py-3 ${
-														row.role === 'ADMIN'
-															? 'text-muted-foreground'
-															: 'text-background'
-													}`}
-												>
-													{row.email}
-												</TableCell>
-												<TableCell
-													className={`px-3 py-3 ${
-														row.role === 'ADMIN'
-															? 'text-muted-foreground'
-															: 'text-background'
-													}`}
-												>
-													{row.phone}
-												</TableCell>
-												<TableCell
-													className={`px-3 py-3 ${
-														row.role === 'ADMIN'
-															? 'text-muted-foreground'
-															: 'text-background'
-													}`}
-												>
-													{row.role}
-												</TableCell>
-												<TableCell className="px-3 py-3">
-													<div className="flex justify-end gap-2">
-														<EditUserDialog
-															user={row}
-															onSuccess={fetchUsers}
-														/>
-														<DeleteUserDialog
-															user={row}
-															onSuccess={fetchUsers}
-															disableDelete={row.id === user?.id}
-														/>
-													</div>
-												</TableCell>
+								<div className="overflow-x-auto rounded-lg border border-background bg-[var(--omkraft-surface-0)]">
+									<Table className="text-background">
+										<TableHeader className="bg-[var(--omkraft-blue-50)]">
+											<TableRow>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() => onUserSort('firstName')}
+													>
+														Name <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() => onUserSort('email')}
+													>
+														Email <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
+												<TableHead>Phone</TableHead>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() => onUserSort('role')}
+													>
+														Role <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
+												<TableHead className="text-right">
+													Actions
+												</TableHead>
 											</TableRow>
-										))
-									) : (
-										<TableRow>
-											<TableCell
-												colSpan={5}
-												className="px-3 py-6 text-center text-background"
-											>
-												No users found
-											</TableCell>
-										</TableRow>
-									)}
-								</TableBody>
-							</Table>
-						</div>
+										</TableHeader>
+										<TableBody className="[&_tr]:border-[rgba(15,23,42,0.14)]">
+											{usersLoading ? (
+												<TableRow className="border-b border-background/20">
+													<TableCell
+														colSpan={5}
+														className="text-center py-6"
+													>
+														<Spinner className="inline size-5 mr-2" />
+														Loading users...
+													</TableCell>
+												</TableRow>
+											) : users.length ? (
+												users.map((row) => (
+													<TableRow
+														key={row.id}
+														className="border-b border-background/20 hover:bg-[var(--omkraft-blue-50)]"
+													>
+														<TableCell>
+															{row.firstName} {row.lastName}
+														</TableCell>
+														<TableCell>{row.email}</TableCell>
+														<TableCell>{row.phone}</TableCell>
+														<TableCell>{row.role}</TableCell>
+														<TableCell>
+															<div className="flex justify-end gap-2">
+																<EditUserDialog
+																	user={row}
+																	onSuccess={fetchUsers}
+																/>
+																<DeleteUserDialog
+																	user={row}
+																	onSuccess={fetchUsers}
+																	disableDelete={
+																		row.id === user.id
+																	}
+																/>
+															</div>
+														</TableCell>
+													</TableRow>
+												))
+											) : (
+												<TableRow className="border-b border-background/20">
+													<TableCell
+														colSpan={5}
+														className="text-center py-6"
+													>
+														No users found
+													</TableCell>
+												</TableRow>
+											)}
+										</TableBody>
+									</Table>
+								</div>
+								<div className="flex items-center justify-between">
+									<p className="text-xs text-background">
+										Page {userPage} of {userTotalPages}
+									</p>
+									<div className="flex gap-2">
+										<Button
+											variant="outline"
+											className="h-7 px-2 text-xs border-background text-background"
+											disabled={userPage <= 1}
+											onClick={() => setUserPage((p) => p - 1)}
+										>
+											Previous
+										</Button>
+										<Button
+											variant="outline"
+											className="h-7 px-2 text-xs border-background text-background"
+											disabled={userPage >= userTotalPages}
+											onClick={() => setUserPage((p) => p + 1)}
+										>
+											Next
+										</Button>
+									</div>
+								</div>
+							</TabsContent>
 
-						<div className="flex items-center justify-between">
-							<p className="text-xs text-background">
-								Page {page} of {totalPages}
-							</p>
-							<div className="flex gap-2">
-								<Button
-									variant="outline"
-									className="h-7 px-2 text-xs border-background text-background hover:bg-[var(--omkraft-blue-50)]"
-									disabled={!canGoPrev}
-									onClick={() => setPage((p) => p - 1)}
-								>
-									Previous
-								</Button>
-								<Button
-									variant="outline"
-									className="h-7 px-2 text-xs border-background text-background hover:bg-[var(--omkraft-blue-50)]"
-									disabled={!canGoNext}
-									onClick={() => setPage((p) => p + 1)}
-								>
-									Next
-								</Button>
-							</div>
+							<TabsContent value="subscriptions" className="space-y-4 mt-0">
+								<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+									<Input
+										value={subscriptionSearchInput}
+										onChange={(e) => setSubscriptionSearchInput(e.target.value)}
+										placeholder="Search by user, email, provider, category"
+										className="w-full lg:max-w-sm bg-[var(--omkraft-surface-0)] text-background border-background placeholder:text-background"
+									/>
+									<p className="text-xs text-background">
+										Sorted by {subscriptionSortBy} ({subscriptionSortOrder}) |
+										Total: {subscriptionTotal}
+									</p>
+								</div>
+
+								<OmkraftAlert
+									error={subscriptionsError}
+									fallbackTitle="Could not load subscriptions"
+								/>
+								<div className="overflow-x-auto rounded-lg border border-background bg-[var(--omkraft-surface-0)]">
+									<Table className="text-background">
+										<TableHeader className="bg-[var(--omkraft-blue-50)]">
+											<TableRow>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() => onSubscriptionSort('name')}
+													>
+														Subscription <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() => onSubscriptionSort('user')}
+													>
+														User <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
+												<TableHead>Provider</TableHead>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() => onSubscriptionSort('amount')}
+													>
+														Amount <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() => onSubscriptionSort('status')}
+													>
+														Status <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() =>
+															onSubscriptionSort('nextBillingDate')
+														}
+													>
+														Next Billing <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
+												<TableHead className="text-right">
+													Actions
+												</TableHead>
+											</TableRow>
+										</TableHeader>
+										<TableBody className="[&_tr]:border-[rgba(15,23,42,0.14)]">
+											{subscriptionsLoading ? (
+												<TableRow className="border-b border-background/20">
+													<TableCell
+														colSpan={7}
+														className="text-center py-6"
+													>
+														<Spinner className="inline size-5 mr-2" />
+														Loading subscriptions...
+													</TableCell>
+												</TableRow>
+											) : subscriptions.length ? (
+												subscriptions.map((row) => (
+													<TableRow
+														key={row._id}
+														className="border-b border-background/20 hover:bg-[var(--omkraft-blue-50)]"
+													>
+														<TableCell>{row.name}</TableCell>
+														<TableCell>
+															{row.user
+																? `${row.user.firstName} ${row.user.lastName}`
+																: 'Unknown user'}
+														</TableCell>
+														<TableCell>{row.provider}</TableCell>
+														<TableCell>
+															<IndianRupee className="mr-1 inline size-3.5" />
+															{row.amount.toFixed(2)}
+														</TableCell>
+														<TableCell>{row.status}</TableCell>
+														<TableCell>
+															{formatDate(row.nextBillingDate)}
+														</TableCell>
+														<TableCell>
+															<div className="flex justify-end gap-2">
+																<EditSubscriptionDialog
+																	subscription={row}
+																	onSuccess={fetchSubscriptions}
+																/>
+																<DeleteSubscriptionDialog
+																	subscription={row}
+																	onSuccess={fetchSubscriptions}
+																/>
+															</div>
+														</TableCell>
+													</TableRow>
+												))
+											) : (
+												<TableRow className="border-b border-background/20">
+													<TableCell
+														colSpan={7}
+														className="text-center py-6"
+													>
+														No subscriptions found
+													</TableCell>
+												</TableRow>
+											)}
+										</TableBody>
+									</Table>
+								</div>
+								<div className="flex items-center justify-between">
+									<p className="text-xs text-background">
+										Page {subscriptionPage} of {subscriptionTotalPages}
+									</p>
+									<div className="flex gap-2">
+										<Button
+											variant="outline"
+											className="h-7 px-2 text-xs border-background text-background"
+											disabled={subscriptionPage <= 1}
+											onClick={() => setSubscriptionPage((p) => p - 1)}
+										>
+											Previous
+										</Button>
+										<Button
+											variant="outline"
+											className="h-7 px-2 text-xs border-background text-background"
+											disabled={subscriptionPage >= subscriptionTotalPages}
+											onClick={() => setSubscriptionPage((p) => p + 1)}
+										>
+											Next
+										</Button>
+									</div>
+								</div>
+							</TabsContent>
 						</div>
-					</div>
+					</Tabs>
 				</div>
 			</section>
 		</main>
@@ -396,7 +594,6 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 	const [phone, setPhone] = useState(user.phone);
 	const [role, setRole] = useState<UserRole>(user.role);
 	const [password, setPassword] = useState('');
-	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<unknown | null>(null);
 
@@ -408,15 +605,13 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 			setPhone(user.phone);
 			setRole(user.role);
 			setPassword('');
-			setShowPassword(false);
 			setError(null);
 		}
 	}, [open, user]);
 
-	async function handleSave(e: React.FormEvent) {
+	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		setError(null);
-
 		try {
 			setLoading(true);
 			await updateAdminUser(user.id, {
@@ -451,70 +646,55 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 				<DialogHeader>
 					<DialogTitle>Edit User</DialogTitle>
 				</DialogHeader>
-				<form onSubmit={handleSave} className="space-y-3">
+				<form onSubmit={handleSubmit} className="space-y-3">
 					<FieldGroup>
 						<Field>
-							<FieldLabel htmlFor={`edit-user-first-name-${user.id}`}>
+							<FieldLabel>
 								First name <span className="text-destructive">*</span>
 							</FieldLabel>
 							<Input
-								id={`edit-user-first-name-${user.id}`}
 								value={firstName}
 								onChange={(e) => setFirstName(e.target.value)}
-								placeholder="First name"
 								required
 							/>
 						</Field>
-
 						<Field>
-							<FieldLabel htmlFor={`edit-user-last-name-${user.id}`}>
+							<FieldLabel>
 								Last name <span className="text-destructive">*</span>
 							</FieldLabel>
 							<Input
-								id={`edit-user-last-name-${user.id}`}
 								value={lastName}
 								onChange={(e) => setLastName(e.target.value)}
-								placeholder="Last name"
 								required
 							/>
 						</Field>
-
 						<Field>
-							<FieldLabel htmlFor={`edit-user-email-${user.id}`}>
+							<FieldLabel>
 								Email <span className="text-destructive">*</span>
 							</FieldLabel>
 							<Input
-								id={`edit-user-email-${user.id}`}
 								value={email}
 								onChange={(e) => setEmail(e.target.value)}
-								placeholder="Email"
 								required
 							/>
 						</Field>
-
 						<Field>
-							<FieldLabel htmlFor={`edit-user-phone-${user.id}`}>
+							<FieldLabel>
 								Phone <span className="text-destructive">*</span>
 							</FieldLabel>
 							<Input
-								id={`edit-user-phone-${user.id}`}
 								value={phone}
 								onChange={(e) => setPhone(e.target.value)}
-								placeholder="Phone"
 								required
 							/>
 						</Field>
-
 						<Field>
-							<FieldLabel htmlFor={`edit-user-role-${user.id}`}>
+							<FieldLabel>
 								Role <span className="text-destructive">*</span>
 							</FieldLabel>
 							<Select value={role} onValueChange={(v) => setRole(v as UserRole)}>
-								<SelectTrigger
-									id={`edit-user-role-${user.id}`}
-									className="border-border bg-muted"
-								>
-									<SelectValue placeholder="Select role" />
+								<SelectTrigger className="border-border bg-muted">
+									<SelectValue />
 								</SelectTrigger>
 								<SelectContent className="bg-[var(--omkraft-blue-700)] text-foreground">
 									<SelectItem value="USER" className="focus:text-background">
@@ -526,43 +706,20 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 								</SelectContent>
 							</Select>
 						</Field>
-
 						<Field>
-							<FieldLabel htmlFor={`edit-user-password-${user.id}`}>
-								Password
-							</FieldLabel>
-							<InputGroup className="bg-input border border-border">
-								<InputGroupInput
-									id={`edit-user-password-${user.id}`}
-									type={showPassword ? 'text' : 'password'}
-									value={password}
-									onChange={(e) => setPassword(e.target.value)}
-									placeholder="Enter new password"
-								/>
-								<InputGroupAddon align="inline-end">
-									<Button
-										className="hover:bg-transparent"
-										onClick={() => setShowPassword(!showPassword)}
-										size="icon"
-										type="button"
-										variant="ghost"
-									>
-										{showPassword ? (
-											<EyeOff className="h-4 w-4 text-muted-foreground" />
-										) : (
-											<Eye className="h-4 w-4 text-muted-foreground" />
-										)}
-									</Button>
-								</InputGroupAddon>
-							</InputGroup>
+							<FieldLabel>Password</FieldLabel>
+							<Input
+								type="password"
+								value={password}
+								onChange={(e) => setPassword(e.target.value)}
+								placeholder="Enter new password"
+							/>
 							<FieldDescription className="text-xs">
 								Leave blank to keep the current password.
 							</FieldDescription>
 						</Field>
 					</FieldGroup>
-
 					<OmkraftAlert error={error} fallbackTitle="Could not update user" />
-
 					<Button type="submit" className="w-full" disabled={loading}>
 						{loading ? (
 							<>
@@ -622,15 +779,11 @@ function DeleteUserDialog({
 				<DialogHeader>
 					<DialogTitle>Delete User</DialogTitle>
 				</DialogHeader>
-
 				<div className="space-y-4">
 					<p className="text-sm text-muted-foreground">
-						Are you sure you want to delete this user account? This action cannot be
-						undone.
+						Are you sure you want to delete this user account?
 					</p>
-
 					<OmkraftAlert error={error} fallbackTitle="Could not delete user" />
-
 					<div className="flex gap-2">
 						<Button variant="outline" onClick={() => setOpen(false)}>
 							Cancel
@@ -644,6 +797,378 @@ function DeleteUserDialog({
 								'Delete User'
 							)}
 						</Button>
+					</div>
+				</div>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+function EditSubscriptionDialog({
+	subscription,
+	onSuccess,
+}: {
+	subscription: AdminSubscription;
+	onSuccess: () => Promise<void>;
+}) {
+	const [open, setOpen] = useState(false);
+	const [name, setName] = useState(subscription.name);
+	const [provider, setProvider] = useState(subscription.provider);
+	const [price, setPrice] = useState(String(subscription.amount));
+	const [billingCycleDays, setBillingCycleDays] = useState(String(subscription.cycleInDays));
+	const [category, setCategory] = useState(subscription.category);
+	const [startDate, setStartDate] = useState<Date>(
+		calculateLastChargedDate(new Date(subscription.nextBillingDate), subscription.cycleInDays)
+	);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<unknown | null>(null);
+
+	useEffect(() => {
+		if (open) {
+			setName(subscription.name);
+			setProvider(subscription.provider);
+			setPrice(String(subscription.amount));
+			setBillingCycleDays(String(subscription.cycleInDays));
+			setCategory(subscription.category);
+			setStartDate(
+				calculateLastChargedDate(
+					new Date(subscription.nextBillingDate),
+					subscription.cycleInDays
+				)
+			);
+			setError(null);
+		}
+	}, [open, subscription]);
+
+	async function handleSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		setError(null);
+		let localError: unknown | null = null;
+
+		if (
+			!name.trim() ||
+			!provider.trim() ||
+			!price.trim() ||
+			!billingCycleDays ||
+			!category ||
+			!startDate
+		) {
+			setError('All fields are required');
+			return;
+		}
+
+		if (!isPositiveNumeric(Number(price))) {
+			setError('Price must be positive number');
+			return;
+		}
+
+		try {
+			setLoading(true);
+			await updateAdminSubscription(subscription._id, {
+				name,
+				category,
+				provider,
+				amount: Number(price),
+				billingCycleDays: Number(billingCycleDays),
+				startDate: startDate.toISOString(),
+			});
+		} catch (err) {
+			localError = err instanceof Error ? err : 'Failed to update subscription';
+			setError(localError);
+		} finally {
+			setLoading(false);
+			if (!localError) {
+				setOpen(false);
+				await onSuccess();
+			}
+		}
+	}
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button
+					size="sm"
+					className="flex items-center gap-1 bg-transparent border border-primary text-primary"
+				>
+					<Pencil size={16} />
+					<span className="hidden lg:block">Edit</span>
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="text-foreground">
+				<DialogHeader>
+					<DialogTitle>Edit Subscription</DialogTitle>
+				</DialogHeader>
+				<form onSubmit={handleSubmit} className="space-y-4">
+					<FieldGroup>
+						<Field>
+							<FieldLabel htmlFor="admin-category">
+								Category <span className="text-destructive">*</span>
+							</FieldLabel>
+							<Select
+								value={category}
+								onValueChange={(value) => setCategory(value)}
+								required
+							>
+								<SelectTrigger
+									id="admin-category"
+									className="border-border bg-muted"
+								>
+									<SelectValue placeholder="Select category" />
+								</SelectTrigger>
+								<SelectContent className="bg-[var(--omkraft-blue-700)] text-foreground">
+									<SelectItem value="OTT" className="focus:text-background">
+										OTT / Streaming
+									</SelectItem>
+									<SelectItem value="MUSIC" className="focus:text-background">
+										Music
+									</SelectItem>
+									<SelectItem
+										value="SIM_PREPAID"
+										className="focus:text-background"
+									>
+										Mobile (Prepaid)
+									</SelectItem>
+									<SelectItem
+										value="SIM_POSTPAID"
+										className="focus:text-background"
+									>
+										Mobile (Postpaid)
+									</SelectItem>
+									<SelectItem value="INTERNET" className="focus:text-background">
+										Internet / Broadband
+									</SelectItem>
+									<SelectItem value="DTH" className="focus:text-background">
+										DTH / TV
+									</SelectItem>
+									<SelectItem value="SOFTWARE" className="focus:text-background">
+										Software / SaaS
+									</SelectItem>
+									<SelectItem value="CLOUD" className="focus:text-background">
+										Cloud Storage
+									</SelectItem>
+									<SelectItem value="GAMING" className="focus:text-background">
+										Gaming
+									</SelectItem>
+									<SelectItem value="OTHER" className="focus:text-background">
+										Other
+									</SelectItem>
+								</SelectContent>
+							</Select>
+						</Field>
+						<Field>
+							<FieldLabel htmlFor="admin-subscription-name">
+								Name <span className="text-destructive">*</span>
+							</FieldLabel>
+							<Input
+								id="admin-subscription-name"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								required
+							/>
+						</Field>
+						<Field>
+							<FieldLabel htmlFor="admin-subscription-provider">
+								Provider <span className="text-destructive">*</span>
+							</FieldLabel>
+							<Input
+								id="admin-subscription-provider"
+								value={provider}
+								onChange={(e) => setProvider(e.target.value)}
+								required
+							/>
+						</Field>
+						<Field>
+							<FieldLabel htmlFor="admin-subscription-price">
+								Price <span className="text-destructive">*</span>
+							</FieldLabel>
+							<InputGroup className="bg-input border border-border">
+								<InputGroupInput
+									id="admin-subscription-price"
+									value={price}
+									onChange={(e) => setPrice(e.target.value)}
+									required
+								/>
+								<InputGroupAddon>
+									<IndianRupee size={14} strokeWidth={2.5} />
+								</InputGroupAddon>
+							</InputGroup>
+						</Field>
+						<Field>
+							<FieldLabel htmlFor="admin-billing-cycle">Billing cycle</FieldLabel>
+							<Select
+								value={billingCycleDays}
+								onValueChange={(value) => setBillingCycleDays(value)}
+							>
+								<SelectTrigger
+									id="admin-billing-cycle"
+									className="border-border bg-muted"
+								>
+									<SelectValue />
+								</SelectTrigger>
+
+								<SelectContent className="bg-[var(--omkraft-blue-700)] text-foreground">
+									<SelectItem value="28" className="focus:text-background">
+										28 calendar days (Mobile)
+									</SelectItem>
+									<SelectItem value="30" className="focus:text-background">
+										30 calendar days
+									</SelectItem>
+									<SelectItem value="31" className="focus:text-background">
+										Monthly
+									</SelectItem>
+									<SelectItem value="84" className="focus:text-background">
+										84 calendar days
+									</SelectItem>
+									<SelectItem value="90" className="focus:text-background">
+										Quarterly
+									</SelectItem>
+									<SelectItem value="365" className="focus:text-background">
+										Yearly
+									</SelectItem>
+								</SelectContent>
+							</Select>
+						</Field>
+						<Field>
+							<FieldLabel htmlFor="admin-start-date">
+								Start date <span className="text-destructive">*</span>
+							</FieldLabel>
+							<StartDatePicker value={startDate} onChange={setStartDate} />
+						</Field>
+					</FieldGroup>
+					<OmkraftAlert error={error} fallbackTitle="Could not update subscription" />
+					{loading ? (
+						<div className="flex gap-2">
+							<Button className="w-full btn-primary flex gap-1" disabled>
+								<Spinner data-icon="inline-start" />
+								Please wait...
+							</Button>
+						</div>
+					) : (
+						<Button type="submit" className="w-full btn-primary">
+							Save Subscription
+						</Button>
+					)}
+				</form>
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+function DeleteSubscriptionDialog({
+	subscription,
+	onSuccess,
+}: {
+	subscription: AdminSubscription;
+	onSuccess: () => Promise<void>;
+}) {
+	const [open, setOpen] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [mode, setMode] = useState<AdminSubscriptionRemovalMode>('inactive');
+	const [error, setError] = useState<unknown | null>(null);
+
+	async function handleDelete() {
+		setError(null);
+		const reason =
+			mode === 'mistake'
+				? 'Added by mistake'
+				: 'No longer subscribed / actively using this service';
+		try {
+			setLoading(true);
+			await deleteAdminSubscription(subscription._id, { mode, reason });
+			setOpen(false);
+			await onSuccess();
+		} catch (err) {
+			setError(err instanceof Error ? err : 'Failed to remove subscription');
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button variant="destructive" size="sm" className="flex items-center gap-1">
+					<Trash size={16} />
+					<span className="hidden lg:block">Remove</span>
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="text-foreground">
+				<DialogHeader>
+					<DialogTitle>Remove Subscription</DialogTitle>
+				</DialogHeader>
+				<div className="space-y-4">
+					<p className="text-sm text-muted-foreground">
+						Why are you removing this subscription?
+					</p>
+					<RadioGroup
+						value={mode}
+						onValueChange={(value) => setMode(value as AdminSubscriptionRemovalMode)}
+						className="grid gap-3"
+					>
+						<div
+							className={`flex items-start gap-3 rounded-md border p-3 ${
+								mode === 'mistake' ? 'border-primary bg-muted/50' : 'border-border'
+							}`}
+						>
+							<RadioGroupItem
+								value="mistake"
+								id={`admin-remove-${subscription._id}-mistake`}
+								className="mt-1 border-foreground"
+							/>
+							<label
+								htmlFor={`admin-remove-${subscription._id}-mistake`}
+								className="cursor-pointer"
+							>
+								<p className="font-medium">Added by mistake</p>
+								<p className="text-xs text-muted-foreground">
+									This will permanently remove the subscription and all its
+									payment history.
+								</p>
+							</label>
+						</div>
+						<div
+							className={`flex items-start gap-3 rounded-md border p-3 ${
+								mode === 'inactive' ? 'border-primary bg-muted/50' : 'border-border'
+							}`}
+						>
+							<RadioGroupItem
+								value="inactive"
+								id={`admin-remove-${subscription._id}-inactive`}
+								className="mt-1 border-foreground"
+							/>
+							<label
+								htmlFor={`admin-remove-${subscription._id}-inactive`}
+								className="cursor-pointer"
+							>
+								<p className="font-medium">No longer active</p>
+								<p className="text-xs text-muted-foreground">
+									This will move the subscription to Inactive while retaining
+									payment history.
+								</p>
+							</label>
+						</div>
+					</RadioGroup>
+					<OmkraftAlert error={error} fallbackTitle="Could not remove subscription" />
+					<div className="flex gap-4">
+						<Button variant="outline" onClick={() => setOpen(false)}>
+							Cancel
+						</Button>
+						{loading ? (
+							<div className="flex gap-2">
+								<Button
+									variant="destructive"
+									className="flex items-center gap-1"
+									disabled
+								>
+									<Spinner data-icon="inline-start" /> Removing...
+								</Button>
+							</div>
+						) : (
+							<Button variant="destructive" onClick={handleDelete}>
+								Remove
+							</Button>
+						)}
 					</div>
 				</div>
 			</DialogContent>

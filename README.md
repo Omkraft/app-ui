@@ -21,6 +21,7 @@
 It includes:
 - Auth flows (register, login, forgot/reset password, email verification)
 - Protected app routes (Dashboard, Utility Hub, Subscription Tracker)
+- Admin dashboard for user/subscription management with sortable tables
 - PWA support (install/update prompts, offline-friendly caching)
 - Push notification registration
 - Real-time notification updates via Socket.IO
