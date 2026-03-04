@@ -4,6 +4,10 @@ interface VersionPayload {
 	version?: string;
 }
 
+export function isReleaseTagVersion(version: string): boolean {
+	return /^v\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/.test(version);
+}
+
 export function getCurrentBuildVersion(): string {
 	return import.meta.env.VITE_APP_VERSION || 'dev';
 }

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { usePWAUpdate } from '@/hooks/usePWAUpdate';
 import { getAvailableUpdateVersion } from '@/hooks/useAppVersion';
 import { omkraftToast } from '@/lib/toast';
+import { isReleaseTagVersion } from '@/lib/version';
 import { Rocket } from 'lucide-react';
 
 export function PWAUpdateToast() {
@@ -14,7 +15,10 @@ export function PWAUpdateToast() {
 
 		(async () => {
 			const newVersion = await getAvailableUpdateVersion();
-			const versionText = newVersion ? `Update available ${newVersion}` : 'Update available';
+			const versionText =
+				newVersion && isReleaseTagVersion(newVersion)
+					? `Update available ${newVersion}`
+					: 'Update available';
 
 			omkraftToast.success(versionText, {
 				description: 'Please wait while we update the app to the latest version.',
