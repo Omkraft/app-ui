@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { registerPush } from '@/services/push';
 import { getProfile } from '@/api/user';
+import { ApiError } from '@/api/client';
 
 export type User = {
 	firstName: string;
@@ -45,10 +46,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				localStorage.setItem('auth', JSON.stringify(profile.user));
 				setUser(profile.user);
 				await registerPush();
-			} catch {
-				localStorage.removeItem('token');
-				localStorage.removeItem('auth');
-				setUser(null);
+			} catch (error) {
+				const isUnauthorized =
+					error instanceof ApiError
+						? error.status === 401
+						: error instanceof Error &&
+							error.message.toLowerCase().includes('session expired');
+
+				if (isUnauthorized) {
+					localStorage.removeItem('token');
+					localStorage.removeItem('auth');
+					setUser(null);
+				}
 			}
 		})();
 	}, []);
