@@ -48,8 +48,13 @@ jobs:
         run: |
           tag="$(git tag --points-at "$GITHUB_SHA" | sort -V | tail -n 1)"
           if [ -z "$tag" ]; then
-            tag="dev"
-            echo "No release tag found on commit $GITHUB_SHA. Using APP_RELEASE_VERSION=$tag for non-release deploy."
+            tag="$(git tag -l 'v*' | sort -V | tail -n 1)"
+            if [ -n "$tag" ]; then
+              echo "No release tag found on commit $GITHUB_SHA. Using latest release tag for APP_RELEASE_VERSION: $tag"
+            else
+              tag="dev"
+              echo "No release tags found in repository. Falling back to APP_RELEASE_VERSION=$tag"
+            fi
           fi
           echo "APP_RELEASE_VERSION=$tag" >> "$GITHUB_ENV"
           echo "value=$tag" >> "$GITHUB_OUTPUT"
