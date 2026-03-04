@@ -6,6 +6,7 @@ export interface UserProfile {
 	lastName: string;
 	email: string;
 	phone: string;
+	role: 'ADMIN' | 'USER';
 }
 
 interface MeResponse {

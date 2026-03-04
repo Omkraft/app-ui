@@ -26,6 +26,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Utility = lazy(() => import('./pages/Utility'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 const EditProfile = lazy(() => import('./pages/EditProfile'));
+const ManageUsers = lazy(() => import('./pages/ManageUsers'));
 
 function ScrollToTopOnRouteChange() {
 	const { pathname } = useLocation();
@@ -153,6 +154,14 @@ export default function App() {
 							element={
 								<ProtectedRoute>
 									<EditProfile />
+								</ProtectedRoute>
+							}
+						/>
+						<Route
+							path="/admin/users"
+							element={
+								<ProtectedRoute>
+									<ManageUsers />
 								</ProtectedRoute>
 							}
 						/>

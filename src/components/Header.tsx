@@ -14,7 +14,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { CircleUser, LogOut, User } from 'lucide-react';
+import { CircleUser, LogOut, ShieldUser, User } from 'lucide-react';
 import { useState } from 'react';
 
 export function Header() {
@@ -85,6 +85,18 @@ export function Header() {
 										{user?.email || 'Profile'}
 									</DropdownMenuLabel>
 									<DropdownMenuSeparator className="bg-muted-foreground" />
+									{user?.role === 'ADMIN' && (
+										<DropdownMenuItem
+											onSelect={() => {
+												setMenuOpen(false);
+												navigate('/admin/users');
+											}}
+											className="cursor-pointer"
+										>
+											<ShieldUser size={16} />
+											Manage users
+										</DropdownMenuItem>
+									)}
 									<DropdownMenuItem
 										onSelect={() => {
 											setMenuOpen(false);

@@ -301,30 +301,29 @@ export default function EditProfile() {
 										</InputGroupAddon>
 									</InputGroup>
 								</Field>
-								<Field>
-									<Button
-										type="submit"
-										className="w-full btn-primary"
-										disabled={saving}
-									>
-										{saving ? 'Saving...' : 'Save changes'}
-									</Button>
-								</Field>
+								{feedback && (
+									<div className="mt-4">
+										<OmkraftAlert
+											error={feedback.message}
+											severity={
+												feedback.type === 'success' ? 'success' : 'error'
+											}
+											fallbackTitle={
+												feedback.type === 'success'
+													? 'Profile updated'
+													: 'Profile update failed'
+											}
+										/>
+									</div>
+								)}
+								<Button
+									type="submit"
+									className="w-full btn-primary"
+									disabled={saving}
+								>
+									{saving ? 'Saving...' : 'Save changes'}
+								</Button>
 							</FieldGroup>
-
-							{feedback && (
-								<div className="mt-4">
-									<OmkraftAlert
-										error={feedback.message}
-										severity={feedback.type === 'success' ? 'success' : 'error'}
-										fallbackTitle={
-											feedback.type === 'success'
-												? 'Profile updated'
-												: 'Profile update failed'
-										}
-									/>
-								</div>
-							)}
 						</form>
 						<p className="text-sm text-center text-muted-foreground mt-4">
 							<Link to="/dashboard" className="text-foreground underline">

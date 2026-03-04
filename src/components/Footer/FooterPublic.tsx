@@ -16,8 +16,8 @@ export function FooterPublic() {
 				</a>
 				<p className="text-sm text-muted-foreground flex items-center gap-1">
 					<Copyright size={14} strokeWidth={2.5} />
-					{year} <span className="font-semibold">Omkraft</span> Inc.{' '}
-					<em>Systems, Crafted.</em>
+					{year} <span className="font-medium">Omkraft</span> Inc.{' '}
+					<em className="font-normal italic">Systems, Crafted.</em>
 				</p>
 
 				<p className="text-sm text-muted-foreground">All rights reserved.</p>

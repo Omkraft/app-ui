@@ -5,6 +5,7 @@ export interface User {
 	lastName: string;
 	email: string;
 	phone: string;
+	role: 'ADMIN' | 'USER';
 }
 
 export interface AuthResponse {

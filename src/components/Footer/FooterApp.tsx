@@ -58,10 +58,10 @@ export function FooterApp() {
 					</a>
 					<p className="flex items-center gap-1">
 						<Copyright size={14} strokeWidth={2.5} />
-						{year} <span className="font-bold">Omkraft</span> Inc.
+						{year} <span className="font-medium">Omkraft</span> Inc.
 					</p>
 					<p>
-						<em>Systems, Crafted.</em>
+						<em className="font-normal italic">Systems, Crafted.</em>
 					</p>
 					<p>Demo project — built for learning, feedback, and future possibilities.</p>
 				</div>
