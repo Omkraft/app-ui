@@ -28,7 +28,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { Trash, Pencil, ArrowUpDown } from 'lucide-react';
+import { Trash, Pencil, ArrowUpDown, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/auth/AuthContext';
 import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import {
@@ -40,6 +40,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent } from '@/components/ui/card';
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 
 type SortBy = 'firstName' | 'lastName' | 'email' | 'createdAt' | 'role';
 type SortOrder = 'asc' | 'desc';
@@ -392,6 +393,7 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 	const [phone, setPhone] = useState(user.phone);
 	const [role, setRole] = useState<UserRole>(user.role);
 	const [password, setPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<unknown | null>(null);
 
@@ -403,6 +405,7 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 			setPhone(user.phone);
 			setRole(user.role);
 			setPassword('');
+			setShowPassword(false);
 			setError(null);
 		}
 	}, [open, user]);
@@ -525,12 +528,30 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 							<FieldLabel htmlFor={`edit-user-password-${user.id}`}>
 								Password
 							</FieldLabel>
-							<Input
-								id={`edit-user-password-${user.id}`}
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								placeholder="Enter new password"
-							/>
+							<InputGroup className="bg-input border border-border">
+								<InputGroupInput
+									id={`edit-user-password-${user.id}`}
+									type={showPassword ? 'text' : 'password'}
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									placeholder="Enter new password"
+								/>
+								<InputGroupAddon align="inline-end">
+									<Button
+										className="hover:bg-transparent"
+										onClick={() => setShowPassword(!showPassword)}
+										size="icon"
+										type="button"
+										variant="ghost"
+									>
+										{showPassword ? (
+											<EyeOff className="h-4 w-4 text-muted-foreground" />
+										) : (
+											<Eye className="h-4 w-4 text-muted-foreground" />
+										)}
+									</Button>
+								</InputGroupAddon>
+							</InputGroup>
 							<FieldDescription className="text-xs">
 								Leave blank to keep the current password.
 							</FieldDescription>
