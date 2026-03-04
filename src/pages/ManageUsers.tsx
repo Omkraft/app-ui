@@ -23,6 +23,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card } from '@/components/ui/card';
 import {
 	Dialog,
 	DialogContent,
@@ -269,24 +270,24 @@ export default function ManageUsers() {
 					<Tabs
 						value={tab}
 						onValueChange={(value) => setTab(value as 'users' | 'subscriptions')}
-						className="space-y-4"
+						className="space-y-4 min-w-0"
 					>
-						<TabsList className="grid h-auto w-full grid-cols-2 border border-primary bg-foreground p-1">
+						<TabsList className="grid h-auto w-full grid-cols-1 border border-primary bg-foreground p-1 sm:grid-cols-2">
 							<TabsTrigger
 								value="users"
-								className="text-primary data-[state=active]:text-primary-foreground data-[state=active]:bg-primary"
+								className="h-auto min-w-0 whitespace-normal px-3 py-2 text-center text-sm leading-tight text-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
 							>
 								User Management
 							</TabsTrigger>
 							<TabsTrigger
 								value="subscriptions"
-								className="text-primary data-[state=active]:text-primary-foreground data-[state=active]:bg-primary"
+								className="h-auto min-w-0 whitespace-normal px-3 py-2 text-center text-sm leading-tight text-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
 							>
 								Subscription Management
 							</TabsTrigger>
 						</TabsList>
 
-						<div className="bg-[var(--omkraft-surface-0)] text-background rounded-lg border border-background p-4">
+						<div className="min-w-0 rounded-lg border border-background bg-[var(--omkraft-surface-0)] p-4 text-background">
 							<TabsContent value="users" className="space-y-4 mt-0">
 								<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 									<Input
@@ -305,8 +306,82 @@ export default function ManageUsers() {
 									error={usersError}
 									fallbackTitle="Could not load users"
 								/>
-								<div className="overflow-x-auto rounded-lg border border-background bg-[var(--omkraft-surface-0)]">
-									<Table className="text-background">
+								<div className="space-y-3 lg:hidden">
+									{usersLoading ? (
+										<div className="rounded-lg border border-[var(--omkraft-border-strong)] p-4 text-center">
+											<Spinner className="mr-2 inline size-5" />
+											Loading users...
+										</div>
+									) : users.length ? (
+										users.map((row) => (
+											/* mobile card: admin users get elevated dark treatment */
+											<Card
+												key={row.id}
+												className={`space-y-2 border-background p-3 text-background shadow-none transition-colors ${
+													row.role === 'ADMIN'
+														? 'bg-background hover:bg-[var(--omkraft-navy-700)]'
+														: 'bg-[var(--omkraft-surface-0)] hover:bg-[var(--omkraft-blue-50)]'
+												}`}
+											>
+												<div className="space-y-1">
+													<p
+														className={`font-semibold ${
+															row.role === 'ADMIN'
+																? 'text-[var(--omkraft-white)]'
+																: ''
+														}`}
+													>
+														{row.firstName} {row.lastName}
+													</p>
+													<p
+														className={`text-sm ${
+															row.role === 'ADMIN'
+																? 'text-muted-foreground'
+																: ''
+														}`}
+													>
+														Role: {row.role}
+													</p>
+													<p
+														className={`break-all text-sm ${
+															row.role === 'ADMIN'
+																? 'text-muted-foreground'
+																: ''
+														}`}
+													>
+														{row.email}
+													</p>
+													<p
+														className={`text-sm ${
+															row.role === 'ADMIN'
+																? 'text-muted-foreground'
+																: ''
+														}`}
+													>
+														{row.phone}
+													</p>
+												</div>
+												<div className="flex flex-wrap gap-2 pt-1">
+													<EditUserDialog
+														user={row}
+														onSuccess={fetchUsers}
+													/>
+													<DeleteUserDialog
+														user={row}
+														onSuccess={fetchUsers}
+														disableDelete={row.id === user.id}
+													/>
+												</div>
+											</Card>
+										))
+									) : (
+										<div className="rounded-lg border border-[var(--omkraft-border-strong)] p-4 text-center">
+											No users found
+										</div>
+									)}
+								</div>
+								<div className="hidden w-full max-w-full overflow-x-auto rounded-lg border border-background bg-[var(--omkraft-surface-0)] lg:block">
+									<Table className="text-background [&_td]:break-words [&_td]:whitespace-normal [&_th]:whitespace-nowrap">
 										<TableHeader className="bg-[var(--omkraft-blue-50)]">
 											<TableRow>
 												<TableHead>
@@ -357,16 +432,50 @@ export default function ManageUsers() {
 												users.map((row) => (
 													<TableRow
 														key={row.id}
-														className="border-b border-[var(--omkraft-navy-100)] hover:bg-[var(--omkraft-blue-50)]"
+														className={`border-b border-[var(--omkraft-border-strong)] ${
+															row.role === 'ADMIN'
+																? 'bg-background hover:bg-[var(--omkraft-navy-700)]'
+																: 'hover:bg-[var(--omkraft-blue-50)]'
+														}`}
 													>
-														<TableCell>
+														<TableCell
+															className={`font-semibold ${
+																row.role === 'ADMIN'
+																	? 'text-[var(--omkraft-white)]'
+																	: ''
+															}`}
+														>
 															{row.firstName} {row.lastName}
 														</TableCell>
-														<TableCell>{row.email}</TableCell>
-														<TableCell>{row.phone}</TableCell>
-														<TableCell>{row.role}</TableCell>
+														<TableCell
+															className={`break-all ${
+																row.role === 'ADMIN'
+																	? 'text-muted-foreground'
+																	: ''
+															}`}
+														>
+															{row.email}
+														</TableCell>
+														<TableCell
+															className={
+																row.role === 'ADMIN'
+																	? 'text-muted-foreground'
+																	: ''
+															}
+														>
+															{row.phone}
+														</TableCell>
+														<TableCell
+															className={
+																row.role === 'ADMIN'
+																	? 'text-muted-foreground'
+																	: ''
+															}
+														>
+															{row.role}
+														</TableCell>
 														<TableCell>
-															<div className="flex justify-end gap-2">
+															<div className="flex flex-wrap justify-end gap-2">
 																<EditUserDialog
 																	user={row}
 																	onSuccess={fetchUsers}
@@ -383,7 +492,7 @@ export default function ManageUsers() {
 													</TableRow>
 												))
 											) : (
-												<TableRow className="border-b border-background/20">
+												<TableRow className="border-b border-[var(--omkraft-border-strong)]">
 													<TableCell
 														colSpan={5}
 														className="text-center py-6"
@@ -395,7 +504,7 @@ export default function ManageUsers() {
 										</TableBody>
 									</Table>
 								</div>
-								<div className="flex items-center justify-between">
+								<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 									<p className="text-xs text-background">
 										Page {userPage} of {userTotalPages}
 									</p>
@@ -438,8 +547,63 @@ export default function ManageUsers() {
 									error={subscriptionsError}
 									fallbackTitle="Could not load subscriptions"
 								/>
-								<div className="overflow-x-auto rounded-lg border border-background bg-[var(--omkraft-surface-0)]">
-									<Table className="text-background">
+								<div className="space-y-3 lg:hidden">
+									{subscriptionsLoading ? (
+										<div className="rounded-lg border border-[var(--omkraft-border-strong)] p-4 text-center">
+											<Spinner className="mr-2 inline size-5" />
+											Loading subscriptions...
+										</div>
+									) : subscriptions.length ? (
+										subscriptions.map((row) => (
+											<Card
+												key={row._id}
+												className="space-y-2 border-background bg-[var(--omkraft-surface-0)] p-3 text-background shadow-none transition-colors hover:bg-[var(--omkraft-blue-50)]"
+											>
+												<div className="space-y-1">
+													<p className="font-semibold">{row.name}</p>
+													<p className="text-sm">Status: {row.status}</p>
+													<p className="text-sm">
+														User:{' '}
+														{row.user
+															? `${row.user.firstName} ${row.user.lastName}`
+															: 'Unknown user'}
+													</p>
+													<p className="break-all text-sm">
+														{row.user?.email ?? '-'}
+													</p>
+													<p className="text-sm">
+														Provider: {row.provider}
+													</p>
+													<p className="text-sm">
+														Amount:{' '}
+														<IndianRupee className="mr-1 inline size-3.5" />
+														{row.amount.toFixed(2)}
+													</p>
+													<p className="text-sm">
+														Next Billing:{' '}
+														{formatDate(row.nextBillingDate)}
+													</p>
+												</div>
+												<div className="flex flex-wrap gap-2 pt-1">
+													<EditSubscriptionDialog
+														subscription={row}
+														onSuccess={fetchSubscriptions}
+													/>
+													<DeleteSubscriptionDialog
+														subscription={row}
+														onSuccess={fetchSubscriptions}
+													/>
+												</div>
+											</Card>
+										))
+									) : (
+										<div className="rounded-lg border border-[var(--omkraft-border-strong)] p-4 text-center">
+											No subscriptions found
+										</div>
+									)}
+								</div>
+								<div className="hidden w-full max-w-full overflow-x-auto rounded-lg border border-background bg-[var(--omkraft-surface-0)] lg:block">
+									<Table className="text-background [&_td]:break-words [&_td]:whitespace-normal [&_th]:whitespace-nowrap">
 										<TableHeader className="bg-[var(--omkraft-blue-50)]">
 											<TableRow>
 												<TableHead>
@@ -510,9 +674,11 @@ export default function ManageUsers() {
 												subscriptions.map((row) => (
 													<TableRow
 														key={row._id}
-														className="border-b border-[var(--omkraft-navy-100)] hover:bg-[var(--omkraft-blue-50)]"
+														className="border-b border-[var(--omkraft-border-strong)] hover:bg-[var(--omkraft-blue-50)]"
 													>
-														<TableCell>{row.name}</TableCell>
+														<TableCell className="font-semibold">
+															{row.name}
+														</TableCell>
 														<TableCell>
 															{row.user
 																? `${row.user.firstName} ${row.user.lastName}`
@@ -528,7 +694,7 @@ export default function ManageUsers() {
 															{formatDate(row.nextBillingDate)}
 														</TableCell>
 														<TableCell>
-															<div className="flex justify-end gap-2">
+															<div className="flex flex-wrap justify-end gap-2">
 																<EditSubscriptionDialog
 																	subscription={row}
 																	onSuccess={fetchSubscriptions}
@@ -542,7 +708,7 @@ export default function ManageUsers() {
 													</TableRow>
 												))
 											) : (
-												<TableRow className="border-b border-background/20">
+												<TableRow className="border-b border-[var(--omkraft-border-strong)]">
 													<TableCell
 														colSpan={7}
 														className="text-center py-6"
@@ -554,7 +720,7 @@ export default function ManageUsers() {
 										</TableBody>
 									</Table>
 								</div>
-								<div className="flex items-center justify-between">
+								<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
 									<p className="text-xs text-background">
 										Page {subscriptionPage} of {subscriptionTotalPages}
 									</p>
@@ -636,10 +802,10 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 			<DialogTrigger asChild>
 				<Button
 					size="sm"
-					className="flex items-center gap-1 bg-transparent border border-primary text-primary hover:bg-[var(--omkraft-blue-100)]"
+					className="flex items-center gap-1 border border-primary bg-transparent text-sm text-primary hover:bg-[var(--omkraft-blue-100)]"
 				>
 					<Pencil size={16} />
-					<span className="hidden lg:block">Edit</span>
+					<span className="hidden text-sm lg:inline">Edit</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="text-foreground">
@@ -768,11 +934,11 @@ function DeleteUserDialog({
 				<Button
 					variant="destructive"
 					size="sm"
-					className="flex items-center gap-1"
+					className="flex items-center gap-1 text-sm"
 					disabled={disableDelete}
 				>
 					<Trash size={16} />
-					<span className="hidden lg:block">Delete</span>
+					<span className="hidden text-sm lg:inline">Delete</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="text-foreground">
@@ -889,10 +1055,10 @@ function EditSubscriptionDialog({
 			<DialogTrigger asChild>
 				<Button
 					size="sm"
-					className="flex items-center gap-1 bg-transparent border border-primary text-primary hover:bg-[var(--omkraft-blue-100)]"
+					className="flex items-center gap-1 border border-primary bg-transparent text-sm text-primary hover:bg-[var(--omkraft-blue-100)]"
 				>
 					<Pencil size={16} />
-					<span className="hidden lg:block">Edit</span>
+					<span className="hidden text-sm lg:inline">Edit</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="text-foreground">
@@ -1088,9 +1254,9 @@ function DeleteSubscriptionDialog({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="destructive" size="sm" className="flex items-center gap-1">
+				<Button variant="destructive" size="sm" className="flex items-center gap-1 text-sm">
 					<Trash size={16} />
-					<span className="hidden lg:block">Remove</span>
+					<span className="hidden text-sm lg:inline">Remove</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="text-foreground">
