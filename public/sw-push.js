@@ -1,4 +1,3 @@
-/* eslint-env serviceworker */
 /* global self, clients */
 
 self.addEventListener('push', function (event) {

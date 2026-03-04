@@ -12,7 +12,10 @@ export default function NotificationBell() {
 
 	return (
 		<Popover>
-			<PopoverTrigger asChild className="justify-items-center hover:bg-muted">
+			<PopoverTrigger
+				asChild
+				className="justify-center items-center inline-flex hover:bg-muted"
+			>
 				<button className="relative h-9 w-9" aria-label="Notifications">
 					<Bell />
 					{unreadCount > 0 && (
