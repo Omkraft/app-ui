@@ -231,7 +231,7 @@ export default function ManageUsers() {
 	}
 
 	return (
-		<main className="min-h-[calc(100vh-178px)] bg-[var(--omkraft-blue-200)]">
+		<main className="min-h-[calc(100vh-178px)] bg-[var(--omkraft-blue-100)]">
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<Breadcrumb>
@@ -271,7 +271,7 @@ export default function ManageUsers() {
 						onValueChange={(value) => setTab(value as 'users' | 'subscriptions')}
 						className="space-y-4"
 					>
-						<TabsList className="grid h-auto w-full grid-cols-2 border border-primary bg-[var(--omkraft-blue-50)] p-1">
+						<TabsList className="grid h-auto w-full grid-cols-2 border border-primary bg-foreground p-1">
 							<TabsTrigger
 								value="users"
 								className="text-primary data-[state=active]:text-primary-foreground data-[state=active]:bg-primary"
@@ -342,9 +342,9 @@ export default function ManageUsers() {
 												</TableHead>
 											</TableRow>
 										</TableHeader>
-										<TableBody className="[&_tr]:border-[rgba(15,23,42,0.14)]">
+										<TableBody>
 											{usersLoading ? (
-												<TableRow className="border-b border-background/20">
+												<TableRow>
 													<TableCell
 														colSpan={5}
 														className="text-center py-6"
@@ -357,7 +357,7 @@ export default function ManageUsers() {
 												users.map((row) => (
 													<TableRow
 														key={row.id}
-														className="border-b border-background/20 hover:bg-[var(--omkraft-blue-50)]"
+														className="border-b border-[var(--omkraft-navy-100)] hover:bg-[var(--omkraft-blue-50)]"
 													>
 														<TableCell>
 															{row.firstName} {row.lastName}
@@ -402,7 +402,7 @@ export default function ManageUsers() {
 									<div className="flex gap-2">
 										<Button
 											variant="outline"
-											className="h-7 px-2 text-xs border-background text-background"
+											className="h-7 px-2 text-xs border-background text-background hover:bg-[var(--omkraft-navy-50)]"
 											disabled={userPage <= 1}
 											onClick={() => setUserPage((p) => p - 1)}
 										>
@@ -410,7 +410,7 @@ export default function ManageUsers() {
 										</Button>
 										<Button
 											variant="outline"
-											className="h-7 px-2 text-xs border-background text-background"
+											className="h-7 px-2 text-xs border-background text-background hover:bg-[var(--omkraft-navy-50)]"
 											disabled={userPage >= userTotalPages}
 											onClick={() => setUserPage((p) => p + 1)}
 										>
@@ -495,9 +495,9 @@ export default function ManageUsers() {
 												</TableHead>
 											</TableRow>
 										</TableHeader>
-										<TableBody className="[&_tr]:border-[rgba(15,23,42,0.14)]">
+										<TableBody>
 											{subscriptionsLoading ? (
-												<TableRow className="border-b border-background/20">
+												<TableRow>
 													<TableCell
 														colSpan={7}
 														className="text-center py-6"
@@ -510,7 +510,7 @@ export default function ManageUsers() {
 												subscriptions.map((row) => (
 													<TableRow
 														key={row._id}
-														className="border-b border-background/20 hover:bg-[var(--omkraft-blue-50)]"
+														className="border-b border-[var(--omkraft-navy-100)] hover:bg-[var(--omkraft-blue-50)]"
 													>
 														<TableCell>{row.name}</TableCell>
 														<TableCell>
@@ -561,7 +561,7 @@ export default function ManageUsers() {
 									<div className="flex gap-2">
 										<Button
 											variant="outline"
-											className="h-7 px-2 text-xs border-background text-background"
+											className="h-7 px-2 text-xs border-background text-background hover:bg-[var(--omkraft-navy-50)]"
 											disabled={subscriptionPage <= 1}
 											onClick={() => setSubscriptionPage((p) => p - 1)}
 										>
@@ -569,7 +569,7 @@ export default function ManageUsers() {
 										</Button>
 										<Button
 											variant="outline"
-											className="h-7 px-2 text-xs border-background text-background"
+											className="h-7 px-2 text-xs border-background text-background hover:bg-[var(--omkraft-navy-50)]"
 											disabled={subscriptionPage >= subscriptionTotalPages}
 											onClick={() => setSubscriptionPage((p) => p + 1)}
 										>
@@ -636,7 +636,7 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 			<DialogTrigger asChild>
 				<Button
 					size="sm"
-					className="flex items-center gap-1 bg-transparent border border-primary text-primary"
+					className="flex items-center gap-1 bg-transparent border border-primary text-primary hover:bg-[var(--omkraft-blue-100)]"
 				>
 					<Pencil size={16} />
 					<span className="hidden lg:block">Edit</span>
@@ -889,7 +889,7 @@ function EditSubscriptionDialog({
 			<DialogTrigger asChild>
 				<Button
 					size="sm"
-					className="flex items-center gap-1 bg-transparent border border-primary text-primary"
+					className="flex items-center gap-1 bg-transparent border border-primary text-primary hover:bg-[var(--omkraft-blue-100)]"
 				>
 					<Pencil size={16} />
 					<span className="hidden lg:block">Edit</span>
