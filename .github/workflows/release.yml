@@ -48,17 +48,12 @@ jobs:
         run: |
           tag="$(git tag --points-at "$GITHUB_SHA" | sort -V | tail -n 1)"
           if [ -z "$tag" ]; then
-            tag="$(git tag --sort=-v:refname | head -n 1)"
-            if [ -n "$tag" ]; then
-              echo "No release tag on this commit. Falling back to latest release tag: $tag"
-            else
-              tag="sha-${GITHUB_SHA::7}"
-              echo "No tags found in repository. Falling back to commit id: $tag"
-            fi
+            tag="dev"
+            echo "No release tag found on commit $GITHUB_SHA. Using APP_RELEASE_VERSION=$tag for non-release deploy."
           fi
           echo "APP_RELEASE_VERSION=$tag" >> "$GITHUB_ENV"
           echo "value=$tag" >> "$GITHUB_OUTPUT"
-          echo "Using release tag: $tag"
+          echo "Using APP_RELEASE_VERSION: $tag"
 
       - run: npm ci
       - run: npm run build
