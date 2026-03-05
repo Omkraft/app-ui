@@ -530,7 +530,7 @@ export default function Utility() {
 							</SelectTrigger>
 
 							<SelectContent className="bg-primary border-muted-foreground">
-								{NEWS_TABS.map((tab, i) => (
+								{NEWS_TABS.map((tab) => (
 									<SelectItem key={tab.key} value={tab.key}>
 										{tab.label}
 									</SelectItem>
