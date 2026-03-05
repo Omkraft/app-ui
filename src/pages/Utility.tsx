@@ -1,5 +1,4 @@
-﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+﻿import React, { useCallback, useEffect, useState } from 'react';
 import { apiRequest } from '@/api/client';
 import {
 	Card,
@@ -48,10 +47,18 @@ import {
 	BreadcrumbSeparator,
 	BreadcrumbPage,
 } from '@/components/ui/breadcrumb';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
 import { Link } from 'react-router-dom';
 import { getNext5Hours } from '@/utils/weatherHelpers';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface NewsArticle {
 	title: string;
@@ -61,10 +68,6 @@ interface NewsArticle {
 	publishedAt: string;
 }
 
-interface NewsResponse {
-	articles: NewsArticle[];
-}
-
 interface QuoteResponse {
 	quote: string;
 	author: string;
@@ -72,24 +75,41 @@ interface QuoteResponse {
 	authorImageThumb: string | null;
 }
 
+const NEWS_TABS = [
+	{ key: 'india', label: 'India' },
+	{ key: 'global', label: 'Global' },
+	{ key: 'business', label: 'Business' },
+	{ key: 'technology', label: 'Technology' },
+	{ key: 'entertainment', label: 'Entertainment' },
+	{ key: 'sports', label: 'Sports' },
+	{ key: 'science', label: 'Science' },
+];
+
 export default function Utility() {
 	const weatherAccordionItems = ['forecast', 'metrix', 'sunriseset'];
 	const [weather, setWeather] = useState<WeatherData | null>(null);
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
 	const [quoteError, setQuoteError] = useState<unknown | null>(null);
-	const [news, setNews] = useState<NewsResponse | null>(null);
 	const [newsError, setNewsError] = useState<unknown | null>(null);
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
 	const [weatherError, setWeatherError] = useState<unknown | null>(null);
-	const [visibleCount, setVisibleCount] = useState(10);
+	const [visibleCounts, setVisibleCounts] = useState<Record<string, number>>({
+		india: 10,
+		global: 10,
+		business: 10,
+		technology: 10,
+		entertainment: 10,
+		sports: 10,
+		science: 10,
+	});
+	const [activeNewsTab, setActiveNewsTab] = useState('india');
 	const [onThisDay, setOnThisDay] = useState<OnThisDayResponse | null>(null);
 	const [onThisDayError, setOnThisDayError] = useState<unknown | null>(null);
+	const [newsSections, setNewsSections] = useState<Record<string, NewsArticle[]>>({});
 	const [weatherDefaultOpenItems] = useState<string[]>(
 		window.innerWidth >= 1024 ? weatherAccordionItems : []
 	);
 	const nextFiveHours = weather ? getNext5Hours(weather) : [];
-
-	const newsSectionRef = useRef<HTMLDivElement | null>(null);
 
 	const fetchWeather = useCallback(async () => {
 		setWeather(null);
@@ -139,14 +159,13 @@ export default function Utility() {
 	};
 
 	const fetchNews = useCallback(async (category: string) => {
-		setNews(null);
-		setNewsError(null);
-		setVisibleCount(10); // Reset to 10 on new tab
 		try {
 			const data = await apiRequest<NewsArticle[]>(`/api/utility/news?category=${category}`);
-			setNews({
-				articles: data,
-			});
+
+			setNewsSections((prev) => ({
+				...prev,
+				[category]: data,
+			}));
 		} catch (error) {
 			console.error(error);
 			setNewsError(error instanceof Error ? error : 'Failed to fetch news.');
@@ -155,6 +174,7 @@ export default function Utility() {
 
 	useEffect(() => {
 		fetchNews('india');
+		fetchNews('global');
 		fetchQuote();
 		fetchOnThisDay();
 		fetchWeather();
@@ -164,6 +184,27 @@ export default function Utility() {
 			window.removeEventListener('omkraft:retry-services', retryHandler);
 		};
 	}, [fetchWeather, fetchNews]);
+
+	useEffect(() => {
+		if (!newsSections[activeNewsTab]) {
+			fetchNews(activeNewsTab);
+		}
+	}, [activeNewsTab, newsSections, fetchNews]);
+
+	useEffect(() => {
+		const interval = setInterval(
+			() => {
+				Object.keys(newsSections).forEach((category) => {
+					if (newsSections[category]?.length) {
+						fetchNews(category);
+					}
+				});
+			},
+			30 * 60 * 1000
+		);
+
+		return () => clearInterval(interval);
+	}, [newsSections, fetchNews]);
 
 	return (
 		<main className="min-h-[calc(100vh-178px)] bg-background">
@@ -474,104 +515,145 @@ export default function Utility() {
 
 			{/* ================= News ================= */}
 			<section className="flex items-center py-6">
-				<div className="app-container grid gap-6 items-center">
+				<div className="app-container flex flex-col gap-6">
 					<h2 className="text-3xl text-foreground">News</h2>
-					<h3 className="text-2xl text-muted-foreground">Top Stories</h3>
-					<Tabs defaultValue="india" onValueChange={(value) => fetchNews(value)}>
-						<TabsList className="bg-primary text-foreground">
-							<TabsTrigger value="india">India</TabsTrigger>
-							<TabsTrigger value="global">Global</TabsTrigger>
-						</TabsList>
 
-						<TabsContent value="india" />
-						<TabsContent value="global" />
+					{/* Navigation */}
+					{/* Mobile dropdown */}
+					<div className="flex flex-col gap-2 lg:hidden">
+						<p className="text-sm text-muted-foreground">
+							Select a category to view the latest headlines.
+						</p>
+						<Select value={activeNewsTab} onValueChange={setActiveNewsTab}>
+							<SelectTrigger className="w-full bg-primary text-primary-foreground border-muted-foreground">
+								<SelectValue />
+							</SelectTrigger>
 
-						<div className="pt-4 space-y-4">
-							{!news || !news?.articles?.length ? (
-								<>
-									{!newsError ? (
-										<div className="grid gap-8 lg:grid-cols-2">
-											{Array.from({ length: 4 }).map((_, i) => (
+							<SelectContent className="bg-primary border-muted-foreground">
+								{NEWS_TABS.map((tab, i) => (
+									<SelectItem key={tab.key} value={tab.key}>
+										{tab.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+
+					{/* Desktop tabs */}
+					<div className="hidden lg:block">
+						<Tabs
+							value={activeNewsTab}
+							onValueChange={setActiveNewsTab}
+							className="text-center"
+						>
+							<TabsList className="bg-primary text-foreground">
+								{NEWS_TABS.map((tab) => (
+									<TabsTrigger key={tab.key} value={tab.key}>
+										{tab.label}
+									</TabsTrigger>
+								))}
+							</TabsList>
+						</Tabs>
+					</div>
+
+					{/* 👇 PLACE CONTENT HERE */}
+					{(() => {
+						const articles = newsSections[activeNewsTab] || [];
+						const visible = visibleCounts[activeNewsTab] || 10;
+
+						return (
+							<>
+								{!newsSections[activeNewsTab] ? (
+									<>
+										{!newsError ? (
+											<div className="grid gap-8 lg:grid-cols-2">
+												{Array.from({ length: 4 }).map((_, i) => (
+													<Card
+														key={i}
+														className="bg-foreground border border-primary"
+													>
+														<CardHeader>
+															<Skeleton className="h-5 w-3/4 bg-background" />
+															<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
+														</CardHeader>
+
+														<CardContent>
+															<Skeleton className="h-4 w-full mb-2 bg-background" />
+															<Skeleton className="h-4 w-5/6 bg-background" />
+														</CardContent>
+													</Card>
+												))}
+											</div>
+										) : (
+											<OmkraftAlert
+												error={newsError}
+												fallbackTitle="News unavailable"
+											/>
+										)}
+									</>
+								) : (
+									<>
+										<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+											{articles.slice(0, visible).map((item, index) => (
 												<Card
-													key={i}
-													className="bg-foreground border border-primary"
+													key={item.url || index}
+													className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
 												>
 													<CardHeader>
-														<Skeleton className="h-5 w-3/4 bg-background" />
-														<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
+														<a
+															href={item.url}
+															target="_blank"
+															rel="noopener noreferrer"
+															className="hover:text-primary transition-colors"
+														>
+															<div className="flex flex-col-reverse justify-between items-start gap-3">
+																<CardTitle className="text-lg leading-snug">
+																	{item.title}
+																</CardTitle>
+
+																<NewsSourceLogo
+																	source={item.source}
+																/>
+															</div>
+														</a>
+
+														<CardDescription className="text-background flex justify-between text-xs mt-1">
+															<span>{item.source}</span>
+															<span>
+																{formatDate(item.publishedAt)}
+															</span>
+														</CardDescription>
 													</CardHeader>
+
 													<CardContent>
-														<Skeleton className="h-4 w-full mb-2 bg-background" />
-														<Skeleton className="h-4 w-5/6 bg-background" />
+														<p className="text-sm line-clamp-3">
+															{item.description}
+														</p>
 													</CardContent>
 												</Card>
 											))}
 										</div>
-									) : (
-										<OmkraftAlert
-											error={newsError}
-											fallbackTitle="News unavailable"
-										/>
-									)}
-								</>
-							) : (
-								<>
-									<div ref={newsSectionRef} className="grid gap-8 lg:grid-cols-2">
-										{news.articles.slice(0, visibleCount).map((item, index) => (
-											<Card
-												key={
-													item.url ||
-													`${item.source}-${item.publishedAt}-${index}`
-												}
-												className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
-											>
-												<CardHeader>
-													<a
-														href={item.url}
-														target="_blank"
-														rel="noopener noreferrer"
-														className="hover:text-primary transition-colors"
-													>
-														<div className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-center gap-3">
-															<CardTitle className="text-lg leading-snug">
-																{item.title}
-															</CardTitle>
-															<NewsSourceLogo
-																source={item.source}
-																className={`${item.source === 'Hindustan Times' || item.source === 'BBC News' || item.source === 'The Hindu' ? 'h-4 ' : ''}`}
-															/>
-														</div>
-													</a>
 
-													<CardDescription className="text-background flex justify-between text-xs mt-1">
-														<span>{item.source}</span>
-														<span>{formatDate(item.publishedAt)}</span>
-													</CardDescription>
-												</CardHeader>
-
-												<CardContent>
-													<p className="text-sm line-clamp-3">
-														{item.description}
-													</p>
-												</CardContent>
-											</Card>
-										))}
-									</div>
-
-									{visibleCount < news.articles.length && (
-										<div className="text-center pt-4">
-											<Button
-												onClick={() => setVisibleCount((prev) => prev + 10)}
-												className="w-full lg:w-auto"
-											>
-												Read More
-											</Button>
-										</div>
-									)}
-								</>
-							)}
-						</div>
-					</Tabs>
+										{visible < articles.length && (
+											<div className="text-center">
+												<Button
+													onClick={() =>
+														setVisibleCounts((prev) => ({
+															...prev,
+															[activeNewsTab]: visible + 10,
+														}))
+													}
+													className="w-full lg:w-auto"
+												>
+													Show more
+												</Button>
+											</div>
+										)}
+									</>
+								)}
+							</>
+						);
+					})()}
 				</div>
 			</section>
 
