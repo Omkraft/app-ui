@@ -1,7 +1,7 @@
 import toi from '@/assets/media/toi.svg';
 import ie from '@/assets/media/indian-express.svg';
 import ht from '@/assets/media/hindustan-times.svg';
-import bbc from '@/assets/media/bbc.svg';
+import nyt from '@/assets/media/nyt.svg';
 import theHindu from '@/assets/media/the-hindu.svg';
 
 import { cn } from '@/lib/utils';
@@ -15,7 +15,7 @@ const logoMap: Record<string, string> = {
 	'Times of India': toi,
 	'Indian Express': ie,
 	'Hindustan Times': ht,
-	'BBC News': bbc,
+	'The New York Times': nyt,
 	'The Hindu': theHindu,
 };
 

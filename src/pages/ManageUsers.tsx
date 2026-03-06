@@ -272,7 +272,7 @@ export default function ManageUsers() {
 						onValueChange={(value) => setTab(value as 'users' | 'subscriptions')}
 						className="space-y-4 min-w-0"
 					>
-						<TabsList className="grid h-auto w-full grid-cols-1 border border-primary bg-foreground p-1 sm:grid-cols-2">
+						<TabsList className="grid h-auto w-full grid-cols-1 border border-primary bg-foreground p-1 lg:grid-cols-2">
 							<TabsTrigger
 								value="users"
 								className="h-auto min-w-0 whitespace-normal px-3 py-2 text-center text-sm leading-tight text-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"

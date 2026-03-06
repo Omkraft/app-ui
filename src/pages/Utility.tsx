@@ -47,18 +47,13 @@ import {
 	BreadcrumbSeparator,
 	BreadcrumbPage,
 } from '@/components/ui/breadcrumb';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Link } from 'react-router-dom';
 import { getNext5Hours } from '@/utils/weatherHelpers';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface NewsArticle {
 	title: string;
@@ -66,6 +61,7 @@ interface NewsArticle {
 	description: string;
 	source: string;
 	publishedAt: string;
+	thumbnail?: string | null;
 }
 
 interface QuoteResponse {
@@ -106,6 +102,7 @@ export default function Utility() {
 	const [onThisDay, setOnThisDay] = useState<OnThisDayResponse | null>(null);
 	const [onThisDayError, setOnThisDayError] = useState<unknown | null>(null);
 	const [newsSections, setNewsSections] = useState<Record<string, NewsArticle[]>>({});
+	const [newsView, setNewsView] = useState<'comfortable' | 'compact'>('comfortable');
 	const [weatherDefaultOpenItems] = useState<string[]>(
 		window.innerWidth >= 1024 ? weatherAccordionItems : []
 	);
@@ -518,142 +515,187 @@ export default function Utility() {
 				<div className="app-container flex flex-col gap-6">
 					<h2 className="text-3xl text-foreground">News</h2>
 
-					{/* Navigation */}
-					{/* Mobile dropdown */}
-					<div className="flex flex-col gap-2 lg:hidden">
-						<p className="text-sm text-muted-foreground">
-							Select a category to view the latest headlines.
-						</p>
-						<Select value={activeNewsTab} onValueChange={setActiveNewsTab}>
-							<SelectTrigger className="w-full bg-primary text-primary-foreground border-muted-foreground">
-								<SelectValue />
-							</SelectTrigger>
+					<div className="flex flex-col items-center lg:flex-row lg:justify-between gap-3">
+						<p className="text-sm text-muted-foreground">Select preferred view</p>
 
-							<SelectContent className="bg-primary border-muted-foreground">
-								{NEWS_TABS.map((tab) => (
-									<SelectItem key={tab.key} value={tab.key}>
-										{tab.label}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</div>
-
-					{/* Desktop tabs */}
-					<div className="hidden lg:block">
-						<Tabs
-							value={activeNewsTab}
-							onValueChange={setActiveNewsTab}
-							className="text-center"
+						<RadioGroup
+							value={newsView}
+							onValueChange={(value) =>
+								setNewsView(value as 'comfortable' | 'compact')
+							}
+							className="flex items-center gap-4 text-muted-foreground"
 						>
-							<TabsList className="bg-primary text-foreground">
-								{NEWS_TABS.map((tab) => (
-									<TabsTrigger key={tab.key} value={tab.key}>
-										{tab.label}
-									</TabsTrigger>
-								))}
-							</TabsList>
-						</Tabs>
+							<div className="flex items-center space-x-2">
+								<RadioGroupItem
+									value="comfortable"
+									id="comfortable"
+									className="border-muted-foreground"
+								/>
+								<Label htmlFor="comfortable">Comfortable</Label>
+							</div>
+
+							<div className="flex items-center space-x-2">
+								<RadioGroupItem
+									value="compact"
+									id="compact"
+									className="border-muted-foreground"
+								/>
+								<Label htmlFor="compact">Compact</Label>
+							</div>
+						</RadioGroup>
 					</div>
+					<Separator className="border-t border-primary" />
 
-					{/* 👇 PLACE CONTENT HERE */}
-					{(() => {
-						const articles = newsSections[activeNewsTab] || [];
-						const visible = visibleCounts[activeNewsTab] || 10;
+					{/* Navigation */}
+					<Tabs
+						value={activeNewsTab}
+						onValueChange={setActiveNewsTab}
+						className="flex flex-col items-center"
+					>
+						<TabsList className="bg-primary text-foreground h-auto flex-wrap border border-muted-foreground">
+							{NEWS_TABS.map((tab) => (
+								<TabsTrigger
+									key={tab.key}
+									value={tab.key}
+									className="justify-start lg:justify-center"
+								>
+									{tab.label}
+								</TabsTrigger>
+							))}
+						</TabsList>
+						<TabsContent value={activeNewsTab} className="mt-6 w-full">
+							{/* 👇 PLACE CONTENT HERE */}
+							{(() => {
+								const articles = newsSections[activeNewsTab] || [];
+								const visible = visibleCounts[activeNewsTab] || 10;
 
-						return (
-							<>
-								{!newsSections[activeNewsTab] ? (
+								return (
 									<>
-										{!newsError ? (
-											<div className="grid gap-8 lg:grid-cols-2">
-												{Array.from({ length: 4 }).map((_, i) => (
-													<Card
-														key={i}
-														className="bg-foreground border border-primary"
-													>
-														<CardHeader>
-															<Skeleton className="h-5 w-3/4 bg-background" />
-															<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
-														</CardHeader>
+										{!newsSections[activeNewsTab] ? (
+											<>
+												{!newsError ? (
+													<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+														{Array.from({ length: 4 }).map((_, i) => (
+															<Card
+																key={i}
+																className="bg-foreground border border-primary"
+															>
+																<CardHeader>
+																	<Skeleton className="h-5 w-3/4 bg-background" />
+																	<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
+																</CardHeader>
 
-														<CardContent>
-															<Skeleton className="h-4 w-full mb-2 bg-background" />
-															<Skeleton className="h-4 w-5/6 bg-background" />
-														</CardContent>
-													</Card>
-												))}
-											</div>
+																<CardContent>
+																	<Skeleton className="h-4 w-full mb-2 bg-background" />
+																	<Skeleton className="h-4 w-5/6 bg-background" />
+																</CardContent>
+															</Card>
+														))}
+													</div>
+												) : (
+													<OmkraftAlert
+														error={newsError}
+														fallbackTitle="News unavailable"
+													/>
+												)}
+											</>
 										) : (
-											<OmkraftAlert
-												error={newsError}
-												fallbackTitle="News unavailable"
-											/>
-										)}
-									</>
-								) : (
-									<>
-										<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-											{articles.slice(0, visible).map((item, index) => (
-												<Card
-													key={item.url || index}
-													className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
-												>
-													<CardHeader>
-														<a
-															href={item.url}
-															target="_blank"
-															rel="noopener noreferrer"
-															className="hover:text-primary transition-colors"
+											<>
+												{articles?.length === 0 && (
+													<OmkraftAlert
+														severity="info"
+														error="We couldn’t find any recent headlines in this category right now. Please check back later."
+														fallbackTitle="No news available"
+													/>
+												)}
+												<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+													{articles
+														.slice(0, visible)
+														.map((item, index) => (
+															<Card
+																key={item.url || index}
+																className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary h-fit"
+															>
+																{newsView === 'comfortable' &&
+																	item.thumbnail && (
+																		<div className="overflow-hidden rounded-t-xl">
+																			<img
+																				src={item.thumbnail}
+																				alt={item.title}
+																				className="w-full h-48 lg:h-56 object-cover"
+																				loading="lazy"
+																			/>
+																		</div>
+																	)}
+																<CardHeader>
+																	<a
+																		href={item.url}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																		className="hover:text-primary transition-colors"
+																	>
+																		<div className="flex flex-col-reverse justify-between items-start gap-3">
+																			<CardTitle className="text-lg leading-snug">
+																				{item.title}
+																			</CardTitle>
+
+																			<NewsSourceLogo
+																				source={item.source}
+																				className={
+																					[
+																						'The New York Times',
+																						'Hindustan Times',
+																					].includes(
+																						item.source
+																					)
+																						? 'h-4'
+																						: 'h-3'
+																				}
+																			/>
+																		</div>
+																	</a>
+
+																	<CardDescription className="text-background flex justify-between text-xs mt-1">
+																		<span>{item.source}</span>
+																		<span>
+																			{formatDate(
+																				item.publishedAt
+																			)}
+																		</span>
+																	</CardDescription>
+																</CardHeader>
+
+																<CardContent>
+																	<p className="text-sm line-clamp-3">
+																		{item.description}
+																	</p>
+																</CardContent>
+															</Card>
+														))}
+												</div>
+
+												{visible < articles.length && (
+													<div className="text-center mt-6">
+														<Button
+															onClick={() =>
+																setVisibleCounts((prev) => ({
+																	...prev,
+																	[activeNewsTab]: visible + 10,
+																}))
+															}
+															className="w-full lg:w-auto"
 														>
-															<div className="flex flex-col-reverse justify-between items-start gap-3">
-																<CardTitle className="text-lg leading-snug">
-																	{item.title}
-																</CardTitle>
-
-																<NewsSourceLogo
-																	source={item.source}
-																/>
-															</div>
-														</a>
-
-														<CardDescription className="text-background flex justify-between text-xs mt-1">
-															<span>{item.source}</span>
-															<span>
-																{formatDate(item.publishedAt)}
-															</span>
-														</CardDescription>
-													</CardHeader>
-
-													<CardContent>
-														<p className="text-sm line-clamp-3">
-															{item.description}
-														</p>
-													</CardContent>
-												</Card>
-											))}
-										</div>
-
-										{visible < articles.length && (
-											<div className="text-center">
-												<Button
-													onClick={() =>
-														setVisibleCounts((prev) => ({
-															...prev,
-															[activeNewsTab]: visible + 10,
-														}))
-													}
-													className="w-full lg:w-auto"
-												>
-													Show more
-												</Button>
-											</div>
+															Show more
+														</Button>
+													</div>
+												)}
+											</>
 										)}
 									</>
-								)}
-							</>
-						);
-					})()}
+								);
+							})()}
+						</TabsContent>
+					</Tabs>
 				</div>
 			</section>
 
