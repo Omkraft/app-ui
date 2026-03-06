@@ -515,7 +515,7 @@ export default function Utility() {
 				<div className="app-container flex flex-col gap-6">
 					<h2 className="text-3xl text-foreground">News</h2>
 
-					<div className="flex flex-col items-center lg:flex-row lg:justify-between gap-3">
+					<div className="flex flex-col lg:flex-row lg:justify-between gap-4">
 						<p className="text-sm text-muted-foreground">Select preferred view</p>
 
 						<RadioGroup
@@ -523,7 +523,7 @@ export default function Utility() {
 							onValueChange={(value) =>
 								setNewsView(value as 'comfortable' | 'compact')
 							}
-							className="flex items-center gap-4 text-muted-foreground"
+							className="flex gap-6 text-muted-foreground"
 						>
 							<div className="flex items-center space-x-2">
 								<RadioGroupItem
@@ -604,73 +604,81 @@ export default function Utility() {
 												{articles?.length === 0 && (
 													<OmkraftAlert
 														severity="info"
-														error="We couldn’t find any recent headlines in this category right now. Please check back later."
+														error={`We couldn't find any recent headlines in ${activeNewsTab} category right now. Please check back later.`}
 														fallbackTitle="No news available"
 													/>
 												)}
-												<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+												<div className="columns-1 lg:columns-2 gap-6">
 													{articles
 														.slice(0, visible)
 														.map((item, index) => (
-															<Card
-																key={item.url || index}
-																className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary h-fit"
-															>
-																{newsView === 'comfortable' &&
-																	item.thumbnail && (
-																		<div className="overflow-hidden rounded-t-xl">
-																			<img
-																				src={item.thumbnail}
-																				alt={item.title}
-																				className="w-full h-48 lg:h-56 object-cover"
-																				loading="lazy"
-																			/>
-																		</div>
-																	)}
-																<CardHeader>
-																	<a
-																		href={item.url}
-																		target="_blank"
-																		rel="noopener noreferrer"
-																		className="hover:text-primary transition-colors"
-																	>
-																		<div className="flex flex-col-reverse justify-between items-start gap-3">
-																			<CardTitle className="text-lg leading-snug">
-																				{item.title}
-																			</CardTitle>
+															<div className="mb-6 break-inside-avoid">
+																<Card
+																	key={item.url || index}
+																	className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
+																>
+																	{newsView === 'comfortable' &&
+																		item.thumbnail && (
+																			<div className="overflow-hidden rounded-t-xl">
+																				<img
+																					src={
+																						item.thumbnail
+																					}
+																					alt={item.title}
+																					className="w-full h-48 lg:h-56 object-cover"
+																					loading="lazy"
+																				/>
+																			</div>
+																		)}
+																	<CardHeader>
+																		<a
+																			href={item.url}
+																			target="_blank"
+																			rel="noopener noreferrer"
+																			className="hover:text-primary transition-colors"
+																		>
+																			<div className="flex flex-col-reverse justify-between items-start gap-3">
+																				<CardTitle className="text-lg leading-snug">
+																					{item.title}
+																				</CardTitle>
 
-																			<NewsSourceLogo
-																				source={item.source}
-																				className={
-																					[
-																						'The New York Times',
-																						'Hindustan Times',
-																					].includes(
+																				<NewsSourceLogo
+																					source={
 																						item.source
-																					)
-																						? 'h-4'
-																						: 'h-3'
-																				}
-																			/>
-																		</div>
-																	</a>
+																					}
+																					className={
+																						[
+																							'The New York Times',
+																							'Hindustan Times',
+																						].includes(
+																							item.source
+																						)
+																							? 'h-4'
+																							: 'h-3'
+																					}
+																				/>
+																			</div>
+																		</a>
 
-																	<CardDescription className="text-background flex justify-between text-xs mt-1">
-																		<span>{item.source}</span>
-																		<span>
-																			{formatDate(
-																				item.publishedAt
-																			)}
-																		</span>
-																	</CardDescription>
-																</CardHeader>
+																		<CardDescription className="text-background flex justify-between text-xs mt-1">
+																			<span>
+																				{item.source}
+																			</span>
+																			<span>
+																				{formatDate(
+																					item.publishedAt
+																				)}
+																			</span>
+																		</CardDescription>
+																	</CardHeader>
 
-																<CardContent>
-																	<p className="text-sm line-clamp-3">
-																		{item.description}
-																	</p>
-																</CardContent>
-															</Card>
+																	<CardContent>
+																		<p className="text-sm line-clamp-3">
+																			{item.description}
+																		</p>
+																	</CardContent>
+																</Card>
+															</div>
 														))}
 												</div>
 
