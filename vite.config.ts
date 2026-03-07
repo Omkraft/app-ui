@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
+import viteImagemin from 'vite-plugin-imagemin';
 
 function resolveAppVersion(): string {
 	const releaseVersion = process.env.APP_RELEASE_VERSION?.trim();
@@ -92,6 +93,25 @@ export default defineConfig({
 				suppressWarnings: true,
 			},
 		}),
+		viteImagemin({
+			disable: process.env.NODE_ENV !== 'production',
+			gifsicle: {
+				optimizationLevel: 3
+			},
+			optipng: {
+				optimizationLevel: 7
+			},
+			mozjpeg: false, // disables lossy jpeg compression
+			pngquant: false, // disables lossy png compression
+			svgo: {
+				plugins: [
+				{
+					name: "removeViewBox",
+					active: false
+				}
+				]
+			}
+		})
 	],
 	resolve: {
 		alias: {
