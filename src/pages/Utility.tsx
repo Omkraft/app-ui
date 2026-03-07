@@ -630,7 +630,7 @@ export default function Utility() {
 																				/>
 																			</div>
 																		)}
-																	<CardHeader>
+																	<CardHeader className="p-4 lg:p-6">
 																		<a
 																			href={item.url}
 																			target="_blank"
@@ -672,7 +672,7 @@ export default function Utility() {
 																		</CardDescription>
 																	</CardHeader>
 
-																	<CardContent>
+																	<CardContent className="p-4 lg:p-6">
 																		<p className="text-sm line-clamp-3">
 																			{item.description}
 																		</p>
