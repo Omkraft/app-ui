@@ -3,6 +3,7 @@ import ie from '@/assets/media/indian-express.svg';
 import ht from '@/assets/media/hindustan-times.svg';
 import nyt from '@/assets/media/nyt.svg';
 import theHindu from '@/assets/media/the-hindu.svg';
+import wp from '@/assets/media/wp.svg';
 
 import { cn } from '@/lib/utils';
 
@@ -17,6 +18,7 @@ const logoMap: Record<string, string> = {
 	'Hindustan Times': ht,
 	'The New York Times': nyt,
 	'The Hindu': theHindu,
+	'The Washington Post': wp,
 };
 
 export function NewsSourceLogo({ source, className }: Props) {
