@@ -568,6 +568,9 @@ export default function Utility() {
 							{(() => {
 								const articles = newsSections[activeNewsTab] || [];
 								const visible = visibleCounts[activeNewsTab] || 10;
+								const initialCount = 10;
+								const initialArticles = articles.slice(0, initialCount);
+								const extraArticles = articles.slice(initialCount, visible);
 
 								return (
 									<>
@@ -608,15 +611,81 @@ export default function Utility() {
 														fallbackTitle="No news available"
 													/>
 												)}
-												<div className="columns-1 lg:columns-2 gap-6">
-													{articles
-														.slice(0, visible)
-														.map((item, index) => (
-															<div className="mb-6 break-inside-avoid">
-																<Card
-																	key={item.url || index}
-																	className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
-																>
+												<div className="columns-1 gap-6 lg:columns-2">
+													{initialArticles.map((item, index) => (
+														<div
+															key={item.url || `initial-${index}`}
+															className="mb-6 break-inside-avoid"
+														>
+															<Card className="border border-primary bg-foreground text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+																{newsView === 'comfortable' &&
+																	item.source !== 'BBC News' &&
+																	item.thumbnail && (
+																		<div className="overflow-hidden rounded-t-xl">
+																			<img
+																				src={item.thumbnail}
+																				alt={item.title}
+																				className="h-48 w-full object-cover lg:h-56"
+																				loading="lazy"
+																			/>
+																		</div>
+																	)}
+																<CardHeader className="p-4 lg:p-6">
+																	<a
+																		href={item.url}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																		className="transition-colors hover:text-primary"
+																	>
+																		<div className="flex flex-col-reverse justify-between gap-3">
+																			<CardTitle className="text-lg leading-snug">
+																				{item.title}
+																			</CardTitle>
+
+																			<NewsSourceLogo
+																				source={item.source}
+																				className={
+																					[
+																						'Hindustan Times',
+																						'BBC News',
+																					].includes(
+																						item.source
+																					)
+																						? 'h-4'
+																						: 'h-3'
+																				}
+																			/>
+																		</div>
+																	</a>
+
+																	<CardDescription className="mt-1 flex justify-between text-xs text-background">
+																		<span>{item.source}</span>
+																		<span>
+																			{formatDate(
+																				item.publishedAt
+																			)}
+																		</span>
+																	</CardDescription>
+																</CardHeader>
+
+																<CardContent className="p-4 lg:p-6">
+																	<p className="line-clamp-3 text-sm">
+																		{item.description}
+																	</p>
+																</CardContent>
+															</Card>
+														</div>
+													))}
+												</div>
+
+												{extraArticles.length > 0 && (
+													<div className="mt-6 columns-1 gap-6 lg:columns-2">
+														{extraArticles.map((item, index) => (
+															<div
+																key={item.url || `extra-${index}`}
+																className="mb-6 break-inside-avoid"
+															>
+																<Card className="border border-primary bg-foreground text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
 																	{newsView === 'comfortable' &&
 																		item.source !==
 																			'BBC News' &&
@@ -627,7 +696,7 @@ export default function Utility() {
 																						item.thumbnail
 																					}
 																					alt={item.title}
-																					className="w-full h-48 lg:h-56 object-cover"
+																					className="h-48 w-full object-cover lg:h-56"
 																					loading="lazy"
 																				/>
 																			</div>
@@ -637,9 +706,9 @@ export default function Utility() {
 																			href={item.url}
 																			target="_blank"
 																			rel="noopener noreferrer"
-																			className="hover:text-primary transition-colors"
+																			className="transition-colors hover:text-primary"
 																		>
-																			<div className="flex flex-col-reverse justify-between items-start gap-3">
+																			<div className="flex flex-col-reverse justify-between gap-3">
 																				<CardTitle className="text-lg leading-snug">
 																					{item.title}
 																				</CardTitle>
@@ -662,7 +731,7 @@ export default function Utility() {
 																			</div>
 																		</a>
 
-																		<CardDescription className="text-background flex justify-between text-xs mt-1">
+																		<CardDescription className="mt-1 flex justify-between text-xs text-background">
 																			<span>
 																				{item.source}
 																			</span>
@@ -675,14 +744,15 @@ export default function Utility() {
 																	</CardHeader>
 
 																	<CardContent className="p-4 lg:p-6">
-																		<p className="text-sm line-clamp-3">
+																		<p className="line-clamp-3 text-sm">
 																			{item.description}
 																		</p>
 																	</CardContent>
 																</Card>
 															</div>
 														))}
-												</div>
+													</div>
+												)}
 
 												{visible < articles.length && (
 													<div className="text-center mt-6">
