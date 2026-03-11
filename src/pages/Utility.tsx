@@ -71,6 +71,10 @@ interface QuoteResponse {
 	authorImageThumb: string | null;
 }
 
+function getNewsSourceLogoSizeClass(source: string) {
+	return ['BBC News', 'Hindustan Times'].includes(source) ? 'h-4' : 'h-3';
+}
+
 const NEWS_TABS = [
 	{ key: 'india', label: 'India' },
 	{ key: 'global', label: 'Global' },
@@ -644,16 +648,9 @@ export default function Utility() {
 
 																			<NewsSourceLogo
 																				source={item.source}
-																				className={
-																					[
-																						'Hindustan Times',
-																						'BBC News',
-																					].includes(
-																						item.source
-																					)
-																						? 'h-4'
-																						: 'h-3'
-																				}
+																				className={getNewsSourceLogoSizeClass(
+																					item.source
+																				)}
 																			/>
 																		</div>
 																	</a>
@@ -717,16 +714,9 @@ export default function Utility() {
 																					source={
 																						item.source
 																					}
-																					className={
-																						[
-																							'The New York Times',
-																							'Hindustan Times',
-																						].includes(
-																							item.source
-																						)
-																							? 'h-4'
-																							: 'h-3'
-																					}
+																					className={getNewsSourceLogoSizeClass(
+																						item.source
+																					)}
 																				/>
 																			</div>
 																		</a>
