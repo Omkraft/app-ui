@@ -613,71 +613,136 @@ export default function Utility() {
 														.slice(0, visible)
 														.map((item, index) => (
 															<div className="mb-6 break-inside-avoid">
-																<Card
-																	key={item.url || index}
-																	className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
-																>
-																	{newsView === 'comfortable' &&
-																		item.thumbnail && (
-																			<div className="overflow-hidden rounded-t-xl">
-																				<img
-																					src={
-																						item.thumbnail
-																					}
-																					alt={item.title}
-																					className="w-full h-48 lg:h-56 object-cover"
-																					loading="lazy"
-																				/>
-																			</div>
-																		)}
-																	<CardHeader className="p-4 lg:p-6">
-																		<a
-																			href={item.url}
-																			target="_blank"
-																			rel="noopener noreferrer"
-																			className="hover:text-primary transition-colors"
-																		>
-																			<div className="flex flex-col-reverse justify-between items-start gap-3">
-																				<CardTitle className="text-lg leading-snug">
-																					{item.title}
-																				</CardTitle>
+																{item.source !== 'BBC News' ? (
+																	<Card
+																		key={item.url || index}
+																		className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary"
+																	>
+																		{newsView ===
+																			'comfortable' &&
+																			item.thumbnail && (
+																				<div className="overflow-hidden rounded-t-xl">
+																					<img
+																						src={
+																							item.thumbnail
+																						}
+																						alt={
+																							item.title
+																						}
+																						className="w-full h-48 lg:h-56 object-cover"
+																						loading="lazy"
+																					/>
+																				</div>
+																			)}
+																		<CardHeader className="p-4 lg:p-6">
+																			<a
+																				href={item.url}
+																				target="_blank"
+																				rel="noopener noreferrer"
+																				className="hover:text-primary transition-colors"
+																			>
+																				<div className="flex flex-col-reverse justify-between items-start gap-3">
+																					<CardTitle className="text-lg leading-snug">
+																						{item.title}
+																					</CardTitle>
 
-																				<NewsSourceLogo
-																					source={
-																						item.source
-																					}
-																					className={
-																						[
-																							'The New York Times',
-																							'Hindustan Times',
-																						].includes(
+																					<NewsSourceLogo
+																						source={
 																							item.source
-																						)
-																							? 'h-4'
-																							: 'h-3'
-																					}
-																				/>
-																			</div>
-																		</a>
+																						}
+																						className={
+																							[
+																								'The New York Times',
+																								'Hindustan Times',
+																							].includes(
+																								item.source
+																							)
+																								? 'h-4'
+																								: 'h-3'
+																						}
+																					/>
+																				</div>
+																			</a>
 
-																		<CardDescription className="text-background flex justify-between text-xs mt-1">
-																			<span>
-																				{item.source}
-																			</span>
-																			<span>
-																				{formatDate(
-																					item.publishedAt
-																				)}
-																			</span>
-																		</CardDescription>
-																	</CardHeader>
+																			<CardDescription className="text-background flex justify-between text-xs mt-1">
+																				<span>
+																					{item.source}
+																				</span>
+																				<span>
+																					{formatDate(
+																						item.publishedAt
+																					)}
+																				</span>
+																			</CardDescription>
+																		</CardHeader>
 
-																	<CardContent className="p-4 lg:p-6">
-																		<p className="text-sm line-clamp-3">
-																			{item.description}
-																		</p>
-																	</CardContent>
-																</Card>
+																		<CardContent className="p-4 lg:p-6">
+																			<p className="text-sm line-clamp-3">
+																				{item.description}
+																			</p>
+																		</CardContent>
+																	</Card>
+																) : (
+																	<Card
+																		key={item.url || index}
+																		className="bg-foreground text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300 border border-primary flex flex-row"
+																	>
+																		{newsView ===
+																			'comfortable' &&
+																			item.thumbnail && (
+																				<div className="overflow-hidden rounded-l-xl">
+																					<img
+																						src={
+																							item.thumbnail
+																						}
+																						alt={
+																							item.title
+																						}
+																						className="w-full h-[175px] object-cover"
+																						loading="lazy"
+																					/>
+																				</div>
+																			)}
+																		<div>
+																			<CardHeader>
+																				<a
+																					href={item.url}
+																					target="_blank"
+																					rel="noopener noreferrer"
+																					className="hover:text-primary transition-colors"
+																				>
+																					<div className="flex flex-col-reverse justify-between items-start gap-3">
+																						<CardTitle className="text-lg leading-snug">
+																							{
+																								item.title
+																							}
+																						</CardTitle>
+
+																						<NewsSourceLogo
+																							source={
+																								item.source
+																							}
+																							className="h-3"
+																						/>
+																					</div>
+																				</a>
+
+																				<CardDescription className="text-background flex justify-between text-xs mt-1">
+																					<span>
+																						{
+																							item.source
+																						}
+																					</span>
+																					<span>
+																						{formatDate(
+																							item.publishedAt
+																						)}
+																					</span>
+																				</CardDescription>
+																			</CardHeader>
+																		</div>
+																	</Card>
+																)}
 															</div>
 														))}
 												</div>

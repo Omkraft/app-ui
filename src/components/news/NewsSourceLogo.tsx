@@ -1,9 +1,8 @@
 import toi from '@/assets/media/toi.svg';
 import ie from '@/assets/media/indian-express.svg';
 import ht from '@/assets/media/hindustan-times.svg';
-import nyt from '@/assets/media/nyt.svg';
 import theHindu from '@/assets/media/the-hindu.svg';
-import wp from '@/assets/media/wp.svg';
+import bbc from '@/assets/media/bbc.svg';
 
 import { cn } from '@/lib/utils';
 
@@ -16,9 +15,8 @@ const logoMap: Record<string, string> = {
 	'Times of India': toi,
 	'Indian Express': ie,
 	'Hindustan Times': ht,
-	'The New York Times': nyt,
 	'The Hindu': theHindu,
-	'The Washington Post': wp,
+	'BBC News': bbc,
 };
 
 export function NewsSourceLogo({ source, className }: Props) {
