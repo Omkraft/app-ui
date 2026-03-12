@@ -1,5 +1,6 @@
 ﻿import React, { useCallback, useEffect, useState } from 'react';
 import { apiRequest } from '@/api/client';
+import { useLayoutEffect, useRef } from 'react';
 import {
 	Card,
 	CardHeader,
@@ -162,6 +163,116 @@ function renderNewsCard(item: NewsArticle, index: number, newsView: 'comfortable
 					<p className="line-clamp-3 text-sm">{item.description}</p>
 				</CardContent>
 			</Card>
+		</div>
+	);
+}
+
+function DesktopNewsMasonry({
+	articles,
+	newsView,
+}: {
+	articles: NewsArticle[];
+	newsView: 'comfortable' | 'compact';
+}) {
+	const containerRef = useRef<HTMLDivElement | null>(null);
+	const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+	const [layout, setLayout] = useState<{
+		positions: Array<{ left: number; top: number; width: number }>;
+		height: number;
+	}>({
+		positions: [],
+		height: 0,
+	});
+
+	const recomputeLayout = useCallback(() => {
+		const container = containerRef.current;
+		if (!container) return;
+
+		const containerWidth = container.clientWidth;
+		if (!containerWidth) return;
+
+		const gap = 24;
+		const columnCount = 2;
+		const columnWidth = (containerWidth - gap * (columnCount - 1)) / columnCount;
+		const columnHeights = Array.from({ length: columnCount }, () => 0);
+
+		const positions = articles.map((_, index) => {
+			const item = itemRefs.current[index];
+			const shortestColumnHeight = Math.min(...columnHeights);
+			const columnIndex = columnHeights.indexOf(shortestColumnHeight);
+			const left = columnIndex * (columnWidth + gap);
+			const top = columnHeights[columnIndex];
+			const itemHeight = item?.offsetHeight ?? 0;
+
+			columnHeights[columnIndex] = top + itemHeight + gap;
+
+			return {
+				left,
+				top,
+				width: columnWidth,
+			};
+		});
+
+		setLayout({
+			positions,
+			height: Math.max(0, ...columnHeights) - gap,
+		});
+	}, [articles]);
+
+	useLayoutEffect(() => {
+		itemRefs.current = itemRefs.current.slice(0, articles.length);
+		recomputeLayout();
+	}, [articles.length, newsView, recomputeLayout]);
+
+	useEffect(() => {
+		if (typeof ResizeObserver === 'undefined') return undefined;
+
+		const observer = new ResizeObserver(() => {
+			recomputeLayout();
+		});
+
+		if (containerRef.current) {
+			observer.observe(containerRef.current);
+		}
+
+		itemRefs.current.forEach((item) => {
+			if (item) observer.observe(item);
+		});
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [articles, newsView, recomputeLayout]);
+
+	return (
+		<div
+			ref={containerRef}
+			className="relative"
+			style={{ height: `${Math.max(layout.height, 1)}px` }}
+		>
+			{articles.map((item, index) => {
+				const position = layout.positions[index];
+
+				return (
+					<div
+						key={item.url || `desktop-${index}`}
+						ref={(node) => {
+							itemRefs.current[index] = node;
+						}}
+						className="absolute"
+						style={{
+							width: position ? `${position.width}px` : 'calc((100% - 24px) / 2)',
+							transform: position
+								? `translate(${position.left}px, ${position.top}px)`
+								: undefined,
+							visibility:
+								layout.positions.length === articles.length ? 'visible' : 'hidden',
+						}}
+					>
+						{renderNewsCard(item, index, newsView)}
+					</div>
+				);
+			})}
 		</div>
 	);
 }
@@ -717,20 +828,10 @@ export default function Utility() {
 													/>
 												)}
 												{isDesktopNewsLayout ? (
-													<div className="columns-2 gap-6">
-														{visibleArticles.map((item, index) => (
-															<div
-																key={item.url || `desktop-${index}`}
-																className="mb-6 break-inside-avoid"
-															>
-																{renderNewsCard(
-																	item,
-																	index,
-																	newsView
-																)}
-															</div>
-														))}
-													</div>
+													<DesktopNewsMasonry
+														articles={visibleArticles}
+														newsView={newsView}
+													/>
 												) : (
 													<div className="space-y-6">
 														{visibleArticles.map((item, index) =>
