@@ -193,3 +193,19 @@ MIT
 
 <p align="center">Built by<br/><span style="font-weight:500;">Omkraft</span> Inc.<br/><em>Systems, Crafted.</em></p>
 <p align="center"><img src="https://raw.githubusercontent.com/Omkraft/.github/main/assets/logo-small.svg" alt="Omkraft Logo Small" width="48" height="48" /></p>
+
+
+---
+
+## PR Review Automation
+
+Pull requests are automatically reviewed by Qodo PR-Agent on:
+- PR open
+- PR reopen
+- PR ready-for-review
+- Each subsequent push to the PR branch (`synchronize`)
+
+Manual PR-Agent comment commands are also enabled on pull requests.
+
+Policy file:
+- `.pr_agent.toml`
