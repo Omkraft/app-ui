@@ -76,7 +76,8 @@ function getNewsSourceLogoSizeClass(source: string) {
 }
 
 function renderNewsCard(item: NewsArticle, index: number, newsView: 'comfortable' | 'compact') {
-	const isBbcCard = item.source === 'BBC News' && Boolean(item.thumbnail);
+	const isBbcCard =
+		newsView === 'comfortable' && item.source === 'BBC News' && Boolean(item.thumbnail);
 
 	if (isBbcCard) {
 		return (
@@ -197,6 +198,7 @@ export default function Utility() {
 	const [onThisDayError, setOnThisDayError] = useState<unknown | null>(null);
 	const [newsSections, setNewsSections] = useState<Record<string, NewsArticle[]>>({});
 	const [newsView, setNewsView] = useState<'comfortable' | 'compact'>('comfortable');
+	const [isDesktopNewsLayout, setIsDesktopNewsLayout] = useState(window.innerWidth >= 1024);
 	const [weatherDefaultOpenItems] = useState<string[]>(
 		window.innerWidth >= 1024 ? weatherAccordionItems : []
 	);
@@ -275,6 +277,17 @@ export default function Utility() {
 			window.removeEventListener('omkraft:retry-services', retryHandler);
 		};
 	}, [fetchWeather, fetchNews]);
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsDesktopNewsLayout(window.innerWidth >= 1024);
+		};
+
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []);
 
 	useEffect(() => {
 		if (!newsSections[activeNewsTab]) {
@@ -710,28 +723,32 @@ export default function Utility() {
 														fallbackTitle="No news available"
 													/>
 												)}
-												<div className="space-y-6 lg:hidden">
-													{visibleArticles.map((item, index) =>
-														renderNewsCard(item, index, newsView)
-													)}
-												</div>
-
-												<div className="hidden gap-6 lg:grid lg:grid-cols-2 lg:items-start">
-													{desktopColumns.map((column, columnIndex) => (
-														<div
-															key={`column-${columnIndex}`}
-															className="space-y-6"
-														>
-															{column.map(({ item, index }) =>
-																renderNewsCard(
-																	item,
-																	index,
-																	newsView
-																)
-															)}
-														</div>
-													))}
-												</div>
+												{isDesktopNewsLayout ? (
+													<div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+														{desktopColumns.map(
+															(column, columnIndex) => (
+																<div
+																	key={`column-${columnIndex}`}
+																	className="space-y-6"
+																>
+																	{column.map(({ item, index }) =>
+																		renderNewsCard(
+																			item,
+																			index,
+																			newsView
+																		)
+																	)}
+																</div>
+															)
+														)}
+													</div>
+												) : (
+													<div className="space-y-6">
+														{visibleArticles.map((item, index) =>
+															renderNewsCard(item, index, newsView)
+														)}
+													</div>
+												)}
 
 												{visible < articles.length && (
 													<div className="text-center mt-6">
