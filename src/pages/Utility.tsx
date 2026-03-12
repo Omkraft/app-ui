@@ -676,13 +676,6 @@ export default function Utility() {
 								const articles = newsSections[activeNewsTab] || [];
 								const visible = visibleCounts[activeNewsTab] || 10;
 								const visibleArticles = articles.slice(0, visible);
-								const desktopColumns = visibleArticles.reduce(
-									(columns, item, index) => {
-										columns[index % 2].push({ item, index });
-										return columns;
-									},
-									[[], []] as Array<Array<{ item: NewsArticle; index: number }>>
-								);
 
 								return (
 									<>
@@ -724,23 +717,19 @@ export default function Utility() {
 													/>
 												)}
 												{isDesktopNewsLayout ? (
-													<div className="grid gap-6 lg:grid-cols-2 lg:items-start">
-														{desktopColumns.map(
-															(column, columnIndex) => (
-																<div
-																	key={`column-${columnIndex}`}
-																	className="space-y-6"
-																>
-																	{column.map(({ item, index }) =>
-																		renderNewsCard(
-																			item,
-																			index,
-																			newsView
-																		)
-																	)}
-																</div>
-															)
-														)}
+													<div className="columns-2 gap-6">
+														{visibleArticles.map((item, index) => (
+															<div
+																key={item.url || `desktop-${index}`}
+																className="mb-6 break-inside-avoid"
+															>
+																{renderNewsCard(
+																	item,
+																	index,
+																	newsView
+																)}
+															</div>
+														))}
 													</div>
 												) : (
 													<div className="space-y-6">
