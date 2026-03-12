@@ -205,7 +205,5 @@ Pull requests are automatically reviewed by Qodo PR-Agent on:
 - PR ready-for-review
 - Each subsequent push to the PR branch (`synchronize`)
 
-Manual PR-Agent comment commands are also enabled on pull requests.
-
 Policy file:
 - `.pr_agent.toml`
