@@ -75,6 +75,96 @@ function getNewsSourceLogoSizeClass(source: string) {
 	return ['BBC News', 'Hindustan Times'].includes(source) ? 'h-4' : 'h-3';
 }
 
+function renderNewsCard(item: NewsArticle, index: number, newsView: 'comfortable' | 'compact') {
+	const isBbcCard = item.source === 'BBC News' && Boolean(item.thumbnail);
+
+	if (isBbcCard) {
+		return (
+			<div key={item.url || `news-${index}`}>
+				<Card className="overflow-hidden border border-primary bg-foreground text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+					<div className="flex min-h-[152px]">
+						<div className="w-[112px] shrink-0 bg-[var(--omkraft-navy-700)] sm:w-[132px]">
+							<img
+								src={item.thumbnail || undefined}
+								alt={item.title}
+								className="h-full w-full object-cover"
+								loading="lazy"
+							/>
+						</div>
+						<CardHeader className="flex flex-1 justify-between p-4">
+							<a
+								href={item.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="transition-colors hover:text-primary"
+							>
+								<div className="flex flex-col-reverse justify-between gap-3 items-start">
+									<CardTitle className="line-clamp-2 text-lg leading-snug">
+										{item.title}
+									</CardTitle>
+
+									<NewsSourceLogo
+										source={item.source}
+										className={getNewsSourceLogoSizeClass(item.source)}
+									/>
+								</div>
+							</a>
+
+							<CardDescription className="mt-3 flex justify-between gap-3 text-xs text-background">
+								<span>{item.source}</span>
+								<span className="shrink-0">{formatDate(item.publishedAt)}</span>
+							</CardDescription>
+						</CardHeader>
+					</div>
+				</Card>
+			</div>
+		);
+	}
+
+	return (
+		<div key={item.url || `news-${index}`}>
+			<Card className="border border-primary bg-foreground text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+				{newsView === 'comfortable' && item.thumbnail && (
+					<div className="overflow-hidden rounded-t-xl">
+						<img
+							src={item.thumbnail}
+							alt={item.title}
+							className="h-48 w-full object-cover lg:h-56"
+							loading="lazy"
+						/>
+					</div>
+				)}
+				<CardHeader className="p-4 lg:p-6">
+					<a
+						href={item.url}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="transition-colors hover:text-primary"
+					>
+						<div className="flex flex-col-reverse justify-between gap-3">
+							<CardTitle className="text-lg leading-snug">{item.title}</CardTitle>
+
+							<NewsSourceLogo
+								source={item.source}
+								className={getNewsSourceLogoSizeClass(item.source)}
+							/>
+						</div>
+					</a>
+
+					<CardDescription className="mt-1 flex justify-between text-xs text-background">
+						<span>{item.source}</span>
+						<span>{formatDate(item.publishedAt)}</span>
+					</CardDescription>
+				</CardHeader>
+
+				<CardContent className="p-4 lg:p-6">
+					<p className="line-clamp-3 text-sm">{item.description}</p>
+				</CardContent>
+			</Card>
+		</div>
+	);
+}
+
 const NEWS_TABS = [
 	{ key: 'india', label: 'India' },
 	{ key: 'global', label: 'Global' },
@@ -572,9 +662,14 @@ export default function Utility() {
 							{(() => {
 								const articles = newsSections[activeNewsTab] || [];
 								const visible = visibleCounts[activeNewsTab] || 10;
-								const initialCount = 10;
-								const initialArticles = articles.slice(0, initialCount);
-								const extraArticles = articles.slice(initialCount, visible);
+								const visibleArticles = articles.slice(0, visible);
+								const desktopColumns = visibleArticles.reduce(
+									(columns, item, index) => {
+										columns[index % 2].push({ item, index });
+										return columns;
+									},
+									[[], []] as Array<Array<{ item: NewsArticle; index: number }>>
+								);
 
 								return (
 									<>
@@ -615,134 +710,28 @@ export default function Utility() {
 														fallbackTitle="No news available"
 													/>
 												)}
-												<div className="columns-1 gap-6 lg:columns-2">
-													{initialArticles.map((item, index) => (
+												<div className="space-y-6 lg:hidden">
+													{visibleArticles.map((item, index) =>
+														renderNewsCard(item, index, newsView)
+													)}
+												</div>
+
+												<div className="hidden gap-6 lg:grid lg:grid-cols-2 lg:items-start">
+													{desktopColumns.map((column, columnIndex) => (
 														<div
-															key={item.url || `initial-${index}`}
-															className="mb-6 break-inside-avoid"
+															key={`column-${columnIndex}`}
+															className="space-y-6"
 														>
-															<Card className="border border-primary bg-foreground text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-																{newsView === 'comfortable' &&
-																	item.source !== 'BBC News' &&
-																	item.thumbnail && (
-																		<div className="overflow-hidden rounded-t-xl">
-																			<img
-																				src={item.thumbnail}
-																				alt={item.title}
-																				className="h-48 w-full object-cover lg:h-56"
-																				loading="lazy"
-																			/>
-																		</div>
-																	)}
-																<CardHeader className="p-4 lg:p-6">
-																	<a
-																		href={item.url}
-																		target="_blank"
-																		rel="noopener noreferrer"
-																		className="transition-colors hover:text-primary"
-																	>
-																		<div className="flex flex-col-reverse justify-between gap-3">
-																			<CardTitle className="text-lg leading-snug">
-																				{item.title}
-																			</CardTitle>
-
-																			<NewsSourceLogo
-																				source={item.source}
-																				className={getNewsSourceLogoSizeClass(
-																					item.source
-																				)}
-																			/>
-																		</div>
-																	</a>
-
-																	<CardDescription className="mt-1 flex justify-between text-xs text-background">
-																		<span>{item.source}</span>
-																		<span>
-																			{formatDate(
-																				item.publishedAt
-																			)}
-																		</span>
-																	</CardDescription>
-																</CardHeader>
-
-																<CardContent className="p-4 lg:p-6">
-																	<p className="line-clamp-3 text-sm">
-																		{item.description}
-																	</p>
-																</CardContent>
-															</Card>
+															{column.map(({ item, index }) =>
+																renderNewsCard(
+																	item,
+																	index,
+																	newsView
+																)
+															)}
 														</div>
 													))}
 												</div>
-
-												{extraArticles.length > 0 && (
-													<div className="mt-6 columns-1 gap-6 lg:columns-2">
-														{extraArticles.map((item, index) => (
-															<div
-																key={item.url || `extra-${index}`}
-																className="mb-6 break-inside-avoid"
-															>
-																<Card className="border border-primary bg-foreground text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-																	{newsView === 'comfortable' &&
-																		item.source !==
-																			'BBC News' &&
-																		item.thumbnail && (
-																			<div className="overflow-hidden rounded-t-xl">
-																				<img
-																					src={
-																						item.thumbnail
-																					}
-																					alt={item.title}
-																					className="h-48 w-full object-cover lg:h-56"
-																					loading="lazy"
-																				/>
-																			</div>
-																		)}
-																	<CardHeader className="p-4 lg:p-6">
-																		<a
-																			href={item.url}
-																			target="_blank"
-																			rel="noopener noreferrer"
-																			className="transition-colors hover:text-primary"
-																		>
-																			<div className="flex flex-col-reverse justify-between gap-3">
-																				<CardTitle className="text-lg leading-snug">
-																					{item.title}
-																				</CardTitle>
-
-																				<NewsSourceLogo
-																					source={
-																						item.source
-																					}
-																					className={getNewsSourceLogoSizeClass(
-																						item.source
-																					)}
-																				/>
-																			</div>
-																		</a>
-
-																		<CardDescription className="mt-1 flex justify-between text-xs text-background">
-																			<span>
-																				{item.source}
-																			</span>
-																			<span>
-																				{formatDate(
-																					item.publishedAt
-																				)}
-																			</span>
-																		</CardDescription>
-																	</CardHeader>
-
-																	<CardContent className="p-4 lg:p-6">
-																		<p className="line-clamp-3 text-sm">
-																			{item.description}
-																		</p>
-																	</CardContent>
-																</Card>
-															</div>
-														))}
-													</div>
-												)}
 
 												{visible < articles.length && (
 													<div className="text-center mt-6">
