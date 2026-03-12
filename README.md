@@ -199,11 +199,13 @@ MIT
 
 ## PR Review Automation
 
-Pull requests are automatically reviewed by Qodo PR-Agent on:
+Pull requests are automatically reviewed by a local Ollama model on:
 - PR open
 - PR reopen
 - PR ready-for-review
 - Each subsequent push to the PR branch (`synchronize`)
 
-Policy file:
-- `.pr_agent.toml`
+Current review model:
+- `qwen2.5-coder:1.5b`
+
+No external LLM API key is required for PR review in this setup.

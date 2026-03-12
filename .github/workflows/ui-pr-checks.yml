@@ -26,17 +26,15 @@ jobs:
       - run: npm ci
       - run: npm run lint
 
-  pr-agent:
-    name: PR Agent Review
+  ollama-review:
+    name: Ollama Review
     needs: lint
-    uses: Omkraft/.github/.github/workflows/pr-agent-review.yml@main
-    secrets:
-      OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+    uses: Omkraft/.github/.github/workflows/ollama-review.yml@main
 
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: pr-agent
+    needs: ollama-review
 
     steps:
       - uses: actions/checkout@v4
