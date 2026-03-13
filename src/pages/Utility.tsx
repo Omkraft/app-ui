@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { apiRequest } from '@/api/client';
 import { useLayoutEffect, useRef } from 'react';
 import {
@@ -55,6 +55,7 @@ import { getNext5Hours } from '@/utils/weatherHelpers';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { reportUiError, toDisplayError } from '@/lib/error';
 
 interface NewsArticle {
 	title: string;
@@ -159,9 +160,11 @@ function renderNewsCard(item: NewsArticle, index: number, newsView: 'comfortable
 					</CardDescription>
 				</CardHeader>
 
-				<CardContent className="p-4 lg:p-6">
-					<p className="line-clamp-3 text-sm">{item.description}</p>
-				</CardContent>
+				{item.description && (
+					<CardContent className="p-4 lg:p-6">
+						<p className="line-clamp-3 text-sm">{item.description}</p>
+					</CardContent>
+				)}
 			</Card>
 		</div>
 	);
@@ -333,24 +336,24 @@ export default function Utility() {
 			setLocationLabel(formattedLocation);
 			setWeather(weather);
 		} catch (error) {
-			console.error(error);
-			setWeatherError(error instanceof Error ? error : 'Failed to fetch weather.');
+			reportUiError('utility:weather', error);
+			setWeatherError(toDisplayError(error, 'Failed to fetch weather.'));
 		}
 	}, []);
 
-	const fetchQuote = async () => {
+	const fetchQuote = useCallback(async () => {
 		setQuote(null);
 		setQuoteError(null);
 		try {
 			const data = await apiRequest<QuoteResponse>('/api/utility/quote');
 			setQuote(data);
 		} catch (error) {
-			console.error(error);
-			setQuoteError(error instanceof Error ? error : 'Failed to load quote');
+			reportUiError('utility:quote', error);
+			setQuoteError(toDisplayError(error, 'Failed to load quote'));
 		}
-	};
+	}, []);
 
-	const fetchOnThisDay = async () => {
+	const fetchOnThisDay = useCallback(async () => {
 		setOnThisDayError(null);
 		setOnThisDay(null);
 		try {
@@ -358,11 +361,13 @@ export default function Utility() {
 
 			setOnThisDay(data);
 		} catch (error) {
-			setOnThisDayError(error instanceof Error ? error : 'Failed to fetch historical events');
+			reportUiError('utility:on-this-day', error);
+			setOnThisDayError(toDisplayError(error, 'Failed to fetch historical events'));
 		}
-	};
+	}, []);
 
 	const fetchNews = useCallback(async (category: string) => {
+		setNewsError(null);
 		try {
 			const data = await apiRequest<NewsArticle[]>(`/api/utility/news?category=${category}`);
 
@@ -371,23 +376,25 @@ export default function Utility() {
 				[category]: data,
 			}));
 		} catch (error) {
-			console.error(error);
-			setNewsError(error instanceof Error ? error : 'Failed to fetch news.');
+			reportUiError('utility:news', error, { category });
+			setNewsError(toDisplayError(error, 'Failed to fetch news.'));
 		}
 	}, []);
 
 	useEffect(() => {
-		fetchNews('india');
-		fetchNews('global');
-		fetchQuote();
-		fetchOnThisDay();
-		fetchWeather();
+		void Promise.allSettled([
+			fetchNews('india'),
+			fetchNews('global'),
+			fetchQuote(),
+			fetchOnThisDay(),
+			fetchWeather(),
+		]);
 		const retryHandler = () => fetchWeather();
 		window.addEventListener('omkraft:retry-services', retryHandler);
 		return () => {
 			window.removeEventListener('omkraft:retry-services', retryHandler);
 		};
-	}, [fetchWeather, fetchNews]);
+	}, [fetchOnThisDay, fetchQuote, fetchWeather, fetchNews]);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -409,9 +416,13 @@ export default function Utility() {
 	useEffect(() => {
 		const interval = setInterval(
 			() => {
+				if (document.visibilityState !== 'visible') {
+					return;
+				}
+
 				Object.keys(newsSections).forEach((category) => {
 					if (newsSections[category]?.length) {
-						fetchNews(category);
+						void fetchNews(category);
 					}
 				});
 			},
@@ -782,7 +793,6 @@ export default function Utility() {
 							))}
 						</TabsList>
 						<TabsContent value={activeNewsTab} className="mt-6 w-full">
-							{/* 👇 PLACE CONTENT HERE */}
 							{(() => {
 								const articles = newsSections[activeNewsTab] || [];
 								const visible = visibleCounts[activeNewsTab] || 10;
@@ -951,7 +961,7 @@ export default function Utility() {
 							{quote ? (
 								<div className="text-center grid gap-4">
 									<p className="italic text-xl font-medium ">
-										"{quote.quote}" —{' '}
+										"{quote.quote}" -{' '}
 									</p>
 								</div>
 							) : (

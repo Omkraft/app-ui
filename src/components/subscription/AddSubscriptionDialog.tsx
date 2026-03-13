@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -26,6 +26,7 @@ import { isPositiveNumeric } from '@/utils/format';
 import { addSubscription } from '@/api/subscription';
 import type { SubscriptionData } from '@/api/subscription';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
+import { reportUiError, toDisplayError } from '@/lib/error';
 
 export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => void }) {
 	const [open, setOpen] = useState(false);
@@ -70,8 +71,8 @@ export default function AddSubscriptionDialog({ onSuccess }: { onSuccess: () => 
 			};
 			await addSubscription(subscriptionData);
 		} catch (err) {
-			console.error(err);
-			error = err instanceof Error ? err : 'Failed to add subscription';
+			reportUiError('subscription:add', err);
+			error = toDisplayError(err, 'Failed to add subscription');
 			setError(error);
 		} finally {
 			setLoading(false);

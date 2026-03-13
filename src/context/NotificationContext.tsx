@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { fetchNotifications, type Notification } from '@/api/notification';
+import { reportUiError } from '@/lib/error';
 
 type NotificationContextType = {
 	notifications: Notification[];
@@ -10,38 +11,48 @@ type NotificationContextType = {
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
+function getStoredUserId() {
+	const storedUser = localStorage.getItem('auth');
+
+	if (!storedUser) {
+		return null;
+	}
+
+	try {
+		return JSON.parse(storedUser).id ?? null;
+	} catch {
+		localStorage.removeItem('auth');
+		return null;
+	}
+}
+
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
 	const socketRef = useRef<Socket | null>(null);
 	const [notifications, setNotifications] = useState<Notification[]>([]);
 
-	// fetch function
 	const refreshNotifications = useCallback(async () => {
 		try {
 			const data = await fetchNotifications();
-
 			setNotifications(data);
 		} catch (error) {
-			console.error('Notification fetch failed', error);
+			reportUiError('notifications:fetch', error);
 		}
 	}, []);
 
-	// initial fetch
 	useEffect(() => {
 		refreshNotifications();
 	}, [refreshNotifications]);
 
 	useEffect(() => {
 		const token = localStorage.getItem('token');
-		const storedUser = localStorage.getItem('auth');
-		const userId = storedUser ? JSON.parse(storedUser).id : null;
+		const userId = getStoredUserId();
 
-		if (!token || !userId) return;
-
-		// ✅ prevent React StrictMode duplicate connection
-		if (socketRef.current) return;
+		if (!token || !userId || socketRef.current) {
+			return;
+		}
 
 		const socket = io(import.meta.env.VITE_API_BASE_URL, {
-			transports: ['websocket'], // ✅ IMPORTANT
+			transports: ['websocket'],
 			auth: { token },
 			withCredentials: true,
 		});
@@ -49,44 +60,44 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 		socketRef.current = socket;
 
 		socket.on('connect', () => {
-			// CRITICAL: join user room
 			socket.emit('join', userId);
 		});
 
 		socket.on('connect_error', (error) => {
-			console.error('Socket connection error:', error.message);
+			reportUiError('notifications:socket-connect', error, { message: error.message });
 		});
 
-		// NEW notification
 		socket.on('notification:new', async () => {
 			await refreshNotifications();
 		});
 
-		// notification resolved (subscription paid)
 		socket.on('notification:resolved', ({ subscriptionId }) => {
 			setNotifications((prev) =>
-				prev.map((n) =>
-					n.metadata?.subscriptionId === subscriptionId ? { ...n, read: true } : n
+				prev.map((notification) =>
+					notification.metadata?.subscriptionId === subscriptionId
+						? { ...notification, read: true }
+						: notification
 				)
 			);
 		});
 
-		// notification manually read
 		socket.on('notification:read', ({ notificationId }) => {
 			setNotifications((prev) =>
-				prev.map((n) => (n._id === notificationId ? { ...n, read: true } : n))
+				prev.map((notification) =>
+					notification._id === notificationId
+						? { ...notification, read: true }
+						: notification
+				)
 			);
 		});
 
 		return () => {
-			if (socketRef.current) {
-				socketRef.current.disconnect();
-				socketRef.current = null;
-			}
+			socket.disconnect();
+			socketRef.current = null;
 		};
 	}, [refreshNotifications]);
 
-	const unreadCount = notifications.filter((n) => !n.read).length;
+	const unreadCount = notifications.filter((notification) => !notification.read).length;
 
 	return (
 		<NotificationContext.Provider

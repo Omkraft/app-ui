@@ -52,6 +52,8 @@ import {
 	updateAdminSubscription,
 } from '@/api/adminSubscriptions';
 import { isPositiveNumeric } from '@/utils/format';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+import { toDisplayError } from '@/lib/error';
 
 type UserSortBy = 'firstName' | 'lastName' | 'email' | 'createdAt' | 'role';
 type SubscriptionSortBy =
@@ -120,7 +122,7 @@ export default function ManageUsers() {
 	const [usersLoading, setUsersLoading] = useState(false);
 	const [usersError, setUsersError] = useState<unknown | null>(null);
 	const [userSearchInput, setUserSearchInput] = useState('');
-	const [userSearch, setUserSearch] = useState('');
+	const userSearch = useDebouncedValue(userSearchInput.trim());
 	const [userPage, setUserPage] = useState(1);
 	const [userTotalPages, setUserTotalPages] = useState(1);
 	const [userTotal, setUserTotal] = useState(0);
@@ -131,7 +133,7 @@ export default function ManageUsers() {
 	const [subscriptionsLoading, setSubscriptionsLoading] = useState(false);
 	const [subscriptionsError, setSubscriptionsError] = useState<unknown | null>(null);
 	const [subscriptionSearchInput, setSubscriptionSearchInput] = useState('');
-	const [subscriptionSearch, setSubscriptionSearch] = useState('');
+	const subscriptionSearch = useDebouncedValue(subscriptionSearchInput.trim());
 	const [subscriptionPage, setSubscriptionPage] = useState(1);
 	const [subscriptionTotalPages, setSubscriptionTotalPages] = useState(1);
 	const [subscriptionTotal, setSubscriptionTotal] = useState(0);
@@ -140,20 +142,12 @@ export default function ManageUsers() {
 	const [subscriptionSortOrder, setSubscriptionSortOrder] = useState<SortOrder>('asc');
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			setUserPage(1);
-			setUserSearch(userSearchInput.trim());
-		}, 350);
-		return () => clearTimeout(timer);
-	}, [userSearchInput]);
+		setUserPage(1);
+	}, [userSearch]);
 
 	useEffect(() => {
-		const timer = setTimeout(() => {
-			setSubscriptionPage(1);
-			setSubscriptionSearch(subscriptionSearchInput.trim());
-		}, 350);
-		return () => clearTimeout(timer);
-	}, [subscriptionSearchInput]);
+		setSubscriptionPage(1);
+	}, [subscriptionSearch]);
 
 	useEffect(() => {
 		if (tab === 'users') {
@@ -182,7 +176,7 @@ export default function ManageUsers() {
 			setUserTotalPages(res.pagination.totalPages);
 			setUserTotal(res.pagination.total);
 		} catch (err) {
-			setUsersError(err instanceof Error ? err : 'Failed to load users');
+			setUsersError(toDisplayError(err, 'Failed to load users'));
 		} finally {
 			setUsersLoading(false);
 		}
@@ -203,7 +197,7 @@ export default function ManageUsers() {
 			setSubscriptionTotalPages(res.pagination.totalPages);
 			setSubscriptionTotal(res.pagination.total);
 		} catch (err) {
-			setSubscriptionsError(err instanceof Error ? err : 'Failed to load subscriptions');
+			setSubscriptionsError(toDisplayError(err, 'Failed to load subscriptions'));
 		} finally {
 			setSubscriptionsLoading(false);
 		}

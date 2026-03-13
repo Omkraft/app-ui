@@ -187,7 +187,8 @@ export default function Dashboard() {
 							<h2 className="text-3xl">
 								Sports
 								<br />
-								<span className="text-[var(--omkraft-blue-700)]">Central</span>
+								<span className="text-[var(--omkraft-blue-700)]">Central</span>{' '}
+								<span className="text-xl">(Beta)</span>
 							</h2>
 							{/* Mobile copy */}
 							<div className="lg:hidden space-y-3">
@@ -232,13 +233,9 @@ export default function Dashboard() {
 							</ul>
 
 							<div className="flex flex-col lg:flex-row gap-4 pt-4">
-								<button
-									type="button"
-									className="btn-secondary cursor-not-allowed opacity-70"
-									disabled
-								>
-									Sports Central Coming Soon
-								</button>
+								<Link to="/sports-central" className="btn-secondary">
+									Open Sports Central
+								</Link>
 							</div>
 						</div>
 
