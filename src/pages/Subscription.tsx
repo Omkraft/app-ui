@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNotifications } from '@/context/NotificationContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -29,6 +29,7 @@ import MonthlyTrendChart from '@/components/analytics/MonthlyTrendChart';
 import AnalyticsKpis from '@/components/analytics/AnalyticsKpis';
 import UpcomingRenewals from '@/components/analytics/UpcomingRenewals';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
+import { reportUiError, toDisplayError } from '@/lib/error';
 
 export default function Subscription() {
 	const [subs, setSubs] = useState<Subscription[] | null>(null);
@@ -40,45 +41,57 @@ export default function Subscription() {
 	const [analyticsOpen, setAnalyticsOpen] = useState(window.innerWidth >= 1024);
 	const [inactiveOpen, setInactiveOpen] = useState(window.innerWidth >= 1024);
 	const { refreshNotifications } = useNotifications();
-	const activeSubs = (subs ?? []).filter((sub) => sub.status !== 'INACTIVE');
-	const inactiveSubs = (subs ?? []).filter((sub) => sub.status === 'INACTIVE');
+	const activeSubs = useMemo(
+		() => (subs ?? []).filter((sub) => sub.status !== 'INACTIVE'),
+		[subs]
+	);
+	const inactiveSubs = useMemo(
+		() => (subs ?? []).filter((sub) => sub.status === 'INACTIVE'),
+		[subs]
+	);
 	const hasSubscriptions = activeSubs.length + inactiveSubs.length > 0;
 
-	useEffect(() => {
-		fetchSubscriptions();
-		fetchAnalytics();
-	}, []);
-
-	async function fetchSubscriptions() {
-		setSubs(null);
-		let error = null;
+	const fetchSubscriptions = useCallback(async () => {
+		setSubsError(null);
 		try {
 			setLoading(true);
 			const data = await getSubscriptions();
 			setSubs(data);
+			return data;
 		} catch (err) {
-			console.error(err);
-			error = err instanceof Error ? err : 'Failed to get subscriptions';
+			reportUiError('subscription:fetch-subscriptions', err);
+			const error = toDisplayError(err, 'Failed to get subscriptions');
 			setSubsError(error);
+			return null;
 		} finally {
 			setLoading(false);
 		}
-	}
+	}, []);
 
-	async function fetchAnalytics() {
-		setAnalytics(null);
+	const fetchAnalytics = useCallback(async () => {
+		setAnalyticsError(null);
 		try {
 			setAnalyticsLoading(true);
 			const data = await getDashboardAnalytics();
-
 			setAnalytics(data);
+			return data;
 		} catch (err) {
-			setAnalyticsError(err instanceof Error ? err : 'Failed to get analytics');
-			console.error('Analytics fetch failed:', err);
+			reportUiError('subscription:fetch-analytics', err);
+			const error = toDisplayError(err, 'Failed to get analytics');
+			setAnalyticsError(error);
+			return null;
 		} finally {
 			setAnalyticsLoading(false);
 		}
-	}
+	}, []);
+
+	const refreshSubscriptionPage = useCallback(async () => {
+		await Promise.all([fetchSubscriptions(), fetchAnalytics()]);
+	}, [fetchAnalytics, fetchSubscriptions]);
+
+	useEffect(() => {
+		void refreshSubscriptionPage();
+	}, [refreshSubscriptionPage]);
 
 	return (
 		<main className="min-h-[calc(100vh-178px)] bg-[var(--omkraft-blue-200)]">
@@ -119,8 +132,7 @@ export default function Subscription() {
 						{!loading && !subsError && (
 							<AddSubscriptionDialog
 								onSuccess={() => {
-									fetchSubscriptions();
-									fetchAnalytics();
+									void refreshSubscriptionPage();
 								}}
 							/>
 						)}
@@ -292,8 +304,7 @@ export default function Subscription() {
 														<ConfirmPaymentPopover
 															subscription={sub}
 															onSuccess={async () => {
-																await fetchSubscriptions();
-																await fetchAnalytics();
+																await refreshSubscriptionPage();
 																await refreshNotifications();
 															}}
 														/>
@@ -304,16 +315,14 @@ export default function Subscription() {
 													<EditSubscriptionDialog
 														subscription={sub}
 														onSuccess={() => {
-															fetchSubscriptions();
-															fetchAnalytics();
+															void refreshSubscriptionPage();
 														}}
 													/>
 
 													<DeleteSubscriptionDialog
 														id={sub._id}
 														onSuccess={() => {
-															fetchSubscriptions();
-															fetchAnalytics();
+															void refreshSubscriptionPage();
 														}}
 													/>
 												</div>
@@ -331,7 +340,7 @@ export default function Subscription() {
 										</p>
 										<p>
 											Click on Add Subscription to add your first subscription
-											to monitor billing cycles, renewal dates, and spending —
+											to monitor billing cycles, renewal dates, and spending -
 											all in one place.
 										</p>
 									</div>

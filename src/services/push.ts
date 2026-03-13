@@ -1,3 +1,5 @@
+import { reportUiError } from '@/lib/error';
+
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
 	const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
 	const normalized = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -19,7 +21,7 @@ export async function registerPush(): Promise<boolean> {
 
 	const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY;
 	if (!vapidPublicKey) {
-		console.error('VITE_VAPID_PUBLIC_KEY is not set.');
+		reportUiError('push:missing-vapid-key', 'VITE_VAPID_PUBLIC_KEY is not set.');
 		return false;
 	}
 
@@ -48,13 +50,16 @@ export async function registerPush(): Promise<boolean> {
 		});
 
 		if (!res.ok) {
-			console.error(`Push subscribe failed with status ${res.status}`);
+			reportUiError(
+				'push:subscribe',
+				new Error(`Push subscribe failed with status ${res.status}`)
+			);
 			return false;
 		}
 
 		return true;
 	} catch (error) {
-		console.error('Push registration failed:', error);
+		reportUiError('push:register', error);
 		return false;
 	}
 }

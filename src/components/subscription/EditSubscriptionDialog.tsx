@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import {
 	Dialog,
 	DialogContent,
@@ -26,6 +26,7 @@ import { isPositiveNumeric } from '@/utils/format';
 import { updateSubscription } from '@/api/subscription';
 import type { Subscription } from '@/api/subscription';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
+import { reportUiError, toDisplayError } from '@/lib/error';
 
 function subtractMonthsSafe(date: Date, months: number) {
 	const d = new Date(date);
@@ -127,8 +128,8 @@ export default function EditSubscriptionDialog({
 				startDate,
 			});
 		} catch (err) {
-			console.error(err);
-			error = err instanceof Error ? err : 'Failed to update subscription';
+			reportUiError('subscription:edit', err, { subscriptionId: subscription._id });
+			error = toDisplayError(err, 'Failed to update subscription');
 			setError(error);
 		} finally {
 			setLoading(false);
