@@ -9,9 +9,24 @@ export interface WeatherData {
 		cloud_cover: string;
 		apparent_temperature: number;
 		precipitation: string;
+		uv_index?: number;
+	};
+
+	air_quality?: {
+		current: {
+			time: string;
+			us_aqi?: number;
+			pm2_5?: number;
+			pm10?: number;
+			carbon_monoxide?: number;
+			nitrogen_dioxide?: number;
+			sulphur_dioxide?: number;
+			ozone?: number;
+		};
 	};
 
 	hourly: {
+		uv_index: number[];
 		uv_index_clear_sky: number[];
 		time: string[];
 		temperature_2m: number[];

@@ -63,7 +63,9 @@ export function FooterApp() {
 					<p>
 						<em className="font-normal italic">Systems, Crafted.</em>
 					</p>
-					<p>Demo project — built for learning, feedback, and future possibilities.</p>
+					<p>
+						Demo project &mdash; built for learning, feedback, and future possibilities.
+					</p>
 				</div>
 			</div>
 		</footer>
