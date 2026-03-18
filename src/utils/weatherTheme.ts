@@ -1,45 +1,37 @@
 export function getWeatherTheme(code?: number, isDay?: number) {
-	// Default fallback (brand navy depth)
-	const defaultTheme = 'bg-background';
+	const baseTheme = 'weather-surface weather-surface--default';
 
 	if (code === undefined || code === null) {
-		return defaultTheme;
+		return baseTheme;
 	}
 
-	// 🌙 Night override (deeper navy)
 	if (isDay === 0) {
-		return 'bg-gradient-to-br from-[var(--omkraft-navy-700)] to-[var(--omkraft-navy-900)]';
+		return 'weather-surface weather-surface--night';
 	}
 
-	// ☀️ Clear sky (Primary → Accent)
 	if (code === 0) {
-		return 'bg-gradient-to-br from-[var(--omkraft-blue-400)] to-[var(--omkraft-mint-600)]';
+		return 'weather-surface weather-surface--clear';
 	}
 
-	// 🌤️ Partly cloudy
 	if ([1, 2, 3].includes(code)) {
-		return 'bg-gradient-to-br from-[var(--omkraft-blue-500)] to-[var(--omkraft-navy-400)]';
+		return 'weather-surface weather-surface--cloudy';
 	}
 
-	// 🌧️ Rain
 	if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) {
-		return 'bg-gradient-to-br from-[var(--omkraft-navy-400)] to-[var(--omkraft-blue-700)]';
+		return 'weather-surface weather-surface--rain';
 	}
 
-	// ❄️ Snow
 	if ([71, 73, 75, 85, 86].includes(code)) {
-		return 'bg-gradient-to-br from-[var(--omkraft-blue-200)] to-[var(--omkraft-navy-300)]';
+		return 'weather-surface weather-surface--snow';
 	}
 
-	// ⛈️ Thunderstorm
 	if ([95, 96, 99].includes(code)) {
-		return 'bg-gradient-to-br from-[var(--omkraft-navy-600)] to-[var(--omkraft-blue-800)]';
+		return 'weather-surface weather-surface--storm';
 	}
 
-	// 🌫️ Fog / Mist
 	if ([45, 48].includes(code)) {
-		return 'bg-gradient-to-br from-[var(--omkraft-navy-300)] to-[var(--omkraft-navy-500)]';
+		return 'weather-surface weather-surface--fog';
 	}
 
-	return defaultTheme;
+	return baseTheme;
 }
