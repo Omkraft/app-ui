@@ -73,6 +73,157 @@ interface QuoteResponse {
 	authorImageThumb: string | null;
 }
 
+function getCurrentHourlyValue(
+	times: Array<string | Date> | undefined,
+	values: Array<number | null | undefined> | undefined,
+	currentTime: string | Date | undefined
+) {
+	if (!times?.length || !values?.length || !currentTime) {
+		return null;
+	}
+
+	const currentTimestamp = new Date(currentTime).getTime();
+
+	if (Number.isNaN(currentTimestamp)) {
+		return null;
+	}
+
+	const targetHour = new Date(currentTimestamp);
+	targetHour.setMinutes(0, 0, 0);
+	const targetHourTimestamp = targetHour.getTime();
+
+	const hourlyIndex = times.findIndex((time) => {
+		const timestamp = new Date(time).getTime();
+		return !Number.isNaN(timestamp) && timestamp === targetHourTimestamp;
+	});
+
+	if (hourlyIndex >= 0) {
+		return values[hourlyIndex] ?? null;
+	}
+
+	let closestIndex = -1;
+	let smallestDifference = Number.POSITIVE_INFINITY;
+
+	times.forEach((time, index) => {
+		const timestamp = new Date(time).getTime();
+		if (Number.isNaN(timestamp)) {
+			return;
+		}
+
+		const difference = Math.abs(timestamp - currentTimestamp);
+		if (difference < smallestDifference) {
+			smallestDifference = difference;
+			closestIndex = index;
+		}
+	});
+
+	return closestIndex >= 0 ? (values[closestIndex] ?? null) : null;
+}
+
+function getUvSeverity(uvIndex: number | null) {
+	if (uvIndex === null || Number.isNaN(uvIndex)) {
+		return null;
+	}
+
+	if (uvIndex <= 2) {
+		return {
+			label: 'Low',
+			className:
+				'border-[var(--success-border)] bg-[var(--success-bg)] text-[var(--success-foreground)]',
+		};
+	}
+
+	if (uvIndex <= 5) {
+		return {
+			label: 'Moderate',
+			className:
+				'border-[var(--warning-border)] bg-[var(--warning-bg)] text-[var(--warning-foreground)]',
+		};
+	}
+
+	if (uvIndex <= 7) {
+		return {
+			label: 'High',
+			className:
+				'border-[var(--omkraft-orange-800)] bg-[var(--omkraft-orange-100)] text-[var(--omkraft-orange-800)]',
+		};
+	}
+
+	if (uvIndex <= 10) {
+		return {
+			label: 'Very High',
+			className:
+				'border-[var(--omkraft-red-700)] bg-[var(--omkraft-red-100)] text-[var(--omkraft-red-700)]',
+		};
+	}
+
+	return {
+		label: 'Extreme',
+		className:
+			'border-[var(--omkraft-indigo-800)] bg-[var(--omkraft-indigo-100)] text-[var(--omkraft-indigo-800)]',
+	};
+}
+
+function getAirQualitySeverity(aqi: number | null) {
+	if (aqi === null || Number.isNaN(aqi)) {
+		return null;
+	}
+
+	if (aqi <= 50) {
+		return {
+			label: 'Good',
+			className:
+				'border-[var(--success-border)] bg-[var(--success-bg)] text-[var(--success-foreground)]',
+		};
+	}
+
+	if (aqi <= 100) {
+		return {
+			label: 'Moderate',
+			className:
+				'border-[var(--warning-border)] bg-[var(--warning-bg)] text-[var(--warning-foreground)]',
+		};
+	}
+
+	if (aqi <= 150) {
+		return {
+			label: 'Unhealthy for Sensitive Groups',
+			className:
+				'border-[var(--omkraft-orange-800)] bg-[var(--omkraft-orange-100)] text-[var(--omkraft-orange-800)]',
+		};
+	}
+
+	if (aqi <= 200) {
+		return {
+			label: 'Unhealthy',
+			className:
+				'border-[var(--omkraft-red-700)] bg-[var(--omkraft-red-100)] text-[var(--omkraft-red-700)]',
+		};
+	}
+
+	if (aqi <= 300) {
+		return {
+			label: 'Very Unhealthy',
+			className:
+				'border-[var(--omkraft-indigo-800)] bg-[var(--omkraft-indigo-100)] text-[var(--omkraft-indigo-800)]',
+		};
+	}
+
+	return {
+		label: 'Hazardous',
+		className:
+			'border-[var(--destructive)] bg-[var(--omkraft-red-50)] text-[var(--destructive)]',
+	};
+}
+
+function formatMetricValue(value: number | null | undefined, unit: string, precision = 1) {
+	if (value === null || value === undefined || Number.isNaN(value)) {
+		return '-';
+	}
+
+	return `${round(value, precision)} ${unit}`;
+}
+
 function getNewsSourceLogoSizeClass(source: string) {
 	return ['BBC News', 'Hindustan Times'].includes(source) ? 'h-4' : 'h-3';
 }
@@ -291,7 +442,7 @@ const NEWS_TABS = [
 ];
 
 export default function Utility() {
-	const weatherAccordionItems = ['forecast', 'metrix', 'sunriseset'];
+	const weatherAccordionItems = ['forecast', 'metrix', 'sunriseset', 'airquality'];
 	const [weather, setWeather] = useState<WeatherData | null>(null);
 	const [quote, setQuote] = useState<QuoteResponse | null>(null);
 	const [quoteError, setQuoteError] = useState<unknown | null>(null);
@@ -317,6 +468,21 @@ export default function Utility() {
 		window.innerWidth >= 1024 ? weatherAccordionItems : []
 	);
 	const nextFiveHours = weather ? getNext5Hours(weather) : [];
+	const currentUvIndex = weather
+		? (weather.current.uv_index ??
+			getCurrentHourlyValue(
+				weather.hourly.time,
+				weather.hourly.uv_index,
+				weather.current.time
+			))
+		: null;
+	const uvSeverity = getUvSeverity(currentUvIndex);
+	const currentAirQuality = weather?.air_quality?.current ?? null;
+	const currentUsAqi =
+		currentAirQuality?.us_aqi !== undefined && currentAirQuality?.us_aqi !== null
+			? currentAirQuality.us_aqi
+			: null;
+	const airQualitySeverity = getAirQualitySeverity(currentUsAqi);
 
 	const fetchWeather = useCallback(async () => {
 		setWeather(null);
@@ -640,7 +806,7 @@ export default function Utility() {
 														Precipitation
 													</p>
 													<p className="text-xl font-semibold">
-														{weather.current.precipitation} mm
+														{round(weather.current.precipitation, 1)} mm
 													</p>
 												</div>
 											</Card>
@@ -659,12 +825,20 @@ export default function Utility() {
 												<Gauge className="w-7 h-7 text-accent" />
 												<div>
 													<p className="text-sm opacity-70">UV Index</p>
-													<p className="text-lg font-semibold">
-														{round(
-															weather.hourly.uv_index_clear_sky?.[0],
-															0
-														)}
-													</p>
+													<div className="flex flex-col items-center gap-2">
+														<p className="text-lg font-semibold">
+															{currentUvIndex !== null
+																? round(currentUvIndex, 1)
+																: '-'}
+														</p>
+														{uvSeverity ? (
+															<span
+																className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${uvSeverity.className}`}
+															>
+																{uvSeverity.label}
+															</span>
+														) : null}
+													</div>
 												</div>
 											</Card>
 										</div>
@@ -704,6 +878,117 @@ export default function Utility() {
 															)}
 													</p>
 												</div>
+											</Card>
+										</div>
+									</AccordionContent>
+								</AccordionItem>
+
+								<AccordionItem
+									value="airquality"
+									className="border-b px-6 last:border-b-0"
+								>
+									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">
+										Air Quality
+									</AccordionTrigger>
+									<AccordionContent className="pb-6">
+										<div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted lg:col-span-2">
+												<Gauge className="w-7 h-7 text-accent" />
+												<div>
+													<p className="text-sm opacity-70">US AQI</p>
+													<div className="flex flex-col items-center gap-2">
+														<p className="text-lg font-semibold">
+															{currentUsAqi !== null
+																? round(currentUsAqi, 0)
+																: '-'}
+														</p>
+														{airQualitySeverity ? (
+															<span
+																className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${airQualitySeverity.className}`}
+															>
+																{airQualitySeverity.label}
+															</span>
+														) : null}
+													</div>
+												</div>
+											</Card>
+
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+												<Wind className="w-7 h-7 text-accent" />
+												<div>
+													<p className="text-sm opacity-70">PM2.5</p>
+													<p className="text-lg font-semibold">
+														{formatMetricValue(
+															currentAirQuality?.pm2_5,
+															'ug/m3'
+														)}
+													</p>
+												</div>
+											</Card>
+
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+												<Droplets className="w-7 h-7 text-accent" />
+												<div>
+													<p className="text-sm opacity-70">PM10</p>
+													<p className="text-lg font-semibold">
+														{formatMetricValue(
+															currentAirQuality?.pm10,
+															'ug/m3'
+														)}
+													</p>
+												</div>
+											</Card>
+
+											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+												<Sun className="w-7 h-7 text-[var(--omkraft-orange-500)]" />
+												<div>
+													<p className="text-sm opacity-70">Ozone</p>
+													<p className="text-lg font-semibold">
+														{formatMetricValue(
+															currentAirQuality?.ozone,
+															'ug/m3'
+														)}
+													</p>
+												</div>
+											</Card>
+										</div>
+
+										<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+											<Card className="p-4 text-center bg-muted">
+												<p className="text-sm opacity-70">
+													Nitrogen Dioxide
+												</p>
+												<p className="text-lg font-semibold mt-1">
+													{formatMetricValue(
+														currentAirQuality?.nitrogen_dioxide,
+														'ug/m3'
+													)}
+												</p>
+											</Card>
+
+											<Card className="p-4 text-center bg-muted">
+												<p className="text-sm opacity-70">
+													Sulphur Dioxide
+												</p>
+												<p className="text-lg font-semibold mt-1">
+													{formatMetricValue(
+														currentAirQuality?.sulphur_dioxide,
+														'ug/m3'
+													)}
+												</p>
+											</Card>
+
+											<Card className="p-4 text-center bg-muted">
+												<p className="text-sm opacity-70">
+													Carbon Monoxide
+												</p>
+												<p className="text-lg font-semibold mt-1">
+													{formatMetricValue(
+														currentAirQuality?.carbon_monoxide,
+														'ug/m3',
+														0
+													)}
+												</p>
 											</Card>
 										</div>
 									</AccordionContent>

@@ -2,7 +2,6 @@ import { useAuth } from '@/context/auth/AuthContext';
 import { Link } from 'react-router-dom';
 import newsIllustration from '@/assets/news-illustration.svg';
 import mediaIllustration from '@/assets/media-illustration.svg';
-import sportsIllustration from '@/assets/sports-illustration.svg';
 
 export default function Dashboard() {
 	const { user } = useAuth();
@@ -30,7 +29,7 @@ export default function Dashboard() {
 						<p className="text-muted-foreground">
 							Omkraft brings together focused tools that solve real, everyday
 							problems. Each app is independent, but connected through a single
-							account - so you move seamlessly between them without friction.
+							account &mdash; so you move seamlessly between them without friction.
 						</p>
 						<p className="text-muted-foreground">Choose where you'd like to begin.</p>
 					</header>
@@ -76,7 +75,7 @@ export default function Dashboard() {
 
 								<p>
 									Check the weather before stepping out, stay informed with
-									essential news, and glance at what matters today - without
+									essential news, and glance at what matters today &mdash; without
 									noise, ads, or clutter.
 								</p>
 
@@ -147,8 +146,8 @@ export default function Dashboard() {
 								<p>Know exactly what you're paying for.</p>
 
 								<p>
-									Subscriptions are easy to start - and easy to forget. Over time,
-									small recurring charges quietly add up.
+									Subscriptions are easy to start &mdash; and easy to forget. Over
+									time, small recurring charges quietly add up.
 								</p>
 
 								<p>
@@ -176,87 +175,13 @@ export default function Dashboard() {
 					</div>
 				</div>
 			</section>
-			<section className="bg-[var(--omkraft-blue-300)] text-background flex items-center py-6">
-				<div className="app-container grid gap-6 items-center">
-					{/* ========================= */}
-					{/* Module 3 - Sports Central */}
-					{/* ========================= */}
-					<div className="grid gap-12 lg:grid-cols-2 items-center">
-						{/* Text */}
-						<div className="space-y-4">
-							<h2 className="text-3xl">
-								Sports
-								<br />
-								<span className="text-[var(--omkraft-blue-700)]">Central</span>{' '}
-								<span className="text-xl">(Beta)</span>
-							</h2>
-							{/* Mobile copy */}
-							<div className="lg:hidden space-y-3">
-								<p className="text-accent-foreground">
-									A clearer way to follow the sports you care about.
-								</p>
-
-								<p>
-									Keep up with scores, fixtures, and major competitions across
-									India and the world in one focused place.
-								</p>
-							</div>
-
-							{/* Desktop copy */}
-							<div className="hidden lg:block space-y-4">
-								<p className="text-accent-foreground">
-									A clearer way to follow the sports you care about.
-								</p>
-
-								<p>
-									Sports Central brings match coverage, schedules, and tournament
-									context into one place, so it is easier to keep up without
-									hopping between multiple apps and sites.
-								</p>
-
-								<p>
-									Follow live and past scores, upcoming matches, and major
-									competitions through clear, visual layouts.
-								</p>
-
-								<p>
-									Everything will be structured to help you move easily between
-									different regions, sports, and competitions.
-								</p>
-							</div>
-
-							<ul className="list-disc pl-5 space-y-2 text-accent-foreground hidden lg:block">
-								<li>Live and historical score tracking</li>
-								<li>Upcoming fixtures and match schedules</li>
-								<li>Structured coverage across multiple sports and regions</li>
-								<li>Interactive layouts for major leagues and tournaments</li>
-							</ul>
-
-							<div className="flex flex-col lg:flex-row gap-4 pt-4">
-								<Link to="/sports-central" className="btn-secondary">
-									Open Sports Central
-								</Link>
-							</div>
-						</div>
-
-						{/* Visual Placeholder */}
-						<div className="justify-center hidden lg:flex">
-							<img
-								src={sportsIllustration}
-								alt="Sports illustration"
-								className="w-full max-w-md opacity-90"
-							/>
-						</div>
-					</div>
-				</div>
-			</section>
 			{/* ========================= */}
 			{/* Footer Hint */}
 			{/* ========================= */}
 			<footer className="py-6 border-t border-border bg-muted text-sm text-muted-foreground">
 				<div className="app-container grid gap-6 items-center">
-					More focused tools will be added here over time - all connected through the same
-					Omkraft account.
+					More focused tools will be added here over time &mdash; all connected through
+					the same Omkraft account.
 				</div>
 			</footer>
 		</main>

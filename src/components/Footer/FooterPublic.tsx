@@ -24,7 +24,7 @@ export function FooterPublic() {
 
 				{/* Center */}
 				<p className="text-sm text-muted-foreground">
-					A personal demo project — built for learning, feedback, and fun.
+					A personal demo project &mdash; built for learning, feedback, and fun.
 				</p>
 
 				{/* Right */}

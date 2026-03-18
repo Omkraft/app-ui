@@ -25,7 +25,6 @@ const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Utility = lazy(() => import('./pages/Utility'));
 const Subscription = lazy(() => import('./pages/Subscription'));
-const SportsCentral = lazy(() => import('./pages/SportsCentral'));
 const EditProfile = lazy(() => import('./pages/EditProfile'));
 const ManageUsers = lazy(() => import('./pages/ManageUsers'));
 
@@ -146,15 +145,6 @@ export default function App() {
 							element={
 								<ProtectedRoute>
 									<Subscription />
-								</ProtectedRoute>
-							}
-						/>
-
-						<Route
-							path="/sports-central"
-							element={
-								<ProtectedRoute>
-									<SportsCentral />
 								</ProtectedRoute>
 							}
 						/>
