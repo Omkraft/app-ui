@@ -2,6 +2,7 @@ import { useAuth } from '@/context/auth/AuthContext';
 import { Link } from 'react-router-dom';
 import newsIllustration from '@/assets/news-illustration.svg';
 import mediaIllustration from '@/assets/media-illustration.svg';
+import dailyPanchangIllustration from '@/assets/daily-panchang-illustration.svg';
 
 export default function Dashboard() {
 	const { user } = useAuth();
@@ -171,6 +172,61 @@ export default function Dashboard() {
 									Open Subscription Tracker
 								</Link>
 							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section className="bg-[var(--omkraft-indigo-400)] text-foreground flex items-center py-6">
+				<div className="app-container grid gap-6 items-center">
+					<div className="grid gap-12 lg:grid-cols-2 items-center">
+						<div className="space-y-4">
+							<h2 className="text-3xl">
+								Daily
+								<br />
+								<span className="text-background">Panchang</span>
+							</h2>
+							<div className="lg:hidden space-y-3">
+								<p>Daily Panchang, grounded in local calculations.</p>
+								<p>
+									View the day&apos;s Tithi, Nakshatra, Yoga, Karana, and key
+									auspicious or avoidable time windows in one place.
+								</p>
+							</div>
+
+							<div className="hidden lg:block space-y-4">
+								<p>Daily Panchang, grounded in local calculations.</p>
+								<p>
+									Panchang brings together the essential daily elements you
+									actually look for &mdash; Tithi, Nakshatra, Yoga, Karana,
+									sunrise, sunset, and practical time windows for the day.
+								</p>
+								<p>
+									It is designed to be quick to read, visually calm, and useful
+									without making you sift through clutter.
+								</p>
+							</div>
+
+							<ul className="list-disc pl-5 space-y-2 hidden lg:block">
+								<li>Tithi, Nakshatra, Yoga, Karana, and Moon Rashi</li>
+								<li>Sunrise and sunset for your date and coordinates</li>
+								<li>Auspicious and inauspicious time windows</li>
+								<li>Short daily guidance for planning the day</li>
+							</ul>
+
+							<div className="flex flex-col lg:flex-row gap-4 pt-4">
+								<Link to="/panchang" className="btn-secondary">
+									Open Daily Panchang
+								</Link>
+							</div>
+						</div>
+
+						{/* Visual Placeholder */}
+						<div className="justify-center hidden lg:flex">
+							<img
+								src={dailyPanchangIllustration}
+								alt="Daily Panchang illustration"
+								className="w-full opacity-90"
+							/>
 						</div>
 					</div>
 				</div>
