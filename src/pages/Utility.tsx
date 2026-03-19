@@ -1246,7 +1246,7 @@ export default function Utility() {
 							{quote ? (
 								<div className="text-center grid gap-4">
 									<p className="italic text-xl font-medium ">
-										"{quote.quote}" -{' '}
+										"{quote.quote}" &mdash;{' '}
 									</p>
 								</div>
 							) : (
