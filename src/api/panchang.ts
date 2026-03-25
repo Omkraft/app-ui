@@ -1,5 +1,5 @@
 import { apiRequest } from '@/api/client';
-import type { PanchangData } from '@/types/panchang';
+import type { DailyHoroscopeResponse, PanchangData } from '@/types/panchang';
 
 export async function fetchPanchang(
 	params: {
@@ -16,4 +16,8 @@ export async function fetchPanchang(
 	});
 
 	return apiRequest<PanchangData>(`/api/panchang?${searchParams.toString()}`, { signal });
+}
+
+export async function fetchDailyHoroscopes(signal?: AbortSignal) {
+	return apiRequest<DailyHoroscopeResponse>('/api/panchang/horoscope', { signal });
 }

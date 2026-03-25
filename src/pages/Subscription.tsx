@@ -208,7 +208,7 @@ export default function Subscription() {
 
 							{/* Content */}
 
-							<CollapsibleContent className="mt-2 border-t border-accent-foreground pt-4">
+							<CollapsibleContent className="mt-2 border-t border-muted-foreground pt-4">
 								<div className="grid lg:grid-cols-2 gap-6 min-w-0">
 									<CategoryDonutChart data={analytics.categoryBreakdown} />
 
