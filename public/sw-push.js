@@ -14,14 +14,17 @@ self.addEventListener('push', function (event) {
 
 	const title = data.title || 'Omkraft';
 	const body = data.body || 'You have a new notification.';
+	const url = data.url || '/';
+	const tag = data.tag || undefined;
 
 	event.waitUntil(
 		self.registration.showNotification(title, {
 			body,
 			icon: '/logo.png',
 			badge: '/badge.png',
+			tag,
 			data: {
-				url: '/',
+				url,
 			},
 		})
 	);

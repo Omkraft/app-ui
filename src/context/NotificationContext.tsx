@@ -61,6 +61,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
 		socket.on('connect', () => {
 			socket.emit('join', userId);
+			socket.emit('presence:heartbeat');
 		});
 
 		socket.on('connect_error', (error) => {
@@ -91,7 +92,23 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 			);
 		});
 
+		const heartbeatInterval = window.setInterval(() => {
+			if (socket.connected) {
+				socket.emit('presence:heartbeat');
+			}
+		}, 60 * 1000);
+
+		const handleVisibility = () => {
+			if (document.visibilityState === 'visible' && socket.connected) {
+				socket.emit('presence:heartbeat');
+			}
+		};
+
+		document.addEventListener('visibilitychange', handleVisibility);
+
 		return () => {
+			window.clearInterval(heartbeatInterval);
+			document.removeEventListener('visibilitychange', handleVisibility);
 			socket.disconnect();
 			socketRef.current = null;
 		};

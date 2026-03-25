@@ -19,6 +19,7 @@ export type DashboardAnalytics = {
 		name: string;
 		amount: number;
 		nextBillingDate: string;
+		status: 'ACTIVE' | 'DUE' | 'OVERDUE';
 	}[];
 };
 

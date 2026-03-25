@@ -11,6 +11,7 @@ export type User = {
 	phone: string;
 	role?: 'ADMIN' | 'USER';
 	id?: string;
+	lastActiveAt?: string | null;
 };
 
 type AuthContextType = {

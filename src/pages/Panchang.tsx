@@ -37,7 +37,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Separator } from '@/components/ui/separator';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
 import { Spinner } from '@/components/ui/spinner';
 import { reportUiError, toDisplayError } from '@/lib/error';
@@ -595,7 +594,7 @@ export default function Panchang() {
 			) : null}
 
 			{panchang ? (
-				<section className="py-6 text-foreground">
+				<section className="py-6 text-foreground bg-[var(--omkraft-amber-100)]">
 					<div className="app-container">
 						<OmkraftAlert
 							severity="warning"
@@ -705,7 +704,7 @@ export default function Panchang() {
 									</span>
 									.
 								</p>
-								<div className="grid grid-cols-2 gap-4 lg:grid-cols-8">
+								<div className="grid grid-cols-1 gap-3 lg:grid-cols-8 lg:gap-4">
 									{MOON_PHASES.map((phase) => {
 										const isCurrent = phase.label === currentMoonPhase;
 
@@ -714,22 +713,22 @@ export default function Panchang() {
 												key={phase.key}
 												className={`border-muted-foreground bg-muted ${isCurrent ? 'ring-2 ring-[var(--omkraft-blue-100)]' : ''}`}
 											>
-												<CardContent className="flex flex-col items-center justify-center gap-3 p-4 text-center">
-													<div className="flex h-10 w-10 items-center justify-center">
+												<CardContent className="flex flex-row items-center justify-start gap-4 p-4 text-left lg:flex-col lg:justify-center lg:gap-3 lg:text-center">
+													<div className="flex h-10 w-10 shrink-0 items-center justify-center lg:h-12 lg:w-12">
 														<img
 															src={moonPhaseImages[phase.key]}
 															alt={phase.label}
 															className="h-full w-full object-contain"
 														/>
 													</div>
-													<div className="grid gap-1">
+													<div className="flex flex-1 items-center justify-between gap-3 lg:grid lg:gap-1">
 														<p
 															className={`text-sm font-medium ${isCurrent ? 'text-foreground' : 'text-muted-foreground'}`}
 														>
 															{phase.label}
 														</p>
 														{isCurrent ? (
-															<Badge className="justify-center border-[var(--info-border)] bg-[var(--info-bg)] text-[var(--info-foreground)]">
+															<Badge className="shrink-0 justify-center border-[var(--info-border)] bg-[var(--info-bg)] text-[var(--info-foreground)]">
 																Today
 															</Badge>
 														) : null}
@@ -783,15 +782,15 @@ export default function Panchang() {
 								className="w-full"
 							>
 								<CollapsibleTrigger asChild>
-									<button className="flex w-full items-start justify-between gap-4 rounded-xl border border-border bg-muted p-4 text-left transition-colors hover:bg-[var(--omkraft-surface-3)] lg:p-6">
+									<button className="flex w-full items-start justify-between gap-4 text-left hover:text-background">
 										<div className="grid gap-3">
 											<div className="flex items-center gap-2">
-												<CalendarDays className="h-8 w-8 text-[var(--omkraft-blue-100)]" />
+												<CalendarDays className="h-8 w-8" />
 												<h2 className="text-2xl font-semibold">
 													Full Daytime Choghadiya
 												</h2>
 											</div>
-											<p className="text-sm text-muted-foreground">
+											<p className="text-sm">
 												The full daytime Choghadiya schedule helps explain
 												time windows that may not appear in the shorter
 												auspicious and avoid summaries above.
@@ -813,13 +812,13 @@ export default function Panchang() {
 						</div>
 					</section>
 
-					<section className="py-6 text-foreground">
+					<section className="py-6 text-foreground bg-accent">
 						<div className="app-container grid gap-4">
 							<div className="flex items-center gap-2">
-								<Lightbulb className="h-8 w-8 text-[var(--omkraft-blue-100)]" />
+								<Lightbulb className="h-8 w-8 text-[var(--omkraft-mint-100)]" />
 								<h2 className="text-2xl font-semibold">Today's Guidance</h2>
 							</div>
-							<Card className="border-muted-foreground bg-muted">
+							<Card className="border-muted-foreground bg-background">
 								<CardHeader className="p-4 lg:p-6">
 									<CardTitle className="text-lg">General Day Guidance</CardTitle>
 									<CardDescription className="text-base text-muted-foreground">
@@ -848,7 +847,7 @@ export default function Panchang() {
 								</CardContent>
 							</Card>
 							{purchaseGuidance ? (
-								<Card className="border-muted-foreground bg-muted">
+								<Card className="border-muted-foreground bg-background">
 									<CardHeader className="p-4 lg:p-6">
 										<CardTitle className="text-lg">
 											Buying New Things Today
@@ -896,7 +895,6 @@ export default function Panchang() {
 
 					<section className="bg-[var(--omkraft-navy-200)] py-6 text-background">
 						<div className="app-container text-sm">
-							<Separator className="mb-4 border-t border-background" />
 							<p>
 								Calculated for {formatDisplayDate(selectedDate)} using{' '}
 								{formatCoordinatePair(panchang.location.lat, panchang.location.lng)}{' '}
