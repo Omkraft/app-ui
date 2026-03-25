@@ -186,19 +186,21 @@ export default function Dashboard() {
 								<span className="text-background">Panchang</span>
 							</h2>
 							<div className="lg:hidden space-y-3">
-								<p>Daily Panchang, grounded in local calculations.</p>
+								<p>Daily Panchang and horoscope, grounded in local calculations.</p>
 								<p>
-									View the day&apos;s Tithi, Nakshatra, Yoga, Karana, and key
-									auspicious or avoidable time windows in one place.
+									View the day&apos;s Tithi, Nakshatra, Yoga, Karana, daily
+									horoscope, and key auspicious or avoidable time windows in one
+									place.
 								</p>
 							</div>
 
 							<div className="hidden lg:block space-y-4">
-								<p>Daily Panchang, grounded in local calculations.</p>
+								<p>Daily Panchang and horoscope, grounded in local calculations.</p>
 								<p>
 									Panchang brings together the essential daily elements you
 									actually look for &mdash; Tithi, Nakshatra, Yoga, Karana,
-									sunrise, sunset, and practical time windows for the day.
+									sunrise, sunset, daily horoscope, and practical time windows for
+									the day.
 								</p>
 								<p>
 									It is designed to be quick to read, visually calm, and useful
@@ -210,6 +212,7 @@ export default function Dashboard() {
 								<li>Tithi, Nakshatra, Yoga, Karana, and Moon Rashi</li>
 								<li>Sunrise and sunset for your date and coordinates</li>
 								<li>Auspicious and inauspicious time windows</li>
+								<li>Daily horoscope for all 12 zodiac signs</li>
 								<li>Short daily guidance for planning the day</li>
 							</ul>
 
@@ -234,7 +237,7 @@ export default function Dashboard() {
 			{/* ========================= */}
 			{/* Footer Hint */}
 			{/* ========================= */}
-			<footer className="py-6 border-t border-border bg-muted text-sm text-muted-foreground">
+			<footer className="border-t border-border bg-muted py-6 text-sm text-foreground/80">
 				<div className="app-container grid gap-6 items-center">
 					More focused tools will be added here over time &mdash; all connected through
 					the same Omkraft account.

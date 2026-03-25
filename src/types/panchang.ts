@@ -54,3 +54,16 @@ export type PanchangData = {
 		avoid: string[];
 	};
 };
+
+export type DailyHoroscopeSign = {
+	sign: string;
+	date: string;
+	period: 'daily';
+	horoscope: string;
+};
+
+export type DailyHoroscopeResponse = {
+	date: string;
+	period: 'daily';
+	signs: DailyHoroscopeSign[];
+};

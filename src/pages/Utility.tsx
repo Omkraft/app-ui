@@ -679,7 +679,7 @@ export default function Utility() {
 			</section>
 
 			{/* ================= Weather ================= */}
-			<section className="relative overflow-hidden bg-primary py-6 text-primary-foreground">
+			<section className="relative overflow-hidden bg-[var(--omkraft-blue-700)] py-6 text-primary-foreground">
 				<div className="app-container grid gap-6 align-items-center">
 					{weather ? (
 						<>
@@ -1161,7 +1161,7 @@ export default function Utility() {
 					>
 						<div ref={newsTabsSentinelRef} aria-hidden="true" className="h-px w-full" />
 						<div
-							className={`sticky top-0 z-20 -mx-4 w-[calc(100%+2rem)] sm:-mx-6 sm:w-[calc(100%+3rem)] lg:mx-0 lg:w-full${
+							className={`sticky top-0 z-20 w-full max-w-full overflow-hidden${
 								isNewsTabsSticky && ' bg-background'
 							}`}
 						>
