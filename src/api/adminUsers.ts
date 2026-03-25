@@ -9,6 +9,8 @@ export interface AdminUser {
 	email: string;
 	phone: string;
 	role: UserRole;
+	lastActiveAt: string | null;
+	online: boolean;
 }
 
 interface ListUsersResponse {
@@ -25,7 +27,7 @@ export interface ListUsersParams {
 	page?: number;
 	limit?: number;
 	search?: string;
-	sortBy?: 'firstName' | 'lastName' | 'email' | 'createdAt' | 'role';
+	sortBy?: 'firstName' | 'lastName' | 'email' | 'createdAt' | 'role' | 'lastActiveAt';
 	sortOrder?: 'asc' | 'desc';
 }
 

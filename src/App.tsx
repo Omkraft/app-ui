@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { isIosSafari } from '@/utils/isIos';
 import { omkraftToast } from '@/lib/toast';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
@@ -15,7 +15,7 @@ import { ConnectionToast } from './components/pwa/ConnectionToast';
 import { isStandalone } from '@/utils/isStandalone';
 
 import './App.css';
-import { Save } from 'lucide-react';
+import { ArrowUp, Save } from 'lucide-react';
 
 const Welcome = lazy(() => import('./pages/Welcome'));
 const Login = lazy(() => import('./pages/Login'));
@@ -41,6 +41,49 @@ function ScrollToTopOnRouteChange() {
 	}, [pathname]);
 
 	return null;
+}
+
+function ScrollToTopButton() {
+	const { pathname } = useLocation();
+	const [visible, setVisible] = useState(false);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			setVisible(window.scrollY > 480);
+		};
+
+		handleScroll();
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, []);
+
+	useEffect(() => {
+		setVisible(false);
+	}, [pathname]);
+
+	return (
+		<button
+			type="button"
+			aria-label="Scroll to top"
+			onClick={() =>
+				window.scrollTo({
+					top: 0,
+					left: 0,
+					behavior: 'smooth',
+				})
+			}
+			className={`fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl lg:bottom-6 lg:right-6 lg:h-auto lg:w-auto lg:px-5 lg:py-3 ${
+				visible
+					? 'pointer-events-auto translate-y-0 opacity-100'
+					: 'pointer-events-none translate-y-4 opacity-0'
+			}`}
+		>
+			<ArrowUp className="size-5 shrink-0" />
+			<span className="hidden lg:inline">Scroll to top</span>
+		</button>
+	);
 }
 
 export default function App() {
@@ -195,6 +238,7 @@ export default function App() {
 					</Routes>
 				</Suspense>
 			</div>
+			<ScrollToTopButton />
 			<Footer />
 		</div>
 	);

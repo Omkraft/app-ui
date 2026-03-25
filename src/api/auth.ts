@@ -6,6 +6,7 @@ export interface User {
 	email: string;
 	phone: string;
 	role: 'ADMIN' | 'USER';
+	lastActiveAt?: string | null;
 }
 
 export interface AuthResponse {

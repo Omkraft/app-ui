@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { ArrowUpDown, IndianRupee, Pencil, Trash } from 'lucide-react';
+import { io, type Socket } from 'socket.io-client';
 import { useAuth } from '@/context/auth/AuthContext';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
@@ -55,7 +57,7 @@ import { isPositiveNumeric } from '@/utils/format';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { toDisplayError } from '@/lib/error';
 
-type UserSortBy = 'firstName' | 'lastName' | 'email' | 'createdAt' | 'role';
+type UserSortBy = 'firstName' | 'lastName' | 'email' | 'createdAt' | 'role' | 'lastActiveAt';
 type SubscriptionSortBy =
 	| 'name'
 	| 'user'
@@ -70,6 +72,41 @@ function formatDate(dateLike: string | Date) {
 	const d = new Date(dateLike);
 	if (Number.isNaN(d.getTime())) return '-';
 	return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+function formatDateTime(dateLike: string | Date | null | undefined) {
+	if (!dateLike) return 'Never';
+
+	const d = new Date(dateLike);
+	if (Number.isNaN(d.getTime())) return '-';
+
+	return d.toLocaleString(undefined, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: true,
+	});
+}
+
+function OnlineStatus({ online }: { online: boolean }) {
+	return (
+		<span
+			className={`inline-flex items-center gap-2 text-sm font-medium ${
+				online ? 'text-[var(--success-foreground)]' : 'text-muted-foreground'
+			}`}
+		>
+			<span
+				className={`inline-block h-2.5 w-2.5 rounded-full ${
+					online
+						? 'animate-pulse bg-[var(--omkraft-mint-500)] shadow-[0_0_0_4px_rgba(0,173,151,0.18)]'
+						: 'bg-muted-foreground/60'
+				}`}
+			/>
+			{online ? 'Online' : 'Offline'}
+		</span>
+	);
 }
 
 function subtractMonthsSafe(date: Date, months: number) {
@@ -112,6 +149,28 @@ function calculateLastChargedDate(nextBillingDate: Date, cycleInDays: number) {
 	const prev = new Date(nextBillingDate);
 	prev.setDate(prev.getDate() - cycleInDays);
 	return prev;
+}
+
+function getSubscriptionStatusBadgeClass(status: AdminSubscription['status']) {
+	switch (status) {
+		case 'DUE':
+			return 'border-[var(--warning-border)] bg-[var(--warning-bg)] text-[var(--warning-foreground)]';
+		case 'OVERDUE':
+			return 'border-[var(--destructive)] bg-[var(--omkraft-red-100)] text-[var(--destructive)]';
+		default:
+			return 'border-[var(--info-border)] bg-[var(--info-bg)] text-[var(--info-foreground)]';
+	}
+}
+
+function getSubscriptionSurfaceClass(status: AdminSubscription['status']) {
+	switch (status) {
+		case 'DUE':
+			return 'border-[var(--warning-border)] bg-[var(--warning-bg)]/40 hover:bg-[var(--warning-bg)]/60';
+		case 'OVERDUE':
+			return 'border-[var(--destructive)] bg-[var(--omkraft-red-100)]/70 hover:bg-[var(--omkraft-red-100)]';
+		default:
+			return 'border-background bg-[var(--omkraft-surface-0)] hover:bg-[var(--omkraft-blue-50)]';
+	}
 }
 
 export default function ManageUsers() {
@@ -160,6 +219,37 @@ export default function ManageUsers() {
 			void fetchSubscriptions();
 		}
 	}, [tab, subscriptionPage, subscriptionSearch, subscriptionSortBy, subscriptionSortOrder]);
+
+	useEffect(() => {
+		const token = localStorage.getItem('token');
+		if (!token || user?.role !== 'ADMIN') {
+			return undefined;
+		}
+
+		const socket: Socket = io(import.meta.env.VITE_API_BASE_URL, {
+			transports: ['websocket'],
+			auth: { token },
+			withCredentials: true,
+		});
+
+		socket.on('presence:snapshot', ({ userIds }: { userIds: string[] }) => {
+			const onlineIds = new Set(userIds);
+			setUsers((prev) =>
+				prev.map((row) => ({
+					...row,
+					online: onlineIds.has(row.id),
+				}))
+			);
+		});
+
+		socket.on('presence:update', ({ userId, online }: { userId: string; online: boolean }) => {
+			setUsers((prev) => prev.map((row) => (row.id === userId ? { ...row, online } : row)));
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, [user?.role]);
 
 	async function fetchUsers() {
 		setUsersError(null);
@@ -336,6 +426,7 @@ export default function ManageUsers() {
 													>
 														Role: {row.role}
 													</p>
+													<OnlineStatus online={row.online} />
 													<p
 														className={`break-all text-sm ${
 															row.role === 'ADMIN'
@@ -353,6 +444,16 @@ export default function ManageUsers() {
 														}`}
 													>
 														{row.phone}
+													</p>
+													<p
+														className={`text-sm ${
+															row.role === 'ADMIN'
+																? 'text-muted-foreground'
+																: ''
+														}`}
+													>
+														Last active:{' '}
+														{formatDateTime(row.lastActiveAt)}
 													</p>
 												</div>
 												<div className="flex flex-wrap gap-2 pt-1">
@@ -406,6 +507,16 @@ export default function ManageUsers() {
 														Role <ArrowUpDown size={14} />
 													</button>
 												</TableHead>
+												<TableHead>Status</TableHead>
+												<TableHead>
+													<button
+														type="button"
+														className="inline-flex items-center gap-1 text-primary"
+														onClick={() => onUserSort('lastActiveAt')}
+													>
+														Last Active <ArrowUpDown size={14} />
+													</button>
+												</TableHead>
 												<TableHead className="text-right">
 													Actions
 												</TableHead>
@@ -415,7 +526,7 @@ export default function ManageUsers() {
 											{usersLoading ? (
 												<TableRow>
 													<TableCell
-														colSpan={5}
+														colSpan={7}
 														className="text-center py-6"
 													>
 														<Spinner className="inline size-5 mr-2" />
@@ -469,6 +580,18 @@ export default function ManageUsers() {
 															{row.role}
 														</TableCell>
 														<TableCell>
+															<OnlineStatus online={row.online} />
+														</TableCell>
+														<TableCell
+															className={
+																row.role === 'ADMIN'
+																	? 'text-muted-foreground'
+																	: ''
+															}
+														>
+															{formatDateTime(row.lastActiveAt)}
+														</TableCell>
+														<TableCell>
 															<div className="flex flex-wrap justify-end gap-2">
 																<EditUserDialog
 																	user={row}
@@ -488,7 +611,7 @@ export default function ManageUsers() {
 											) : (
 												<TableRow className="border-b border-[var(--omkraft-border-strong)]">
 													<TableCell
-														colSpan={5}
+														colSpan={7}
 														className="text-center py-6"
 													>
 														No users found
@@ -551,11 +674,20 @@ export default function ManageUsers() {
 										subscriptions.map((row) => (
 											<Card
 												key={row._id}
-												className="space-y-2 border-background bg-[var(--omkraft-surface-0)] p-3 text-background shadow-none transition-colors hover:bg-[var(--omkraft-blue-50)]"
+												className={`space-y-2 p-3 text-background shadow-none transition-colors ${getSubscriptionSurfaceClass(row.status)}`}
 											>
 												<div className="space-y-1">
 													<p className="font-semibold">{row.name}</p>
-													<p className="text-sm">Status: {row.status}</p>
+													<div className="flex items-center gap-2 text-sm">
+														<span>Status:</span>
+														<Badge
+															className={getSubscriptionStatusBadgeClass(
+																row.status
+															)}
+														>
+															{row.status}
+														</Badge>
+													</div>
 													<p className="text-sm">
 														User:{' '}
 														{row.user
@@ -668,7 +800,7 @@ export default function ManageUsers() {
 												subscriptions.map((row) => (
 													<TableRow
 														key={row._id}
-														className="border-b border-[var(--omkraft-border-strong)] hover:bg-[var(--omkraft-blue-50)]"
+														className={`border-b border-[var(--omkraft-border-strong)] ${getSubscriptionSurfaceClass(row.status)}`}
 													>
 														<TableCell className="font-semibold">
 															{row.name}
@@ -683,7 +815,15 @@ export default function ManageUsers() {
 															<IndianRupee className="mr-1 inline size-3.5" />
 															{row.amount.toFixed(2)}
 														</TableCell>
-														<TableCell>{row.status}</TableCell>
+														<TableCell>
+															<Badge
+																className={getSubscriptionStatusBadgeClass(
+																	row.status
+																)}
+															>
+																{row.status}
+															</Badge>
+														</TableCell>
 														<TableCell>
 															{formatDate(row.nextBillingDate)}
 														</TableCell>

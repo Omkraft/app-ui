@@ -35,7 +35,6 @@ import {
 	Umbrella,
 	CircleUser,
 } from 'lucide-react';
-import { getWeatherTheme } from '@/utils/weatherTheme';
 import { Button } from '@/components/ui/button';
 import type { OnThisDayResponse } from '@/types/insights';
 import { Separator } from '@radix-ui/react-separator';
@@ -467,6 +466,11 @@ export default function Utility() {
 	const [weatherDefaultOpenItems] = useState<string[]>(
 		window.innerWidth >= 1024 ? weatherAccordionItems : []
 	);
+	const newsSectionRef = useRef<HTMLDivElement | null>(null);
+	const newsHeadingRef = useRef<HTMLHeadingElement | null>(null);
+	const newsTabsSentinelRef = useRef<HTMLDivElement | null>(null);
+	const [isNewsTabsSticky, setIsNewsTabsSticky] = useState(false);
+	const weatherSecondaryTextClass = 'text-primary-foreground/85';
 	const nextFiveHours = weather ? getNext5Hours(weather) : [];
 	const currentUvIndex = weather
 		? (weather.current.uv_index ??
@@ -598,6 +602,47 @@ export default function Utility() {
 		return () => clearInterval(interval);
 	}, [newsSections, fetchNews]);
 
+	useEffect(() => {
+		const handleScroll = () => {
+			const sentinel = newsTabsSentinelRef.current;
+			if (!sentinel) {
+				return;
+			}
+
+			setIsNewsTabsSticky(sentinel.getBoundingClientRect().top <= 0);
+		};
+
+		handleScroll();
+		window.addEventListener('scroll', handleScroll, { passive: true });
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, []);
+
+	const scrollNewsToTop = useCallback(() => {
+		const target = newsSectionRef.current ?? newsHeadingRef.current;
+		if (!target) {
+			return;
+		}
+
+		newsHeadingRef.current?.focus({ preventScroll: true });
+		const targetTop = Math.max(target.getBoundingClientRect().top + window.scrollY - 96, 0);
+		window.scrollTo({
+			top: targetTop,
+			behavior: 'smooth',
+		});
+	}, []);
+
+	const handleNewsTabChange = useCallback(
+		(value: string) => {
+			setActiveNewsTab(value);
+			window.requestAnimationFrame(() => {
+				scrollNewsToTop();
+			});
+		},
+		[scrollNewsToTop]
+	);
+
 	return (
 		<main className="min-h-[calc(100vh-178px)] bg-background">
 			<section className="flex items-center py-6">
@@ -634,17 +679,11 @@ export default function Utility() {
 			</section>
 
 			{/* ================= Weather ================= */}
-			<section
-				className={`relative overflow-hidden text-foreground py-6 transition-all duration-700 ${getWeatherTheme(weather?.current?.weather_code, weather?.current?.is_day)}`}
-			>
+			<section className="relative overflow-hidden bg-primary py-6 text-primary-foreground">
 				<div className="app-container grid gap-6 align-items-center">
 					{weather ? (
 						<>
-							<h2
-								className={`text-3xl font-semibold${(!weather.current.weather_code || [71, 73, 75, 85, 86].includes(weather.current.weather_code)) && weather.current.is_day ? ' text-background' : ' text-foreground'}`}
-							>
-								Weather
-							</h2>
+							<h2 className="text-3xl font-semibold">Weather</h2>
 							{/* Current */}
 							<Card
 								className={`${(!weather.current.weather_code || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)] ' : 'bg-muted '}border border-foreground`}
@@ -656,7 +695,9 @@ export default function Utility() {
 												<p className="text-lg font-medium">
 													{locationLabel?.split(',')[0]}
 												</p>
-												<p className="text-sm opacity-70">
+												<p
+													className={`text-sm ${weatherSecondaryTextClass}`}
+												>
 													{locationLabel?.split(',').slice(1).join(',')}
 												</p>
 											</div>
@@ -756,7 +797,9 @@ export default function Utility() {
 															)}
 															°
 														</p>
-														<p className="opacity-70 flex items-center justify-center gap-1">
+														<p
+															className={`flex items-center justify-center gap-1 ${weatherSecondaryTextClass}`}
+														>
 															<Moon className="w-5 h-5 text-[var(--omkraft-blue-300)]" />
 															{round(
 																weather.daily.temperature_2m_min[
@@ -792,7 +835,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Droplets className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">Humidity</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														Humidity
+													</p>
 													<p className="text-xl font-semibold">
 														{weather.current.relative_humidity_2m}%
 													</p>
@@ -802,7 +849,9 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Umbrella className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
 														Precipitation
 													</p>
 													<p className="text-xl font-semibold">
@@ -814,7 +863,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Wind className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">Wind</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														Wind
+													</p>
 													<p className="text-xl font-semibold">
 														{round(weather.current.wind_speed_10m)} km/h
 													</p>
@@ -824,7 +877,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Gauge className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">UV Index</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														UV Index
+													</p>
 													<div className="flex flex-col items-center gap-2">
 														<p className="text-lg font-semibold">
 															{currentUvIndex !== null
@@ -857,7 +914,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Sunrise className="w-7 h-7 text-[var(--omkraft-yellow-500)]" />
 												<div>
-													<p className="text-sm opacity-70">Sunrise</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														Sunrise
+													</p>
 													<p className="text-lg font-semibold">
 														{weather.daily.sunrise[0] &&
 															formatTimeLocal(
@@ -870,7 +931,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Sunset className="w-7 h-7 text-[var(--omkraft-orange-500)]" />
 												<div>
-													<p className="text-sm opacity-70">Sunset</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														Sunset
+													</p>
 													<p className="text-lg font-semibold">
 														{weather.daily.sunset[0] &&
 															formatTimeLocal(
@@ -895,7 +960,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted lg:col-span-2">
 												<Gauge className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">US AQI</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														US AQI
+													</p>
 													<div className="flex flex-col items-center gap-2">
 														<p className="text-lg font-semibold">
 															{currentUsAqi !== null
@@ -916,7 +985,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Wind className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">PM2.5</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														PM2.5
+													</p>
 													<p className="text-lg font-semibold">
 														{formatMetricValue(
 															currentAirQuality?.pm2_5,
@@ -929,7 +1002,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Droplets className="w-7 h-7 text-accent" />
 												<div>
-													<p className="text-sm opacity-70">PM10</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														PM10
+													</p>
 													<p className="text-lg font-semibold">
 														{formatMetricValue(
 															currentAirQuality?.pm10,
@@ -942,7 +1019,11 @@ export default function Utility() {
 											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
 												<Sun className="w-7 h-7 text-[var(--omkraft-orange-500)]" />
 												<div>
-													<p className="text-sm opacity-70">Ozone</p>
+													<p
+														className={`text-sm ${weatherSecondaryTextClass}`}
+													>
+														Ozone
+													</p>
 													<p className="text-lg font-semibold">
 														{formatMetricValue(
 															currentAirQuality?.ozone,
@@ -955,7 +1036,9 @@ export default function Utility() {
 
 										<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
 											<Card className="p-4 text-center bg-muted">
-												<p className="text-sm opacity-70">
+												<p
+													className={`text-sm ${weatherSecondaryTextClass}`}
+												>
 													Nitrogen Dioxide
 												</p>
 												<p className="text-lg font-semibold mt-1">
@@ -967,7 +1050,9 @@ export default function Utility() {
 											</Card>
 
 											<Card className="p-4 text-center bg-muted">
-												<p className="text-sm opacity-70">
+												<p
+													className={`text-sm ${weatherSecondaryTextClass}`}
+												>
 													Sulphur Dioxide
 												</p>
 												<p className="text-lg font-semibold mt-1">
@@ -979,7 +1064,9 @@ export default function Utility() {
 											</Card>
 
 											<Card className="p-4 text-center bg-muted">
-												<p className="text-sm opacity-70">
+												<p
+													className={`text-sm ${weatherSecondaryTextClass}`}
+												>
 													Carbon Monoxide
 												</p>
 												<p className="text-lg font-semibold mt-1">
@@ -994,7 +1081,7 @@ export default function Utility() {
 									</AccordionContent>
 								</AccordionItem>
 							</Accordion>
-							<p className="text-sm text-muted-foreground text-right">
+							<p className={`text-right text-sm ${weatherSecondaryTextClass}`}>
 								Updated on:{' '}
 								{new Date(weather.current.time).toLocaleString(undefined, {
 									day: '2-digit',
@@ -1026,8 +1113,14 @@ export default function Utility() {
 
 			{/* ================= News ================= */}
 			<section className="flex items-center py-6">
-				<div className="app-container flex flex-col gap-6">
-					<h2 className="text-3xl text-foreground">News</h2>
+				<div ref={newsSectionRef} className="app-container flex flex-col gap-6">
+					<h2
+						ref={newsHeadingRef}
+						tabIndex={-1}
+						className="text-3xl text-foreground focus:outline-none"
+					>
+						News
+					</h2>
 
 					<div className="flex flex-col lg:flex-row lg:justify-between gap-4">
 						<p className="text-sm text-muted-foreground">Select preferred view</p>
@@ -1063,20 +1156,35 @@ export default function Utility() {
 					{/* Navigation */}
 					<Tabs
 						value={activeNewsTab}
-						onValueChange={setActiveNewsTab}
+						onValueChange={handleNewsTabChange}
 						className="flex flex-col items-center"
 					>
-						<TabsList className="bg-primary text-foreground h-auto flex-wrap border border-muted-foreground">
-							{NEWS_TABS.map((tab) => (
-								<TabsTrigger
-									key={tab.key}
-									value={tab.key}
-									className="justify-start lg:justify-center"
-								>
-									{tab.label}
-								</TabsTrigger>
-							))}
-						</TabsList>
+						<div ref={newsTabsSentinelRef} aria-hidden="true" className="h-px w-full" />
+						<div
+							className={`sticky top-0 z-20 -mx-4 w-[calc(100%+2rem)] sm:-mx-6 sm:w-[calc(100%+3rem)] lg:mx-0 lg:w-full${
+								isNewsTabsSticky && ' bg-background'
+							}`}
+						>
+							<div
+								className={`${
+									isNewsTabsSticky
+										? 'border-b border-[var(--omkraft-border-subtle)] py-3'
+										: 'border-b-0 py-0'
+								}`}
+							>
+								<TabsList className="h-auto w-full flex-wrap border border-muted-foreground bg-primary text-foreground">
+									{NEWS_TABS.map((tab) => (
+										<TabsTrigger
+											key={tab.key}
+											value={tab.key}
+											className="justify-start lg:justify-center"
+										>
+											{tab.label}
+										</TabsTrigger>
+									))}
+								</TabsList>
+							</div>
+						</div>
 						<TabsContent value={activeNewsTab} className="mt-6 w-full">
 							{(() => {
 								const articles = newsSections[activeNewsTab] || [];
@@ -1223,7 +1331,7 @@ export default function Utility() {
 											{index !== onThisDay.events.length - 1 && (
 												<Separator
 													role="listitem"
-													className="border border-[var(--omkraft-mint-700)]"
+													className="border-t border-[var(--omkraft-mint-700)]"
 												/>
 											)}
 										</React.Fragment>
@@ -1238,7 +1346,7 @@ export default function Utility() {
 							<CardTitle>
 								<h3 className="text-2xl text-center flex flex-col items-center gap-2">
 									<Quote />
-									Quote of the Day
+									Daily Quote
 								</h3>
 							</CardTitle>
 						</CardHeader>

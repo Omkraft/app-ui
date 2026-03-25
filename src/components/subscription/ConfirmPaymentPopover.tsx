@@ -1,14 +1,20 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { CircleCheckBig, IndianRupee } from 'lucide-react';
 
+import { confirmSubscriptionPayment, type Subscription } from '@/api/subscription';
+import OmkraftAlert from '@/components/ui/omkraft-alert';
 import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Spinner } from '@/components/ui/spinner';
 import { isPositiveNumeric } from '@/utils/format';
-import { confirmSubscriptionPayment, type Subscription } from '@/api/subscription';
-import OmkraftAlert from '@/components/ui/omkraft-alert';
 
 type PaymentMode = 'total' | 'custom';
 
@@ -51,15 +57,18 @@ export default function ConfirmPaymentPopover({
 	}
 
 	return (
-		<Popover open={open} onOpenChange={setOpen}>
-			<PopoverTrigger asChild>
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
 				<Button className="btn-primary flex gap-2">
 					<CircleCheckBig size={20} /> Mark as Paid
 				</Button>
-			</PopoverTrigger>
-			<PopoverContent className="w-80 space-y-4">
+			</DialogTrigger>
+			<DialogContent className="max-w-md space-y-4 text-foreground">
+				<DialogHeader>
+					<DialogTitle>Confirm Payment</DialogTitle>
+				</DialogHeader>
+
 				<div className="space-y-1">
-					<h4 className="font-semibold">Confirm Payment</h4>
 					<p className="text-xs text-muted-foreground">
 						Choose how much was paid for this billing cycle.
 					</p>
@@ -130,7 +139,7 @@ export default function ConfirmPaymentPopover({
 						</Button>
 					)}
 				</div>
-			</PopoverContent>
-		</Popover>
+			</DialogContent>
+		</Dialog>
 	);
 }
