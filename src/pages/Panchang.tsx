@@ -804,7 +804,7 @@ export default function Panchang() {
 															<CardTitle className="text-lg">
 																{item.name}
 															</CardTitle>
-															<CardDescription className="text-base text-foreground/80">
+															<CardDescription className="text-base text-foreground">
 																{item.significance}
 															</CardDescription>
 														</CardHeader>
@@ -963,21 +963,25 @@ export default function Panchang() {
 									{orderedHoroscopes.length > 0 ? (
 										<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 											{orderedHoroscopes.map(
-												({ key, label, image, entry }) => (
+												({ key, label, image, entry }, index) => (
 													<Card
 														key={key}
 														className="overflow-hidden border border-primary bg-foreground text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
 													>
 														<CardHeader className="space-y-4 p-4 lg:p-6">
-															<div className="flex items-center gap-4">
-																<div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-muted-foreground/40 bg-background/5 p-3">
+															<div
+																className={`flex items-center gap-4 lg:flex-row ${index % 2 === 1 ? 'flex-row-reverse lg:text-left' : ''}`}
+															>
+																<div className="flex h-20 w-20 shrink-0 items-center justify-center p-2">
 																	<img
 																		src={image}
 																		alt={label}
 																		className="h-full w-full object-contain"
 																	/>
 																</div>
-																<div className="space-y-1">
+																<div
+																	className={`space-y-1 ${index % 2 === 1 ? 'text-right' : ''} lg:text-left`}
+																>
 																	<CardTitle className="text-xl text-background">
 																		{label}
 																	</CardTitle>
