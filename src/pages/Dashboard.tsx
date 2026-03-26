@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import newsIllustration from '@/assets/news-illustration.svg';
 import mediaIllustration from '@/assets/media-illustration.svg';
 import dailyPanchangIllustration from '@/assets/daily-panchang-illustration.svg';
+import { Newspaper, ReceiptIndianRupee, ScrollText } from 'lucide-react';
 
 export default function Dashboard() {
 	const { user } = useAuth();
@@ -44,11 +45,16 @@ export default function Dashboard() {
 					<div className="grid gap-12 lg:grid-cols-2 items-center">
 						{/* Text */}
 						<div className="space-y-4">
-							<h2 className="text-3xl">
-								Personal
-								<br />
-								<span className="text-[var(--omkraft-mint-900)]">Utility Hub</span>
-							</h2>
+							<div className="flex items-center justify-between gap-4">
+								<h2 className="text-3xl">
+									Personal
+									<br />
+									<span className="text-[var(--omkraft-mint-900)]">
+										Utility Hub
+									</span>
+								</h2>
+								<Newspaper className="h-12 w-12 shrink-0 text-[var(--omkraft-mint-900)] lg:hidden" />
+							</div>
 							{/* Mobile copy */}
 							<div className="lg:hidden space-y-3">
 								<p className="text-accent-foreground">
@@ -127,11 +133,14 @@ export default function Dashboard() {
 						</div>
 						{/* Text */}
 						<div className="space-y-4">
-							<h2 className="text-3xl">
-								Subscription
-								<br />
-								<span className="text-[var(--omkraft-bg)]">Tracker</span>
-							</h2>
+							<div className="flex items-center justify-between gap-4">
+								<h2 className="text-3xl">
+									Subscription
+									<br />
+									<span className="text-[var(--omkraft-bg)]">Tracker</span>
+								</h2>
+								<ReceiptIndianRupee className="h-12 w-12 shrink-0 text-[var(--omkraft-bg)] lg:hidden" />
+							</div>
 							{/* Mobile copy */}
 							<div className="lg:hidden space-y-3">
 								<p>Know exactly what you're paying for.</p>
@@ -180,11 +189,14 @@ export default function Dashboard() {
 				<div className="app-container grid gap-6 items-center">
 					<div className="grid gap-12 lg:grid-cols-2 items-center">
 						<div className="space-y-4">
-							<h2 className="text-3xl">
-								Daily
-								<br />
-								<span className="text-background">Panchang</span>
-							</h2>
+							<div className="flex items-center justify-between gap-4">
+								<h2 className="text-3xl">
+									Daily
+									<br />
+									<span className="text-background">Panchang</span>
+								</h2>
+								<ScrollText className="h-12 w-12 shrink-0 text-background lg:hidden" />
+							</div>
 							<div className="lg:hidden space-y-3">
 								<p>Daily Panchang and horoscope, grounded in local calculations.</p>
 								<p>

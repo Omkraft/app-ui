@@ -616,13 +616,7 @@ export default function Utility() {
 	}, []);
 
 	useEffect(() => {
-		void Promise.allSettled([
-			fetchNews('india'),
-			fetchNews('global'),
-			fetchQuote(),
-			fetchOnThisDay(),
-			fetchWeather(),
-		]);
+		void Promise.allSettled([fetchQuote(), fetchOnThisDay(), fetchWeather()]);
 		const retryHandler = () => fetchWeather();
 		window.addEventListener('omkraft:retry-services', retryHandler);
 		return () => {
@@ -889,7 +883,7 @@ export default function Utility() {
 														key={day}
 														className="flex justify-around lg:block p-4 space-y-2 text-center bg-muted items-center"
 													>
-														<p className="text-lg font-semibold">
+														<p className="text-sm font-semibold lg:text-lg">
 															{new Date(day).toLocaleDateString(
 																undefined,
 																{
@@ -1317,6 +1311,11 @@ export default function Utility() {
 											</TabsTrigger>
 										))}
 									</TabsList>
+									{activeNewsTab === 'local' && locationCityName ? (
+										<p className="mt-3 text-sm text-muted-foreground">
+											Local news from {locationCityName}
+										</p>
+									) : null}
 								</div>
 							</div>
 							<TabsContent value={activeNewsTab} className="mt-6 w-full">
