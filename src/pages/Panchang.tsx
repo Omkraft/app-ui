@@ -788,7 +788,13 @@ export default function Panchang() {
 													)}
 												</h2>
 											</div>
-											<div className="grid gap-4 lg:grid-cols-2">
+											<div
+												className={`grid gap-4 ${
+													panchang.observances.length > 1
+														? 'lg:grid-cols-2'
+														: ''
+												}`}
+											>
 												{panchang.observances.map((item) => (
 													<Card
 														key={item.id}
@@ -976,8 +982,11 @@ export default function Panchang() {
 																		{label}
 																	</CardTitle>
 																	<CardDescription className="text-background/75">
-																		{entry?.date ??
-																			horoscopes?.date}
+																		{formatDisplayDate(
+																			entry?.date ??
+																				horoscopes?.date ??
+																				''
+																		)}
 																	</CardDescription>
 																</div>
 															</div>

@@ -237,7 +237,7 @@ export default function Dashboard() {
 			{/* ========================= */}
 			{/* Footer Hint */}
 			{/* ========================= */}
-			<footer className="border-t border-border bg-muted py-6 text-sm text-foreground/80">
+			<footer className="border-t border-border bg-muted py-6 text-sm text-muted-foreground">
 				<div className="app-container grid gap-6 items-center">
 					More focused tools will be added here over time &mdash; all connected through
 					the same Omkraft account.

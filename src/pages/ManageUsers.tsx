@@ -94,14 +94,14 @@ function OnlineStatus({ online }: { online: boolean }) {
 	return (
 		<span
 			className={`inline-flex items-center gap-2 text-sm font-medium ${
-				online ? 'text-[var(--success-foreground)]' : 'text-muted-foreground'
+				online ? 'text-accent' : 'text-background'
 			}`}
 		>
 			<span
 				className={`inline-block h-2.5 w-2.5 rounded-full ${
 					online
-						? 'animate-pulse bg-[var(--omkraft-mint-500)] shadow-[0_0_0_4px_rgba(0,173,151,0.18)]'
-						: 'bg-muted-foreground/60'
+						? 'animate-pulse bg-accent shadow-[0_0_0_4px_rgba(0,173,151,0.18)]'
+						: 'border border-background/30 bg-[var(--omkraft-navy-300)]'
 				}`}
 			/>
 			{online ? 'Online' : 'Offline'}
