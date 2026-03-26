@@ -6,13 +6,23 @@ export type LocationData = {
 	countryCode: string | null;
 };
 
+const LOCATION_STORAGE_KEY = 'omkraft-last-location';
+
 /**
  * Reverse geocode using primary + fallback providers
  */
 async function reverseGeocode(latitude: number, longitude: number) {
+	const controller = new AbortController();
+	const timeout = window.setTimeout(() => controller.abort(), 8000);
+
 	const res = await fetch(
-		`${import.meta.env.VITE_API_BASE_URL}/api/location/reverse-geocode?latitude=${latitude}&longitude=${longitude}`
-	);
+		`${import.meta.env.VITE_API_BASE_URL}/api/location/reverse-geocode?latitude=${latitude}&longitude=${longitude}`,
+		{
+			signal: controller.signal,
+		}
+	).finally(() => {
+		window.clearTimeout(timeout);
+	});
 
 	if (!res.ok) throw new Error('Reverse geocode failed');
 
@@ -45,7 +55,7 @@ export async function getCurrentLocation(): Promise<LocationData> {
 					};
 
 					// cache for offline / fallback
-					localStorage.setItem('omkraft-last-location', JSON.stringify(locationData));
+					localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
 
 					resolve(locationData);
 				} catch (error) {

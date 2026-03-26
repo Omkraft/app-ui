@@ -440,6 +440,55 @@ const NEWS_TABS = [
 	{ key: 'science', label: 'Science' },
 ];
 
+const LOCAL_NEWS_CITY_ALIASES = new Set([
+	'mumbai',
+	'delhi',
+	'newdelhi',
+	'bangalore',
+	'bengaluru',
+	'hyderabad',
+	'chennai',
+	'ahmedabad',
+	'ahemdabad',
+	'allahabad',
+	'prayagraj',
+	'bhubaneswar',
+	'coimbatore',
+	'gurgaon',
+	'gurugram',
+	'guwahati',
+	'hubli',
+	'kanpur',
+	'kolkata',
+	'ludhiana',
+	'mangalore',
+	'mysore',
+	'mysuru',
+	'noida',
+	'pune',
+	'goa',
+	'chandigarh',
+	'lucknow',
+	'patna',
+	'jaipur',
+	'nagpur',
+	'rajkot',
+	'ranchi',
+	'surat',
+	'vadodara',
+	'varanasi',
+	'thane',
+	'thiruvananthapuram',
+	'trivandrum',
+]);
+
+function normalizeLocalNewsCity(city: string | null) {
+	return (city ?? '')
+		.trim()
+		.toLowerCase()
+		.replace(/[^a-z]/g, '');
+}
+
 export default function Utility() {
 	const weatherAccordionItems = ['forecast', 'metrix', 'sunriseset', 'airquality'];
 	const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -447,6 +496,8 @@ export default function Utility() {
 	const [quoteError, setQuoteError] = useState<unknown | null>(null);
 	const [newsError, setNewsError] = useState<unknown | null>(null);
 	const [locationLabel, setLocationLabel] = useState<string | null>(null);
+	const [locationCityName, setLocationCityName] = useState<string | null>(null);
+	const [isNewsLocationLoading, setIsNewsLocationLoading] = useState(true);
 	const [weatherError, setWeatherError] = useState<unknown | null>(null);
 	const [visibleCounts, setVisibleCounts] = useState<Record<string, number>>({
 		india: 10,
@@ -487,10 +538,15 @@ export default function Utility() {
 			? currentAirQuality.us_aqi
 			: null;
 	const airQualitySeverity = getAirQualitySeverity(currentUsAqi);
+	const hasLocalNews = LOCAL_NEWS_CITY_ALIASES.has(normalizeLocalNewsCity(locationCityName));
+	const newsTabs = hasLocalNews ? [{ key: 'local', label: 'Local' }, ...NEWS_TABS] : NEWS_TABS;
 
 	const fetchWeather = useCallback(async () => {
 		setWeather(null);
 		setWeatherError(null);
+		setIsNewsLocationLoading(true);
+		setLocationLabel(null);
+		setLocationCityName(null);
 		try {
 			const { latitude, longitude, cityName, state, countryCode } =
 				await getCurrentLocation();
@@ -504,10 +560,13 @@ export default function Utility() {
 			);
 
 			setLocationLabel(formattedLocation);
+			setLocationCityName(cityName ?? null);
 			setWeather(weather);
 		} catch (error) {
 			reportUiError('utility:weather', error);
 			setWeatherError(toDisplayError(error, 'Failed to fetch weather.'));
+		} finally {
+			setIsNewsLocationLoading(false);
 		}
 	}, []);
 
@@ -536,10 +595,15 @@ export default function Utility() {
 		}
 	}, []);
 
-	const fetchNews = useCallback(async (category: string) => {
+	const fetchNews = useCallback(async (category: string, city?: string | null) => {
 		setNewsError(null);
 		try {
-			const data = await apiRequest<NewsArticle[]>(`/api/utility/news?category=${category}`);
+			const params = new URLSearchParams({ category });
+			if (category === 'local' && city) {
+				params.set('city', city);
+			}
+
+			const data = await apiRequest<NewsArticle[]>(`/api/utility/news?${params.toString()}`);
 
 			setNewsSections((prev) => ({
 				...prev,
@@ -578,10 +642,55 @@ export default function Utility() {
 	}, []);
 
 	useEffect(() => {
-		if (!newsSections[activeNewsTab]) {
-			fetchNews(activeNewsTab);
+		if (isNewsLocationLoading) {
+			return;
 		}
-	}, [activeNewsTab, newsSections, fetchNews]);
+
+		if (hasLocalNews && !newsSections.local) {
+			void fetchNews('local', locationCityName);
+		}
+
+		if (!hasLocalNews && activeNewsTab === 'local') {
+			setActiveNewsTab('india');
+		}
+	}, [
+		activeNewsTab,
+		fetchNews,
+		hasLocalNews,
+		isNewsLocationLoading,
+		locationCityName,
+		newsSections.local,
+	]);
+
+	useEffect(() => {
+		setNewsSections((prev) => {
+			if (!prev.local) {
+				return prev;
+			}
+
+			const nextSections = { ...prev };
+			delete nextSections.local;
+			return nextSections;
+		});
+	}, [locationCityName]);
+
+	useEffect(() => {
+		if (isNewsLocationLoading) {
+			return;
+		}
+
+		setActiveNewsTab(hasLocalNews ? 'local' : 'india');
+	}, [hasLocalNews, isNewsLocationLoading]);
+
+	useEffect(() => {
+		if (isNewsLocationLoading) {
+			return;
+		}
+
+		if (!newsSections[activeNewsTab]) {
+			fetchNews(activeNewsTab, locationCityName);
+		}
+	}, [activeNewsTab, newsSections, fetchNews, isNewsLocationLoading, locationCityName]);
 
 	useEffect(() => {
 		const interval = setInterval(
@@ -592,7 +701,10 @@ export default function Utility() {
 
 				Object.keys(newsSections).forEach((category) => {
 					if (newsSections[category]?.length) {
-						void fetchNews(category);
+						void fetchNews(
+							category,
+							category === 'local' ? locationCityName : undefined
+						);
 					}
 				});
 			},
@@ -600,7 +712,7 @@ export default function Utility() {
 		);
 
 		return () => clearInterval(interval);
-	}, [newsSections, fetchNews]);
+	}, [newsSections, fetchNews, locationCityName]);
 
 	useEffect(() => {
 		const handleScroll = () => {
@@ -1154,117 +1266,147 @@ export default function Utility() {
 					<Separator className="border-t border-primary" />
 
 					{/* Navigation */}
-					<Tabs
-						value={activeNewsTab}
-						onValueChange={handleNewsTabChange}
-						className="flex flex-col items-center"
-					>
-						<div ref={newsTabsSentinelRef} aria-hidden="true" className="h-px w-full" />
-						<div
-							className={`sticky top-0 z-20 w-full max-w-full overflow-hidden${
-								isNewsTabsSticky && ' bg-background'
-							}`}
-						>
-							<div
-								className={`${
-									isNewsTabsSticky
-										? 'border-b border-[var(--omkraft-border-subtle)] py-3'
-										: 'border-b-0 py-0'
-								}`}
-							>
-								<TabsList className="h-auto w-full flex-wrap border border-muted-foreground bg-primary text-foreground">
-									{NEWS_TABS.map((tab) => (
-										<TabsTrigger
-											key={tab.key}
-											value={tab.key}
-											className="justify-start lg:justify-center"
-										>
-											{tab.label}
-										</TabsTrigger>
-									))}
-								</TabsList>
+					{isNewsLocationLoading ? (
+						<div className="grid gap-6">
+							<div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+								{Array.from({ length: 4 }).map((_, i) => (
+									<Card key={i} className="bg-foreground border border-primary">
+										<CardHeader>
+											<Skeleton className="h-5 w-3/4 bg-background" />
+											<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
+										</CardHeader>
+										<CardContent>
+											<Skeleton className="h-4 w-full mb-2 bg-background" />
+											<Skeleton className="h-4 w-5/6 bg-background" />
+										</CardContent>
+									</Card>
+								))}
 							</div>
 						</div>
-						<TabsContent value={activeNewsTab} className="mt-6 w-full">
-							{(() => {
-								const articles = newsSections[activeNewsTab] || [];
-								const visible = visibleCounts[activeNewsTab] || 10;
-								const visibleArticles = articles.slice(0, visible);
+					) : (
+						<Tabs
+							value={activeNewsTab}
+							onValueChange={handleNewsTabChange}
+							className="flex flex-col items-center"
+						>
+							<div
+								ref={newsTabsSentinelRef}
+								aria-hidden="true"
+								className="h-px w-full"
+							/>
+							<div
+								className={`sticky top-0 z-20 w-full max-w-full overflow-hidden${
+									isNewsTabsSticky && ' bg-background'
+								}`}
+							>
+								<div
+									className={`${
+										isNewsTabsSticky
+											? 'border-b border-[var(--omkraft-border-subtle)] py-3'
+											: 'border-b-0 py-0'
+									}`}
+								>
+									<TabsList className="h-auto w-full flex-wrap border border-muted-foreground bg-primary text-foreground">
+										{newsTabs.map((tab) => (
+											<TabsTrigger
+												key={tab.key}
+												value={tab.key}
+												className="justify-start lg:justify-center"
+											>
+												{tab.label}
+											</TabsTrigger>
+										))}
+									</TabsList>
+								</div>
+							</div>
+							<TabsContent value={activeNewsTab} className="mt-6 w-full">
+								{(() => {
+									const articles = newsSections[activeNewsTab] || [];
+									const visible = visibleCounts[activeNewsTab] || 10;
+									const visibleArticles = articles.slice(0, visible);
 
-								return (
-									<>
-										{!newsSections[activeNewsTab] ? (
-											<>
-												{!newsError ? (
-													<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-														{Array.from({ length: 4 }).map((_, i) => (
-															<Card
-																key={i}
-																className="bg-foreground border border-primary"
+									return (
+										<>
+											{!newsSections[activeNewsTab] ? (
+												<>
+													{!newsError ? (
+														<div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
+															{Array.from({ length: 4 }).map(
+																(_, i) => (
+																	<Card
+																		key={i}
+																		className="bg-foreground border border-primary"
+																	>
+																		<CardHeader>
+																			<Skeleton className="h-5 w-3/4 bg-background" />
+																			<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
+																		</CardHeader>
+
+																		<CardContent>
+																			<Skeleton className="h-4 w-full mb-2 bg-background" />
+																			<Skeleton className="h-4 w-5/6 bg-background" />
+																		</CardContent>
+																	</Card>
+																)
+															)}
+														</div>
+													) : (
+														<OmkraftAlert
+															error={newsError}
+															fallbackTitle="News unavailable"
+														/>
+													)}
+												</>
+											) : (
+												<>
+													{articles?.length === 0 && (
+														<OmkraftAlert
+															severity="info"
+															error={`We couldn't find any recent headlines in ${activeNewsTab === 'local' ? 'your local area' : activeNewsTab} right now. Please check back later.`}
+															fallbackTitle="No news available"
+														/>
+													)}
+													{isDesktopNewsLayout ? (
+														<DesktopNewsMasonry
+															articles={visibleArticles}
+															newsView={newsView}
+														/>
+													) : (
+														<div className="space-y-6">
+															{visibleArticles.map((item, index) =>
+																renderNewsCard(
+																	item,
+																	index,
+																	newsView
+																)
+															)}
+														</div>
+													)}
+
+													{visible < articles.length && (
+														<div className="text-center mt-6">
+															<Button
+																onClick={() =>
+																	setVisibleCounts((prev) => ({
+																		...prev,
+																		[activeNewsTab]:
+																			visible + 10,
+																	}))
+																}
+																className="w-full lg:w-auto"
 															>
-																<CardHeader>
-																	<Skeleton className="h-5 w-3/4 bg-background" />
-																	<Skeleton className="h-4 w-1/3 mt-2 bg-background" />
-																</CardHeader>
-
-																<CardContent>
-																	<Skeleton className="h-4 w-full mb-2 bg-background" />
-																	<Skeleton className="h-4 w-5/6 bg-background" />
-																</CardContent>
-															</Card>
-														))}
-													</div>
-												) : (
-													<OmkraftAlert
-														error={newsError}
-														fallbackTitle="News unavailable"
-													/>
-												)}
-											</>
-										) : (
-											<>
-												{articles?.length === 0 && (
-													<OmkraftAlert
-														severity="info"
-														error={`We couldn't find any recent headlines in ${activeNewsTab} category right now. Please check back later.`}
-														fallbackTitle="No news available"
-													/>
-												)}
-												{isDesktopNewsLayout ? (
-													<DesktopNewsMasonry
-														articles={visibleArticles}
-														newsView={newsView}
-													/>
-												) : (
-													<div className="space-y-6">
-														{visibleArticles.map((item, index) =>
-															renderNewsCard(item, index, newsView)
-														)}
-													</div>
-												)}
-
-												{visible < articles.length && (
-													<div className="text-center mt-6">
-														<Button
-															onClick={() =>
-																setVisibleCounts((prev) => ({
-																	...prev,
-																	[activeNewsTab]: visible + 10,
-																}))
-															}
-															className="w-full lg:w-auto"
-														>
-															Show more
-														</Button>
-													</div>
-												)}
-											</>
-										)}
-									</>
-								);
-							})()}
-						</TabsContent>
-					</Tabs>
+																Show more
+															</Button>
+														</div>
+													)}
+												</>
+											)}
+										</>
+									);
+								})()}
+							</TabsContent>
+						</Tabs>
+					)}
 				</div>
 			</section>
 
