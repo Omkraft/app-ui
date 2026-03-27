@@ -1,6 +1,23 @@
 import type { ReactNode, SVGProps } from 'react';
+import {
+	MoonStar,
+	ZodiacAquarius,
+	ZodiacAries,
+	ZodiacCancer,
+	ZodiacCapricorn,
+	ZodiacGemini,
+	ZodiacLeo,
+	ZodiacLibra,
+	ZodiacPisces,
+	ZodiacSagittarius,
+	ZodiacScorpio,
+	ZodiacTaurus,
+	ZodiacVirgo,
+} from 'lucide-react';
 
 type IconProps = SVGProps<SVGSVGElement>;
+export const PANCHANG_CARD_ICON_CLASS = 'h-8 w-8 scale-[1.5]';
+export const PANCHANG_ZODIAC_ICON_CLASS = 'h-8 w-8 scale-[0.875]';
 
 function IconFrame({ children, ...props }: IconProps & { children: ReactNode }) {
 	return (
@@ -66,42 +83,33 @@ export function KaranaIcon(props: IconProps) {
 	);
 }
 
-const RASHI_SYMBOLS: Record<string, string> = {
-	Mesha: '\u2648',
-	Vrishabha: '\u2649',
-	Mithuna: '\u264A',
-	Karka: '\u264B',
-	Simha: '\u264C',
-	Kanya: '\u264D',
-	Tula: '\u264E',
-	Vrischika: '\u264F',
-	Dhanu: '\u2650',
-	Makara: '\u2651',
-	Kumbha: '\u2652',
-	Meena: '\u2653',
-};
+const MOON_RASHI_ICONS = {
+	Mesha: ZodiacAries,
+	Vrishabha: ZodiacTaurus,
+	Mithuna: ZodiacGemini,
+	Karka: ZodiacCancer,
+	Simha: ZodiacLeo,
+	Kanya: ZodiacVirgo,
+	Tula: ZodiacLibra,
+	Vrischika: ZodiacScorpio,
+	Dhanu: ZodiacSagittarius,
+	Makara: ZodiacCapricorn,
+	Kumbha: ZodiacAquarius,
+	Meena: ZodiacPisces,
+} as const;
 
-export function RashiIcon({
+export function MoonRashiIcon({
 	rashi,
+	className = PANCHANG_ZODIAC_ICON_CLASS,
 	...props
 }: IconProps & {
 	rashi: string;
 }) {
-	const symbol = RASHI_SYMBOLS[rashi] ?? '\u25CC';
+	const Icon = MOON_RASHI_ICONS[rashi as keyof typeof MOON_RASHI_ICONS];
 
-	return (
-		<svg viewBox="0 0 48 48" fill="none" aria-hidden="true" {...props}>
-			<text
-				x="24"
-				y="24"
-				textAnchor="middle"
-				dominantBaseline="middle"
-				fontSize="30"
-				fontWeight="700"
-				fill="currentColor"
-			>
-				{symbol}
-			</text>
-		</svg>
-	);
+	if (!Icon) {
+		return <MoonStar className={className} {...props} />;
+	}
+
+	return <Icon className={className} strokeWidth={1.8} {...props} />;
 }

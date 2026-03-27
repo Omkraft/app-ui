@@ -225,6 +225,48 @@ button,
 	z-index: 1;
 }
 
+@keyframes moon-phase-border-ripple {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+		border-color: rgba(255, 255, 255, 0.98);
+	}
+	70% {
+		opacity: 0;
+		transform: scale(1.1);
+		border-color: rgba(239, 246, 255, 0.4);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(1.14);
+		border-color: rgba(239, 246, 255, 0.18);
+	}
+}
+
+.moon-phase-current-card {
+	position: relative;
+	border-color: rgba(255, 255, 255, 0.98);
+}
+
+.moon-phase-current-card::before,
+.moon-phase-current-card::after {
+	content: '';
+	position: absolute;
+	inset: -4px;
+	border-radius: inherit;
+	border: 2px solid rgba(255, 255, 255, 0.92);
+	pointer-events: none;
+	box-shadow: none;
+}
+
+.moon-phase-current-card::before {
+	animation: moon-phase-border-ripple 2.4s ease-out infinite;
+}
+
+.moon-phase-current-card::after {
+	animation: moon-phase-border-ripple 2.4s ease-out 1.2s infinite;
+}
+
 .weather-surface--default {
 	--weather-from: var(--omkraft-navy-500);
 	--weather-to: var(--omkraft-navy-700);
@@ -289,7 +331,10 @@ button,
 
 @media (prefers-reduced-motion: reduce) {
 	.weather-surface::before,
-	.weather-surface::after {
+	.weather-surface::after,
+	.moon-phase-current-card,
+	.moon-phase-current-card::before,
+	.moon-phase-current-card::after {
 		animation: none;
 	}
 }

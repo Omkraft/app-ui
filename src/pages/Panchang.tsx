@@ -7,8 +7,8 @@ import {
 	Compass,
 	Flag,
 	Lightbulb,
-	Orbit,
 	MoonStar,
+	Orbit,
 	Sparkles,
 	ScrollText,
 	Sunrise,
@@ -33,8 +33,10 @@ import { fetchDailyHoroscopes, fetchPanchang } from '@/api/panchang';
 import { StartDatePicker } from '@/components/subscription/StartDatePicker';
 import {
 	KaranaIcon,
+	MoonRashiIcon,
 	NakshatraIcon,
-	RashiIcon,
+	PANCHANG_CARD_ICON_CLASS,
+	PANCHANG_ZODIAC_ICON_CLASS,
 	TithiIcon,
 	YogaIcon,
 } from '@/components/panchang/PanchangIcons';
@@ -52,7 +54,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
 import { Spinner } from '@/components/ui/spinner';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { reportUiError, toDisplayError } from '@/lib/error';
 import type { DailyHoroscopeResponse, PanchangData, PanchangTimeRange } from '@/types/panchang';
 
@@ -113,19 +115,25 @@ const MOON_PHASES: Array<{
 	{ key: 'waning-crescent', label: 'Waning Crescent' },
 ];
 const ZODIAC_SIGNS = [
-	{ key: 'aries', label: 'Aries', image: ariesSvg },
-	{ key: 'taurus', label: 'Taurus', image: taurusSvg },
-	{ key: 'gemini', label: 'Gemini', image: geminiSvg },
-	{ key: 'cancer', label: 'Cancer', image: cancerSvg },
-	{ key: 'leo', label: 'Leo', image: leoSvg },
-	{ key: 'virgo', label: 'Virgo', image: virgoSvg },
-	{ key: 'libra', label: 'Libra', image: libraSvg },
-	{ key: 'scorpio', label: 'Scorpio', image: scorpioSvg },
-	{ key: 'sagittarius', label: 'Sagittarius', image: sagittariusSvg },
-	{ key: 'capricorn', label: 'Capricorn', image: capricornSvg },
-	{ key: 'aquarius', label: 'Aquarius', image: aquariusSvg },
-	{ key: 'pisces', label: 'Pisces', image: piscesSvg },
+	{ key: 'aries', label: 'Aries', sanskritLabel: 'Mesha', image: ariesSvg },
+	{ key: 'taurus', label: 'Taurus', sanskritLabel: 'Vrishabha', image: taurusSvg },
+	{ key: 'gemini', label: 'Gemini', sanskritLabel: 'Mithuna', image: geminiSvg },
+	{ key: 'cancer', label: 'Cancer', sanskritLabel: 'Karka', image: cancerSvg },
+	{ key: 'leo', label: 'Leo', sanskritLabel: 'Simha', image: leoSvg },
+	{ key: 'virgo', label: 'Virgo', sanskritLabel: 'Kanya', image: virgoSvg },
+	{ key: 'libra', label: 'Libra', sanskritLabel: 'Tula', image: libraSvg },
+	{ key: 'scorpio', label: 'Scorpio', sanskritLabel: 'Vrishchika', image: scorpioSvg },
+	{
+		key: 'sagittarius',
+		label: 'Sagittarius',
+		sanskritLabel: 'Dhanu',
+		image: sagittariusSvg,
+	},
+	{ key: 'capricorn', label: 'Capricorn', sanskritLabel: 'Makara', image: capricornSvg },
+	{ key: 'aquarius', label: 'Aquarius', sanskritLabel: 'Kumbha', image: aquariusSvg },
+	{ key: 'pisces', label: 'Pisces', sanskritLabel: 'Meena', image: piscesSvg },
 ] as const;
+
 const PANCHANG_TABS = [
 	{ key: 'panchang', label: 'Panchang' },
 	{ key: 'horoscope', label: 'Horoscope' },
@@ -317,18 +325,32 @@ function getMoonPhaseFromTithiNumber(tithiNumber: number): MoonPhaseName {
 	return 'New Moon';
 }
 
-function PanchangTimeCard({ item }: { item: PanchangTimeRange }) {
+function PanchangTimeCard({
+	item,
+	cardClassName = 'border-muted-foreground bg-muted',
+	titleClassName = '',
+	descriptionClassName = 'text-foreground/80',
+	timeClassName = '',
+	badgeClassName = '',
+}: {
+	item: PanchangTimeRange;
+	cardClassName?: string;
+	titleClassName?: string;
+	descriptionClassName?: string;
+	timeClassName?: string;
+	badgeClassName?: string;
+}) {
 	return (
-		<Card className="border-muted-foreground bg-muted">
+		<Card className={cardClassName}>
 			<CardHeader className="space-y-3 p-4 lg:p-6">
 				<div className="flex items-start justify-between gap-3">
 					<div>
-						<CardTitle className="text-lg">{item.label}</CardTitle>
-						<CardDescription className="text-foreground/80">
+						<CardTitle className={`text-lg ${titleClassName}`}>{item.label}</CardTitle>
+						<CardDescription className={descriptionClassName}>
 							{item.reason}
 						</CardDescription>
 					</div>
-					<Badge className={getRangeBadgeClass(item.quality)}>
+					<Badge className={`${getRangeBadgeClass(item.quality)} ${badgeClassName}`}>
 						{item.quality === 'good'
 							? 'Auspicious'
 							: item.quality === 'avoid'
@@ -338,7 +360,7 @@ function PanchangTimeCard({ item }: { item: PanchangTimeRange }) {
 				</div>
 			</CardHeader>
 			<CardContent className="p-4 pt-0 lg:px-6 lg:pb-6">
-				<p className="text-xl font-semibold">{formatRange(item)}</p>
+				<p className={`text-xl font-semibold ${timeClassName}`}>{formatRange(item)}</p>
 			</CardContent>
 		</Card>
 	);
@@ -354,15 +376,17 @@ function PanchangValueCard({
 	icon: React.ReactNode;
 }) {
 	return (
-		<Card className="border-muted-foreground bg-muted">
+		<Card className="border border-primary bg-foreground">
 			<CardHeader className="p-4">
-				<div className="flex flex-col text-center items-center">
-					<div className="flex h-12 w-12 shrink-0 items-center justify-center text-primary [&_svg]:h-full [&_svg]:w-full">
+				<div className="flex flex-col items-center text-center">
+					<div className="flex h-12 w-12 shrink-0 items-center justify-center text-primary">
 						{icon}
 					</div>
 					<div className="grid gap-1">
-						<CardDescription className="text-foreground/80">{label}</CardDescription>
-						<CardTitle className="text-lg font-semibold">{value}</CardTitle>
+						<CardDescription className="text-background">{label}</CardDescription>
+						<CardTitle className="text-lg font-semibold text-background">
+							{value}
+						</CardTitle>
 					</div>
 				</div>
 			</CardHeader>
@@ -552,27 +576,32 @@ export default function Panchang() {
 				{
 					label: 'Tithi',
 					value: panchang.tithi.name,
-					icon: <TithiIcon className="h-full w-full" />,
+					icon: <TithiIcon className={PANCHANG_CARD_ICON_CLASS} />,
 				},
 				{
 					label: 'Nakshatra',
 					value: panchang.nakshatra.name,
-					icon: <NakshatraIcon className="h-full w-full" />,
+					icon: <NakshatraIcon className={PANCHANG_CARD_ICON_CLASS} />,
 				},
 				{
 					label: 'Yoga',
 					value: panchang.yoga.name,
-					icon: <YogaIcon className="h-full w-full" />,
+					icon: <YogaIcon className={PANCHANG_CARD_ICON_CLASS} />,
 				},
 				{
 					label: 'Karana',
 					value: panchang.karana.name,
-					icon: <KaranaIcon className="h-full w-full" />,
+					icon: <KaranaIcon className={PANCHANG_CARD_ICON_CLASS} />,
 				},
 				{
 					label: 'Moon Rashi',
 					value: panchang.moonRashi.name,
-					icon: <RashiIcon rashi={panchang.moonRashi.name} className="h-full w-full" />,
+					icon: (
+						<MoonRashiIcon
+							rashi={panchang.moonRashi.name}
+							className={PANCHANG_ZODIAC_ICON_CLASS}
+						/>
+					),
 				},
 			]
 		: [];
@@ -651,7 +680,7 @@ export default function Panchang() {
 			</section>
 
 			<Tabs value={activeTab} onValueChange={handleTabChange} className="text-foreground">
-				{!(loading && !panchang) ? (
+						{!(loading && !panchang) ? (
 					<>
 						<div
 							ref={panchangTabsSentinelRef}
@@ -685,6 +714,13 @@ export default function Panchang() {
 								</div>
 							</div>
 						</div>
+
+						<TabsContent value="panchang" forceMount className="sr-only mt-0">
+							Panchang tab panel
+						</TabsContent>
+						<TabsContent value="horoscope" forceMount className="sr-only mt-0">
+							Horoscope tab panel
+						</TabsContent>
 
 						{activeTab === 'panchang' ? (
 							<section className="py-6 text-foreground">
@@ -852,24 +888,24 @@ export default function Panchang() {
 											</h2>
 										</div>
 										<div className="grid gap-4 lg:grid-cols-2">
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted lg:flex-col border-muted-foreground">
+											<Card className="flex flex-row items-center justify-center gap-2 border border-primary bg-foreground p-4 text-center lg:flex-col">
 												<Sunrise className="w-7 h-7 text-[var(--omkraft-yellow-500)]" />
 												<div>
-													<p className="text-sm text-foreground/80">
+													<p className="text-sm text-background">
 														Sunrise
 													</p>
-													<p className="text-lg font-semibold">
+													<p className="text-lg font-semibold text-background">
 														{formatTime(panchang.sunrise)}
 													</p>
 												</div>
 											</Card>
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted lg:flex-col border-muted-foreground">
+											<Card className="flex flex-row items-center justify-center gap-2 border border-primary bg-foreground p-4 text-center lg:flex-col">
 												<Sunset className="w-7 h-7 text-[var(--omkraft-orange-500)]" />
 												<div>
-													<p className="text-sm text-foreground/80">
+													<p className="text-sm text-background">
 														Sunset
 													</p>
-													<p className="text-lg font-semibold">
+													<p className="text-lg font-semibold text-background">
 														{formatTime(panchang.sunset)}
 													</p>
 												</div>
@@ -902,7 +938,7 @@ export default function Panchang() {
 													return (
 														<Card
 															key={phase.key}
-															className={`border-muted-foreground bg-muted ${isCurrent ? 'ring-2 ring-[var(--omkraft-blue-100)]' : ''}`}
+															className={`relative border bg-foreground ${isCurrent ? 'moon-phase-current-card border-[var(--omkraft-blue-50)] overflow-visible' : 'border-primary overflow-hidden'}`}
 														>
 															<CardContent className="flex flex-row items-center justify-start gap-4 p-4 text-left lg:flex-col lg:justify-center lg:gap-3 lg:text-center">
 																<div className="flex h-10 w-10 shrink-0 items-center justify-center lg:h-12 lg:w-12">
@@ -917,13 +953,11 @@ export default function Panchang() {
 																	/>
 																</div>
 																<div className="flex flex-1 items-center justify-between gap-3 lg:grid lg:gap-1">
-																	<p
-																		className={`text-sm font-medium ${isCurrent ? 'text-foreground' : 'text-[var(--omkraft-indigo-100)]'}`}
-																	>
+																	<p className="text-sm font-medium text-background">
 																		{phase.label}
 																	</p>
 																	{isCurrent ? (
-																		<Badge className="shrink-0 justify-center border-[var(--info-border)] bg-[var(--info-bg)] text-[var(--info-foreground)]">
+																		<Badge className="shrink-0 justify-center bg-primary text-primary-foreground">
 																			Today
 																		</Badge>
 																	) : null}
@@ -963,7 +997,10 @@ export default function Panchang() {
 									{orderedHoroscopes.length > 0 ? (
 										<div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
 											{orderedHoroscopes.map(
-												({ key, label, image, entry }, index) => (
+												(
+													{ key, label, sanskritLabel, image, entry },
+													index
+												) => (
 													<Card
 														key={key}
 														className="overflow-hidden border border-primary bg-foreground text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
@@ -983,7 +1020,10 @@ export default function Panchang() {
 																	className={`space-y-1 ${index % 2 === 1 ? 'text-right' : ''} lg:text-left`}
 																>
 																	<CardTitle className="text-xl text-background">
-																		{label}
+																		{label}{' '}
+																		<span className="text-lg font-medium text-background/80">
+																			({sanskritLabel})
+																		</span>
 																	</CardTitle>
 																	<CardDescription className="text-background/75">
 																		{formatDisplayDate(
@@ -1047,7 +1087,7 @@ export default function Panchang() {
 									</div>
 								</section>
 
-								<section className="bg-[var(--omkraft-indigo-500)] py-6 text-foreground">
+								<section className="bg-[var(--omkraft-indigo-600)] py-6 text-foreground">
 									<div className="app-container grid gap-4">
 										<Collapsible
 											open={daytimeChoghadiyaOpen}
@@ -1089,10 +1129,10 @@ export default function Panchang() {
 									</div>
 								</section>
 
-								<section className="py-6 text-foreground bg-accent">
+								<section className="py-6 text-accent-foreground bg-accent">
 									<div className="app-container grid gap-4">
 										<div className="flex items-center gap-2">
-											<Lightbulb className="h-8 w-8 text-[var(--omkraft-mint-100)]" />
+											<Lightbulb className="h-8 w-8" />
 											<h2 className="text-2xl font-semibold">
 												Today's Guidance
 											</h2>
@@ -1118,7 +1158,7 @@ export default function Panchang() {
 													</ul>
 												</div>
 												<div className="grid gap-3">
-													<p className="font-semibold text-destructive">
+													<p className="font-semibold text-[var(--omkraft-red-300)]">
 														Avoid
 													</p>
 													<ul className="grid gap-2 pl-5 text-sm list-disc">
@@ -1163,7 +1203,7 @@ export default function Panchang() {
 														)}
 													</div>
 													<div className="grid gap-3">
-														<p className="font-semibold text-destructive">
+														<p className="font-semibold text-[var(--omkraft-red-300)]">
 															Avoid these time windows
 														</p>
 														<ul className="grid gap-2 pl-5 text-sm list-disc">
