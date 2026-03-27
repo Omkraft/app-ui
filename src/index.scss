@@ -26,7 +26,7 @@
   }
 
   .auth-card {
-    @apply card w-full max-w-sm;
+    @apply w-full max-w-sm rounded-lg border border-border bg-card text-card-foreground shadow-sm;
   }
 }
 
@@ -35,57 +35,47 @@
 /* ========================= */
 
 @layer components {
-
   .btn-base {
-    @apply inline-flex items-center justify-center
-      rounded-md
-      px-4 py-2
-      text-sm font-medium
-      transition-colors
-      focus:outline-none
-      focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
   }
 
   .btn-primary {
-    @apply btn-base bg-primary text-primary-foreground;
+    @apply inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
 
-    &:hover {
-      filter: brightness(0.92);
-    }
+  .btn-primary:hover {
+    filter: brightness(0.92);
   }
 
   .btn-secondary {
-    @apply btn-base border border-border bg-background text-secondary-foreground;
+    @apply inline-flex items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
 
-    &:hover {
-      background: var(--omkraft-navy-600);
-    }
+  .btn-secondary:hover {
+    background: var(--omkraft-navy-600);
   }
 
   .btn-accent {
-    @apply btn-base border border-border bg-accent text-accent-foreground;
+    @apply inline-flex items-center justify-center rounded-md border border-border bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
 
-    &:hover {
-      background: var(--omkraft-mint-600);
-      color: var(--foreground);
-    }
+  .btn-accent:hover {
+    background: var(--omkraft-mint-600);
+    color: var(--foreground);
   }
 
   .btn-destructive {
-    @apply btn-base bg-destructive text-white;
-
-    &:hover {
-      filter: brightness(0.92);
-    }
+    @apply inline-flex items-center justify-center rounded-md bg-destructive px-4 py-2 text-sm font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
   }
 
+  .btn-destructive:hover {
+    filter: brightness(0.92);
+  }
 }
 
 /* ========================= */
-/* Sonner — Omkraft Theme */
+/* Sonner - Omkraft Theme */
 /* ========================= */
-
-/* ---------- Base font sizing ---------- */
 
 [data-sonner-toast][data-styled=true] {
   font-size: var(--font-body-size);
@@ -98,14 +88,10 @@ html [data-sonner-toast][data-styled=true] [data-close-button] {
   font-size: var(--font-body-size);
 }
 
-/* ---------- Button sizing ---------- */
-
 html [data-sonner-toast][data-styled=true] [data-button] {
   height: auto;
-  padding: theme('spacing.2');
+  padding: 0.5rem;
 }
-
-/* ---------- Theme variables ---------- */
 
 [data-sonner-toast] {
   --normal-bg: var(--omkraft-blue-100);
@@ -131,13 +117,9 @@ html [data-sonner-toast][data-styled=true] [data-button] {
   --normal-border: var(--omkraft-blue-800);
 }
 
-/* ---------- Description color ---------- */
-
 html [data-sonner-toast][data-styled=true] [data-description] {
   color: var(--normal-text);
 }
-
-/* ---------- Close button color ---------- */
 
 html [data-sonner-toast][data-styled=true][data-type="info"] [data-close-button] {
   color: var(--omkraft-blue-800);
@@ -153,8 +135,6 @@ html [data-sonner-toast][data-styled=true][data-type="error"] [data-close-button
   color: var(--omkraft-red-800);
   border-color: var(--omkraft-red-800);
 }
-
-/* ---------- Close button hover ---------- */
 
 html [data-sonner-toast][data-styled=true][data-type="info"]:hover [data-close-button]:hover {
   background: var(--omkraft-blue-800);
