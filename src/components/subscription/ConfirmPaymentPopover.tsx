@@ -79,7 +79,11 @@ export default function ConfirmPaymentPopover({
 					onValueChange={(value: string) => setMode(value as PaymentMode)}
 				>
 					<div className="flex items-start gap-3 rounded-md border p-3">
-						<RadioGroupItem value="total" id={`payment-${subscription._id}-total`} />
+						<RadioGroupItem
+							value="total"
+							id={`payment-${subscription._id}-total`}
+							className="border-foreground"
+						/>
 						<label
 							htmlFor={`payment-${subscription._id}-total`}
 							className="cursor-pointer"
@@ -91,7 +95,11 @@ export default function ConfirmPaymentPopover({
 						</label>
 					</div>
 					<div className="flex items-start gap-3 rounded-md border p-3">
-						<RadioGroupItem value="custom" id={`payment-${subscription._id}-custom`} />
+						<RadioGroupItem
+							value="custom"
+							id={`payment-${subscription._id}-custom`}
+							className="border-foreground"
+						/>
 						<label
 							htmlFor={`payment-${subscription._id}-custom`}
 							className="cursor-pointer"
