@@ -680,7 +680,7 @@ export default function Panchang() {
 			</section>
 
 			<Tabs value={activeTab} onValueChange={handleTabChange} className="text-foreground">
-						{!(loading && !panchang) ? (
+				{!(loading && !panchang) ? (
 					<>
 						<div
 							ref={panchangTabsSentinelRef}
