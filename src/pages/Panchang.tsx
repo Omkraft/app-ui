@@ -915,7 +915,7 @@ export default function Panchang() {
 								</section>
 
 								{currentMoonPhase ? (
-									<section className="bg-[var(--omkraft-indigo-900)] py-6 text-foreground">
+									<section className="overflow-x-clip bg-[var(--omkraft-indigo-900)] py-6 text-foreground">
 										<div className="app-container grid gap-4">
 											<div className="flex items-center gap-2">
 												<Orbit className="h-8 w-8 text-[var(--omkraft-blue-100)]" />
@@ -930,7 +930,7 @@ export default function Panchang() {
 												</span>
 												.
 											</p>
-											<div className="grid grid-cols-1 gap-3 lg:grid-cols-8 lg:gap-4">
+											<div className="grid grid-cols-1 gap-4 lg:grid-cols-8">
 												{MOON_PHASES.map((phase) => {
 													const isCurrent =
 														phase.label === currentMoonPhase;
