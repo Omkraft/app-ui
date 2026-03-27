@@ -46,7 +46,10 @@ export async function registerPush(): Promise<boolean> {
 				'Content-Type': 'application/json',
 				Authorization: `Bearer ${token}`,
 			},
-			body: JSON.stringify(subscription),
+			body: JSON.stringify({
+				subscription,
+				timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone ?? null,
+			}),
 		});
 
 		if (!res.ok) {

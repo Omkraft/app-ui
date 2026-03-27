@@ -1312,8 +1312,9 @@ export default function Utility() {
 										))}
 									</TabsList>
 									{activeNewsTab === 'local' && locationCityName ? (
-										<p className="mt-3 text-sm text-muted-foreground">
-											Local news from {locationCityName}
+										<p className="mt-3 text-muted-foreground">
+											Latest local headlines and city updates around{' '}
+											{locationCityName}
 										</p>
 									) : null}
 								</div>
