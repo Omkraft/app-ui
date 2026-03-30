@@ -1087,7 +1087,7 @@ export default function Panchang() {
 									</div>
 								</section>
 
-								<section className="bg-[var(--omkraft-indigo-600)] py-6 text-foreground">
+								<section className="bg-primary py-6 text-primary-foreground">
 									<div className="app-container grid gap-4">
 										<Collapsible
 											open={daytimeChoghadiyaOpen}
@@ -1095,7 +1095,7 @@ export default function Panchang() {
 											className="w-full"
 										>
 											<CollapsibleTrigger asChild>
-												<button className="flex w-full items-start justify-between gap-4 text-left hover:text-background">
+												<button className="flex w-full items-start justify-between gap-4 text-left hover:text-[var(--omkraft-blue-50)]">
 													<div className="grid gap-3">
 														<div className="flex items-center gap-2">
 															<CalendarDays className="h-8 w-8" />
@@ -1121,6 +1121,8 @@ export default function Panchang() {
 														<PanchangTimeCard
 															key={item.label}
 															item={item}
+															cardClassName="border-background bg-foreground text-background"
+															descriptionClassName="text-primary"
 														/>
 													))}
 												</div>

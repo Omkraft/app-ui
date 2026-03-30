@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { isIosSafari } from '@/utils/isIos';
+import { isIos } from '@/utils/isIos';
 import { omkraftToast } from '@/lib/toast';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Header } from './components/Header';
@@ -88,8 +88,8 @@ function ScrollToTopButton() {
 
 export default function App() {
 	useEffect(() => {
-		// Only for iOS Safari
-		if (!isIosSafari()) return;
+		// Only for iOS browsers
+		if (!isIos()) return;
 
 		// Do not show if already installed
 		if (isStandalone()) return;
@@ -100,7 +100,8 @@ export default function App() {
 		if (lastShown && Date.now() - Number(lastShown) < 7 * 24 * 60 * 60 * 1000) return;
 
 		omkraftToast.info('Install Omkraft', {
-			description: 'Tap Share → Add to Home Screen',
+			description:
+				'Tap Share -> Add to Home Screen, then open Omkraft from your Home Screen.',
 			icon: <Save size={18} strokeWidth={2.5} />,
 			duration: Infinity,
 		});
