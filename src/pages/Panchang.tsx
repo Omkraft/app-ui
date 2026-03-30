@@ -212,6 +212,10 @@ function formatRange(range: Pick<PanchangTimeRange, 'start' | 'end'>) {
 	return `${formatTime(range.start)} - ${formatTime(range.end)}`;
 }
 
+function getTimeRangeKey(item: Pick<PanchangTimeRange, 'label' | 'start' | 'end'>) {
+	return `${item.label}-${item.start ?? 'na'}-${item.end ?? 'na'}`;
+}
+
 function formatTime(value: string | null) {
 	if (!value) {
 		return 'Unavailable';
@@ -1061,7 +1065,10 @@ export default function Panchang() {
 										</div>
 										<div className="grid gap-4 lg:grid-cols-3">
 											{panchang.goodTimes.map((item) => (
-												<PanchangTimeCard key={item.label} item={item} />
+												<PanchangTimeCard
+													key={getTimeRangeKey(item)}
+													item={item}
+												/>
 											))}
 										</div>
 									</div>
@@ -1081,7 +1088,10 @@ export default function Panchang() {
 												panchang.yamagandam,
 												panchang.gulikaKalam,
 											].map((item) => (
-												<PanchangTimeCard key={item.label} item={item} />
+												<PanchangTimeCard
+													key={getTimeRangeKey(item)}
+													item={item}
+												/>
 											))}
 										</div>
 									</div>
@@ -1119,7 +1129,7 @@ export default function Panchang() {
 												<div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
 													{panchang.daytimeChoghadiya.map((item) => (
 														<PanchangTimeCard
-															key={item.label}
+															key={getTimeRangeKey(item)}
 															item={item}
 															cardClassName="border-background bg-foreground text-background"
 															descriptionClassName="text-primary"
