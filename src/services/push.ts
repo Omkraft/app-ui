@@ -1,4 +1,6 @@
 import { reportUiError } from '@/lib/error';
+import { isIos } from '@/utils/isIos';
+import { isStandalone } from '@/utils/isStandalone';
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
 	const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -13,8 +15,25 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 	return outputArray;
 }
 
-export async function registerPush(): Promise<boolean> {
-	if (!('serviceWorker' in navigator) || !('PushManager' in window)) return false;
+type RegisterPushOptions = {
+	requestPermission?: boolean;
+};
+
+export async function registerPush(options: RegisterPushOptions = {}): Promise<boolean> {
+	const { requestPermission = true } = options;
+
+	if (
+		!('serviceWorker' in navigator) ||
+		!('PushManager' in window) ||
+		!('Notification' in window)
+	) {
+		return false;
+	}
+
+	// iOS web push is only available for Home Screen web apps.
+	if (isIos() && !isStandalone()) {
+		return false;
+	}
 
 	const token = localStorage.getItem('token');
 	if (!token) return false;
@@ -25,8 +44,14 @@ export async function registerPush(): Promise<boolean> {
 		return false;
 	}
 
-	const permission = await Notification.requestPermission();
-	if (permission !== 'granted') return false;
+	if (Notification.permission !== 'granted') {
+		if (!requestPermission) {
+			return false;
+		}
+
+		const permission = await Notification.requestPermission();
+		if (permission !== 'granted') return false;
+	}
 
 	try {
 		// Use the currently active SW (managed by vite-plugin-pwa), do not register a second SW.

@@ -3,6 +3,9 @@ import type { ReactNode } from 'react';
 import { registerPush } from '@/services/push';
 import { getProfile } from '@/api/user';
 import { ApiError } from '@/api/client';
+import { omkraftToast } from '@/lib/toast';
+import { isIos } from '@/utils/isIos';
+import { isStandalone } from '@/utils/isStandalone';
 
 export type User = {
 	firstName: string;
@@ -23,6 +26,27 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+function promptForIosPushPermission() {
+	if (!isIos() || !isStandalone() || !('Notification' in window)) {
+		return;
+	}
+
+	if (Notification.permission !== 'default') {
+		return;
+	}
+
+	omkraftToast.info('Enable notifications', {
+		description: 'Tap Enable to allow Omkraft alerts on your iPhone Home Screen app.',
+		duration: 12000,
+		action: {
+			label: 'Enable',
+			onClick: () => {
+				void registerPush({ requestPermission: true });
+			},
+		},
+	});
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
@@ -46,7 +70,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				const profile = await getProfile();
 				localStorage.setItem('auth', JSON.stringify(profile.user));
 				setUser(profile.user);
-				await registerPush();
+				await registerPush({ requestPermission: false });
+				promptForIosPushPermission();
 			} catch (error) {
 				const isUnauthorized =
 					error instanceof ApiError
@@ -67,7 +92,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		localStorage.setItem('token', token);
 		localStorage.setItem('auth', JSON.stringify(user));
 		setUser(user);
-		await registerPush();
+		await registerPush({ requestPermission: false });
+		promptForIosPushPermission();
 	}
 
 	function updateUser(nextUser: User) {
