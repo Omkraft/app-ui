@@ -17,7 +17,11 @@ import {
 } from '@/lib/investmentVaultCrypto';
 import { omkraftToast } from '@/lib/toast';
 import type { InvestmentFormState, InvestmentRecord } from './types';
-import { buildInvestmentRecord, toPersistedInvestment } from './utils';
+import {
+	buildInvestmentRecord,
+	buildInvestmentReminderMetadata,
+	toPersistedInvestment,
+} from './utils';
 
 export function usePersonalVault(userVaultId: string) {
 	const [records, setRecords] = useState<InvestmentRecord[]>([]);
@@ -83,7 +87,10 @@ export function usePersonalVault(userVaultId: string) {
 					userVaultId,
 					toPersistedInvestment(nextRecord)
 				);
-				const savedRecord = await addInvestment(encryptedPayload);
+				const savedRecord = await addInvestment({
+					...encryptedPayload,
+					reminderMetadata: buildInvestmentReminderMetadata(nextRecord),
+				});
 				const hydratedRecord = await hydrateRecord(savedRecord);
 				setRecords((current) => [hydratedRecord, ...current]);
 				omkraftToast.success('Investment saved');
@@ -106,7 +113,10 @@ export function usePersonalVault(userVaultId: string) {
 					userVaultId,
 					toPersistedInvestment(nextRecord)
 				);
-				const savedRecord = await updateInvestment(id, encryptedPayload);
+				const savedRecord = await updateInvestment(id, {
+					...encryptedPayload,
+					reminderMetadata: buildInvestmentReminderMetadata(nextRecord),
+				});
 				const hydratedRecord = await hydrateRecord(savedRecord);
 				setRecords((current) =>
 					current.map((record) => (record.id === id ? hydratedRecord : record))

@@ -276,11 +276,11 @@ button,
 }
 
 .alert-ripple-frame::before {
-	animation: alert-border-ripple 2.4s ease-out 5;
+	animation: alert-border-ripple 2.4s ease-out 3;
 }
 
 .alert-ripple-frame::after {
-	animation: alert-border-ripple 2.4s ease-out 1.2s 5;
+	animation: alert-border-ripple 2.4s ease-out 1.2s 2;
 }
 
 .moon-phase-current-card {

@@ -1,4 +1,4 @@
-import { Bell } from 'lucide-react';
+import { Bell, CheckCheck } from 'lucide-react';
 
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { useNotifications } from '@/context/NotificationContext';
@@ -6,9 +6,10 @@ import { useNotifications } from '@/context/NotificationContext';
 import { Separator } from '@/components/ui/separator';
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 export default function NotificationBell() {
-	const { unreadCount, notifications } = useNotifications();
+	const { unreadCount, notifications, markAsRead } = useNotifications();
 
 	return (
 		<Popover>
@@ -49,10 +50,30 @@ export default function NotificationBell() {
 						notifications.map((n, i) => (
 							<React.Fragment key={n._id}>
 								<div
-									className={`flex flex-col gap-1${n.read && ' text-muted-foreground'}`}
+									className={`flex items-start justify-between gap-3${n.read ? ' text-muted-foreground' : ''}`}
 								>
-									<p className="font-semibold">{n.title}</p>
-									<p className="text-sm">{n.message}</p>
+									<div className="flex flex-col gap-1">
+										<p className="font-semibold">{n.title}</p>
+										<p className="text-sm">{n.message}</p>
+									</div>
+									{!n.read ? (
+										<Button
+											type="button"
+											variant="ghost"
+											size="icon"
+											className="h-7 w-7 shrink-0"
+											onClick={(event) => {
+												event.preventDefault();
+												event.stopPropagation();
+												void markAsRead(n._id);
+											}}
+										>
+											<CheckCheck className="h-4 w-4" />
+											<span className="sr-only">
+												Mark notification as read
+											</span>
+										</Button>
+									) : null}
 								</div>
 								{i !== notifications.length - 1 && (
 									<Separator role="listitem" className="border border-border" />

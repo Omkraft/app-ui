@@ -1,6 +1,8 @@
 import { IndianRupee } from 'lucide-react';
 import type { InvestmentFormState, InvestmentRecord, RdPaymentEntry } from './types';
 
+export type InvestmentAttentionState = 'default' | 'maturing-soon' | 'matured';
+
 export function getInitialFormState(record?: InvestmentRecord | null): InvestmentFormState {
 	if (!record) {
 		return {
@@ -159,6 +161,14 @@ export function toPersistedInvestment(record: InvestmentRecord): Omit<Investment
 	return persistedRecord;
 }
 
+export function buildInvestmentReminderMetadata(record: InvestmentRecord) {
+	return {
+		maturityDate: record.maturityDate,
+		institutionName: record.institutionName,
+		investmentType: record.type,
+	};
+}
+
 export function formatCurrencyNumber(value: number) {
 	return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(value);
 }
@@ -206,6 +216,26 @@ export function getMaturityDuration(maturityDate: string) {
 	if (differenceInDays === 0) return 'Matures today';
 	if (differenceInDays === 1) return '1 day remaining';
 	return `${differenceInDays} days remaining`;
+}
+
+export function getInvestmentAttentionState(maturityDate: string): InvestmentAttentionState {
+	const today = new Date();
+	const maturity = parseFormDate(maturityDate);
+	if (!maturity) return 'default';
+
+	const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+	const startOfMaturity = new Date(
+		maturity.getFullYear(),
+		maturity.getMonth(),
+		maturity.getDate()
+	);
+	const differenceInDays = Math.ceil(
+		(startOfMaturity.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24)
+	);
+
+	if (differenceInDays <= 0) return 'matured';
+	if (differenceInDays <= 15) return 'maturing-soon';
+	return 'default';
 }
 
 export function CurrencyValue({
