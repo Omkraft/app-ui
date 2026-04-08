@@ -1,4 +1,10 @@
-﻿import { AlertCircleIcon, AlertTriangleIcon, CheckCircle2Icon, InfoIcon } from 'lucide-react';
+import {
+	AlertCircleIcon,
+	AlertTriangleIcon,
+	CheckCircle2Icon,
+	InfoIcon,
+	type LucideIcon,
+} from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getErrorAlertDetails } from '@/lib/errorAlert';
 import { cn } from '@/lib/utils';
@@ -10,6 +16,7 @@ type Props = {
 	severity?: AlertSeverity;
 	fallbackTitle?: string;
 	fallbackMessage?: string;
+	icon?: LucideIcon;
 };
 
 export default function OmkraftAlert({
@@ -17,6 +24,7 @@ export default function OmkraftAlert({
 	severity = 'error',
 	fallbackTitle,
 	fallbackMessage,
+	icon: CustomIcon,
 }: Props) {
 	if (!error) return null;
 
@@ -42,16 +50,17 @@ export default function OmkraftAlert({
 								: message,
 				};
 
-	const icon =
-		severity === 'warning' ? (
-			<AlertTriangleIcon />
-		) : severity === 'info' ? (
-			<InfoIcon />
-		) : severity === 'success' ? (
-			<CheckCircle2Icon />
-		) : (
-			<AlertCircleIcon />
-		);
+	const icon = CustomIcon ? (
+		<CustomIcon />
+	) : severity === 'warning' ? (
+		<AlertTriangleIcon />
+	) : severity === 'info' ? (
+		<InfoIcon />
+	) : severity === 'success' ? (
+		<CheckCircle2Icon />
+	) : (
+		<AlertCircleIcon />
+	);
 	const variant =
 		severity === 'warning'
 			? 'warning'

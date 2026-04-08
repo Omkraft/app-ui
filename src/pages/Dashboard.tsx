@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import newsIllustration from '@/assets/news-illustration.svg';
 import mediaIllustration from '@/assets/media-illustration.svg';
 import dailyPanchangIllustration from '@/assets/daily-panchang-illustration.svg';
-import { Newspaper, ReceiptIndianRupee, ScrollText } from 'lucide-react';
+import investmentIllustration from '@/assets/investment-illustration.svg';
+import { Landmark, Newspaper, ReceiptIndianRupee, ScrollText } from 'lucide-react';
 
 export default function Dashboard() {
 	const { user } = useAuth();
@@ -111,7 +112,7 @@ export default function Dashboard() {
 							<img
 								src={newsIllustration}
 								alt="News illustration"
-								className="w-full max-w-md opacity-90"
+								className="w-full max-w-md"
 							/>
 						</div>
 					</div>
@@ -128,7 +129,7 @@ export default function Dashboard() {
 							<img
 								src={mediaIllustration}
 								alt="Media illustration"
-								className="w-full max-w-md opacity-90"
+								className="w-full max-w-md"
 							/>
 						</div>
 						{/* Text */}
@@ -185,7 +186,7 @@ export default function Dashboard() {
 					</div>
 				</div>
 			</section>
-			<section className="bg-[var(--omkraft-indigo-400)] text-foreground flex items-center py-6">
+			<section className="bg-[var(--omkraft-indigo-400)] text-background flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<div className="grid gap-12 lg:grid-cols-2 items-center">
 						<div className="space-y-4">
@@ -193,7 +194,9 @@ export default function Dashboard() {
 								<h2 className="text-3xl">
 									Daily
 									<br />
-									<span className="text-background">Panchang</span>
+									<span className="text-[var(--omkraft-indigo-800)]">
+										Panchang
+									</span>
 								</h2>
 								<ScrollText className="h-12 w-12 shrink-0 text-background lg:hidden" />
 							</div>
@@ -240,8 +243,73 @@ export default function Dashboard() {
 							<img
 								src={dailyPanchangIllustration}
 								alt="Daily Panchang illustration"
-								className="w-full opacity-90"
+								className="w-full"
 							/>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section className="bg-[var(--omkraft-mint-700)] text-foreground flex items-center py-6">
+				<div className="app-container grid gap-6 items-center">
+					<div className="grid gap-12 lg:grid-cols-2 items-center">
+						<div className="justify-center hidden lg:flex">
+							<img
+								src={investmentIllustration}
+								alt="Investment illustration"
+								className="w-full"
+							/>
+						</div>
+						<div className="space-y-4">
+							<div className="flex items-center justify-between gap-4">
+								<h2 className="text-3xl">
+									Personal
+									<br />
+									<span className="text-[var(--omkraft-mint-300)]">Vault</span>
+								</h2>
+								<Landmark className="h-12 w-12 shrink-0 text-[var(--omkraft-mint-300)] lg:hidden" />
+							</div>
+
+							<div className="lg:hidden space-y-3">
+								<p>Track your fixed and recurring deposits in one secure place.</p>
+								<p>
+									Review maturity details, monitor returns, and keep both FD and
+									RD records organized with end-to-end encrypted storage.
+								</p>
+							</div>
+
+							<div className="hidden lg:block space-y-4">
+								<p>Track your fixed and recurring deposits in one secure place.</p>
+								<p>
+									Personal Vault is a focused space for deposits that usually end
+									up scattered across bank apps, PDFs, and reminders.
+								</p>
+								<p>
+									Keep maturity dates, returns, installment progress, and related
+									reference details easy to review in the same workflow.
+								</p>
+								<p>
+									Your records are encrypted before storage, so privacy is built
+									into the tracker instead of being an afterthought.
+								</p>
+								<p>Simple visibility first. Better financial clarity every day.</p>
+							</div>
+
+							<ul className="list-disc pl-5 space-y-2 hidden lg:block">
+								<li>Track FD and RD records with key dates and amounts</li>
+								<li>
+									Keep interest, maturity, and installment progress easy to review
+								</li>
+								<li>Store important institution and holder details in one place</li>
+								<li>
+									Keep sensitive deposit data protected with end-to-end encryption
+								</li>
+							</ul>
+
+							<div className="flex flex-col lg:flex-row gap-4 pt-4">
+								<Link to="/vault" className="btn-accent">
+									Open My Vault
+								</Link>
+							</div>
 						</div>
 					</div>
 				</div>

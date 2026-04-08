@@ -1,4 +1,3 @@
-const LOGO_API_KEY = import.meta.env.VITE_LOGO_DEV_API_KEY as string;
 import {
 	Gamepad2,
 	Package,
@@ -11,329 +10,226 @@ import {
 	Disc3,
 	Music,
 } from 'lucide-react';
+import { getCachedLogoUrl } from './logoProxy';
 
 const brandsInCategory: Record<string, { name: string; src: string; alt: string }[]> = {
 	SIM_PREPAID: [
 		{
 			name: 'jio',
-			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'jio.com', retina: false }),
 			alt: 'Jio logo',
 		},
 		{
 			name: 'airtel',
-			src: `https://img.logo.dev/airtel.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'airtel.com', retina: false }),
 			alt: 'Airtel logo',
 		},
 		{
 			name: 'vi',
-			src: `https://img.logo.dev/vodafone.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'vodafone.com', retina: false }),
 			alt: 'Vodafone logo',
 		},
 		{
 			name: 'vodafone',
-			src: `https://img.logo.dev/vodafone.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'vodafone.com', retina: false }),
 			alt: 'Vodafone logo',
 		},
 		{
 			name: 'bsnl',
-			src: `https://img.logo.dev/bsnl.co.in?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'bsnl.co.in', retina: false }),
 			alt: 'BSNL logo',
 		},
 	],
 	SIM_POSTPAID: [
 		{
 			name: 'jio',
-			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'jio.com', retina: false }),
 			alt: 'Jio logo',
 		},
 		{
 			name: 'airtel',
-			src: `https://img.logo.dev/airtel.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'airtel.com', retina: false }),
 			alt: 'Airtel logo',
 		},
 		{
 			name: 'vi',
-			src: `https://img.logo.dev/vodafone.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'vodafone.com', retina: false }),
 			alt: 'Vodafone logo',
 		},
 		{
 			name: 'vodafone',
-			src: `https://img.logo.dev/vodafone.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'vodafone.com', retina: false }),
 			alt: 'Vodafone logo',
 		},
 		{
 			name: 'bsnl',
-			src: `https://img.logo.dev/bsnl.co.in?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'bsnl.co.in', retina: false }),
 			alt: 'BSNL logo',
 		},
 	],
 	OTT: [
-		{
-			name: 'netflix',
-			src: `https://img.logo.dev/netflix.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Netflix logo',
-		},
+		{ name: 'netflix', src: getCachedLogoUrl({ domain: 'netflix.com' }), alt: 'Netflix logo' },
 		{
 			name: 'prime',
-			src: `https://img.logo.dev/primevideo.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'primevideo.com' }),
 			alt: 'Prime Video logo',
 		},
 		{
 			name: 'primevideo',
-			src: `https://img.logo.dev/primevideo.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'primevideo.com' }),
 			alt: 'Prime Video logo',
 		},
-		{
-			name: 'hotstar',
-			src: `https://img.logo.dev/hotstar.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Hotstar logo',
-		},
-		{
-			name: 'liv',
-			src: `https://img.logo.dev/sonyliv.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Sony LIV logo',
-		},
-		{
-			name: 'zee5',
-			src: `https://img.logo.dev/zee5.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'ZEE5 logo',
-		},
-		{
-			name: 'youtube',
-			src: `https://img.logo.dev/youtube.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'YouTube logo',
-		},
-		{
-			name: 'apple tv',
-			src: `https://img.logo.dev/apple.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Apple TV logo',
-		},
+		{ name: 'hotstar', src: getCachedLogoUrl({ domain: 'hotstar.com' }), alt: 'Hotstar logo' },
+		{ name: 'liv', src: getCachedLogoUrl({ domain: 'sonyliv.com' }), alt: 'Sony LIV logo' },
+		{ name: 'zee5', src: getCachedLogoUrl({ domain: 'zee5.com' }), alt: 'ZEE5 logo' },
+		{ name: 'youtube', src: getCachedLogoUrl({ domain: 'youtube.com' }), alt: 'YouTube logo' },
+		{ name: 'apple tv', src: getCachedLogoUrl({ domain: 'apple.com' }), alt: 'Apple TV logo' },
 	],
 	MUSIC: [
-		{
-			name: 'saavn',
-			src: `https://img.logo.dev/jiosaavn.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'jio Saavn logo',
-		},
+		{ name: 'saavn', src: getCachedLogoUrl({ domain: 'jiosaavn.com' }), alt: 'jio Saavn logo' },
 		{
 			name: 'jio saavn',
-			src: `https://img.logo.dev/jiosaavn.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'jiosaavn.com' }),
 			alt: 'jio Saavn logo',
 		},
-		{
-			name: 'spotify',
-			src: `https://img.logo.dev/spotify.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Spotify logo',
-		},
-		{
-			name: 'gaana',
-			src: `https://img.logo.dev/gaana.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Gaana.com logo',
-		},
-		{
-			name: 'apple',
-			src: `https://img.logo.dev/apple.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Apple logo',
-		},
-		{
-			name: 'youtube',
-			src: `https://img.logo.dev/youtube.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Google logo',
-		},
-		{
-			name: 'google',
-			src: `https://img.logo.dev/google.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Google logo',
-		},
+		{ name: 'spotify', src: getCachedLogoUrl({ domain: 'spotify.com' }), alt: 'Spotify logo' },
+		{ name: 'gaana', src: getCachedLogoUrl({ domain: 'gaana.com' }), alt: 'Gaana.com logo' },
+		{ name: 'apple', src: getCachedLogoUrl({ domain: 'apple.com' }), alt: 'Apple logo' },
+		{ name: 'youtube', src: getCachedLogoUrl({ domain: 'youtube.com' }), alt: 'Google logo' },
+		{ name: 'google', src: getCachedLogoUrl({ domain: 'google.com' }), alt: 'Google logo' },
 	],
 	INTERNET: [
-		{
-			name: 'jio',
-			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Jio Fiber logo',
-		},
-		{
-			name: 'reliance',
-			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Jio Fiber logo',
-		},
+		{ name: 'jio', src: getCachedLogoUrl({ domain: 'jio.com' }), alt: 'Jio Fiber logo' },
+		{ name: 'reliance', src: getCachedLogoUrl({ domain: 'jio.com' }), alt: 'Jio Fiber logo' },
 		{
 			name: 'airtel',
-			src: `https://img.logo.dev/airtel.in?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'airtel.in' }),
 			alt: 'Airtel Fiber logo',
 		},
 		{
 			name: 'tata play',
-			src: `https://img.logo.dev/tataplayfiber.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'tataplayfiber.com' }),
 			alt: 'Tata Play Fiber logo',
 		},
-		{
-			name: 'hathway',
-			src: `https://img.logo.dev/hathway.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Hathway logo',
-		},
-		{
-			name: 'bsnl',
-			src: `https://img.logo.dev/bsnl.co.in?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'BSNL Fiber logo',
-		},
+		{ name: 'hathway', src: getCachedLogoUrl({ domain: 'hathway.com' }), alt: 'Hathway logo' },
+		{ name: 'bsnl', src: getCachedLogoUrl({ domain: 'bsnl.co.in' }), alt: 'BSNL Fiber logo' },
 	],
 	DTH: [
 		{
 			name: 'tata play binge',
-			src: `https://img.logo.dev/tataplaybinge.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'tataplaybinge.com' }),
 			alt: 'Tata Play Binge logo',
 		},
 		{
 			name: 'tata play',
-			src: `https://img.logo.dev/tataplay.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'tataplay.com' }),
 			alt: 'Tata Play logo',
 		},
 		{
 			name: 'airtel',
-			src: `https://img.logo.dev/airtelxstream.in?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'airtelxstream.in' }),
 			alt: 'Airtel DTH logo',
 		},
-		{
-			name: 'dish tv',
-			src: `https://img.logo.dev/dishtv.in?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Dish TV logo',
-		},
-		{
-			name: 'dishtv',
-			src: `https://img.logo.dev/dishtv.in?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Dish TV logo',
-		},
-		{
-			name: 'jio',
-			src: `https://img.logo.dev/jio.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Jio logo',
-		},
+		{ name: 'dish tv', src: getCachedLogoUrl({ domain: 'dishtv.in' }), alt: 'Dish TV logo' },
+		{ name: 'dishtv', src: getCachedLogoUrl({ domain: 'dishtv.in' }), alt: 'Dish TV logo' },
+		{ name: 'jio', src: getCachedLogoUrl({ domain: 'jio.com' }), alt: 'Jio logo' },
 	],
-
 	CLOUD: [
 		{
 			name: 'google cloud',
-			src: `https://img.logo.dev/name/Google%20Cloud?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ name: 'Google Cloud' }),
 			alt: 'Google Cloud logo',
 		},
 		{
 			name: 'google play',
-			src: `https://img.logo.dev/google.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'google.com' }),
 			alt: 'Google logo',
 		},
-		{
-			name: 'aws',
-			src: `https://img.logo.dev/amazonaws.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'AWS logo',
-		},
-		{
-			name: 'dropbox',
-			src: `https://img.logo.dev/dropbox.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Dropbox logo',
-		},
-		{
-			name: 'icloud',
-			src: `https://img.logo.dev/icloud.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'iCloud logo',
-		},
+		{ name: 'aws', src: getCachedLogoUrl({ domain: 'amazonaws.com' }), alt: 'AWS logo' },
+		{ name: 'dropbox', src: getCachedLogoUrl({ domain: 'dropbox.com' }), alt: 'Dropbox logo' },
+		{ name: 'icloud', src: getCachedLogoUrl({ domain: 'icloud.com' }), alt: 'iCloud logo' },
 		{
 			name: 'microsoft',
-			src: `https://img.logo.dev/microsoft.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'microsoft.com' }),
 			alt: 'Microsoft logo',
 		},
 		{
 			name: 'onedrive',
-			src: `https://img.logo.dev/onedrive.com.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'onedrive.com.com' }),
 			alt: 'Microsoft logo',
 		},
 		{
 			name: 'one drive',
-			src: `https://img.logo.dev/onedrive.com.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'onedrive.com.com' }),
 			alt: 'Microsoft logo',
 		},
 	],
-
 	SOFTWARE: [
-		{
-			name: 'adobe',
-			src: `https://img.logo.dev/adobe.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Adobe logo',
-		},
+		{ name: 'adobe', src: getCachedLogoUrl({ domain: 'adobe.com' }), alt: 'Adobe logo' },
 		{
 			name: 'microsoft',
-			src: `https://img.logo.dev/microsoft.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'microsoft.com' }),
 			alt: 'Microsoft logo',
 		},
-		{
-			name: 'figma',
-			src: `https://img.logo.dev/figma.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'Figma logo',
-		},
-		{
-			name: 'chatgpt',
-			src: `https://img.logo.dev/openai.com?token=${LOGO_API_KEY}&format=png&retina=true`,
-			alt: 'OpenAI logo',
-		},
+		{ name: 'figma', src: getCachedLogoUrl({ domain: 'figma.com' }), alt: 'Figma logo' },
+		{ name: 'chatgpt', src: getCachedLogoUrl({ domain: 'openai.com' }), alt: 'OpenAI logo' },
 		{
 			name: 'office365',
-			src: `https://img.logo.dev/office365.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'office365.com' }),
 			alt: 'Office 365 logo',
 		},
 		{
 			name: 'office 365',
-			src: `https://img.logo.dev/office365.com?token=${LOGO_API_KEY}&format=png&retina=true`,
+			src: getCachedLogoUrl({ domain: 'office365.com' }),
 			alt: 'Office 365 logo',
 		},
 		{
 			name: 'google',
-			src: `https://img.logo.dev/google.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'google.com', retina: false }),
 			alt: 'Google One logo',
 		},
 		{
 			name: 'apple',
-			src: `https://img.logo.dev/apple.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'apple.com', retina: false }),
 			alt: 'Apple logo',
 		},
 	],
-
 	GAMING: [
 		{
 			name: 'xbox',
-			src: `https://img.logo.dev/xbox.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'xbox.com', retina: false }),
 			alt: 'Xbox logo',
 		},
 		{
 			name: 'playstation',
-			src: `https://img.logo.dev/playstation.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'playstation.com', retina: false }),
 			alt: 'PlayStation logo',
 		},
 		{
 			name: 'steam',
-			src: `https://img.logo.dev/steampowered.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'steampowered.com', retina: false }),
 			alt: 'Steam logo',
 		},
 		{
 			name: 'epic',
-			src: `https://img.logo.dev/epicgames.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'epicgames.com', retina: false }),
 			alt: 'Epic Games logo',
 		},
 		{
 			name: 'rockstar',
-			src: `https://img.logo.dev/rockstargames.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'rockstargames.com', retina: false }),
 			alt: 'Rockstar Games logo',
 		},
 	],
-
 	OTHER: [
 		{
 			name: 'google',
-			src: `https://img.logo.dev/google.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'google.com', retina: false }),
 			alt: 'Google One logo',
 		},
 		{
 			name: 'apple',
-			src: `https://img.logo.dev/apple.com?token=${LOGO_API_KEY}&format=png`,
+			src: getCachedLogoUrl({ domain: 'apple.com', retina: false }),
 			alt: 'Apple logo',
 		},
 	],
@@ -348,10 +244,8 @@ export function resolveLogo(
 	alt?: string;
 	Icon?: LucideIcon;
 } {
-	// STEP 1: Try category-specific brand match
 	if (provider && category in brandsInCategory) {
 		const brands = brandsInCategory[category];
-
 		const match = brands.find((brand) =>
 			provider.toLowerCase().includes(brand.name.toLowerCase())
 		);
@@ -365,7 +259,6 @@ export function resolveLogo(
 		}
 	}
 
-	// STEP 2: fallback to category icon
 	return {
 		type: 'icon',
 		Icon: getCategoryIcon(category),
@@ -377,28 +270,20 @@ function getCategoryIcon(category: string): LucideIcon {
 		case 'SIM_PREPAID':
 		case 'SIM_POSTPAID':
 			return CardSim;
-
 		case 'OTT':
 			return TvMinimalPlay;
-
 		case 'DTH':
 			return SatelliteDish;
-
 		case 'MUSIC':
 			return Music;
-
 		case 'INTERNET':
 			return Router;
-
 		case 'CLOUD':
 			return CloudUpload;
-
 		case 'GAMING':
 			return Gamepad2;
-
 		case 'SOFTWARE':
 			return Disc3;
-
 		default:
 			return Package;
 	}
