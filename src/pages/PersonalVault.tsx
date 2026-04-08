@@ -39,7 +39,7 @@ import {
 } from '@/components/ui/table';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
 import { StartDatePicker } from '@/components/subscription/StartDatePicker';
-import { IndianRupee, KeyRound } from 'lucide-react';
+import { IndianRupee, LockKeyhole } from 'lucide-react';
 import { resolveInvestmentLogo } from '@/utils/investmentBrand';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/auth/AuthContext';
@@ -144,7 +144,7 @@ export default function PersonalVault() {
 								severity="info"
 								fallbackTitle="Your vault is private by design"
 								fallbackMessage="Your investment details are end-to-end encrypted, so only you can unlock and view the full record. To send reminders at the right time, we securely store only a few basic details needed for alerts and emails."
-								icon={KeyRound}
+								icon={LockKeyhole}
 							/>
 						</div>
 						<h1 className="text-4xl font-semibold text-background">
