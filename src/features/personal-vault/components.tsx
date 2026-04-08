@@ -633,7 +633,7 @@ function InvestmentMobileCard({
 
 	return (
 		<Card className={getVaultRecordCardClassName(record)}>
-			<CardHeader className="space-y-4">
+			<CardHeader className="space-y-4 p-4">
 				<div className="flex items-start justify-between gap-3">
 					<div className="flex items-center gap-3">
 						<InstitutionMark logo={logo} institutionName={record.institutionName} />
@@ -652,7 +652,7 @@ function InvestmentMobileCard({
 					<TypeBadge type={record.type} />
 				</div>
 			</CardHeader>
-			<CardContent className="space-y-4">
+			<CardContent className="space-y-4 p-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 					<DetailTile
 						label="Amount"
@@ -816,7 +816,7 @@ export function InstitutionMark({
 				<img
 					src={logo.src}
 					alt={logo.alt ?? `${institutionName} logo`}
-					className="h-14 w-14 object-contain"
+					className="h-12 w-12 object-contain"
 					onError={() => setImageFailed(true)}
 				/>
 			) : logo.Icon ? (
