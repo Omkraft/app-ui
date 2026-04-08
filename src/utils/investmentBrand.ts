@@ -54,10 +54,6 @@ const investmentBrands: { name: string; src: string; alt: string }[] = [
 	},
 ];
 
-function getFallbackLogoUrl(institutionName: string) {
-	return getCachedLogoUrl({ name: institutionName });
-}
-
 export function resolveInvestmentLogo(institutionName: string): {
 	type: 'image' | 'icon';
 	src?: string;
@@ -74,14 +70,6 @@ export function resolveInvestmentLogo(institutionName: string): {
 			type: 'image',
 			src: match.src,
 			alt: match.alt,
-		};
-	}
-
-	if (institutionName.trim()) {
-		return {
-			type: 'image',
-			src: getFallbackLogoUrl(institutionName.trim()),
-			alt: `${institutionName.trim()} logo`,
 		};
 	}
 

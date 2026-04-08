@@ -219,7 +219,7 @@ export default function PersonalVault() {
 				<div className="app-container grid gap-6">
 					<Tabs defaultValue="all" className="w-full">
 						<Card className="border-primary bg-foreground text-background shadow-sm">
-							<CardHeader className="gap-4 border-b border-[var(--omkraft-blue-200)]">
+							<CardHeader className="gap-4 border-b border-[var(--omkraft-blue-200)] p-4 lg:p-6">
 								<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 									<div className="space-y-2">
 										<CardTitle className="text-2xl text-background">
