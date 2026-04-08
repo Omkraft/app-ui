@@ -49,7 +49,13 @@ import {
 } from '@/components/ui/table';
 import { resolveInvestmentLogo } from '@/utils/investmentBrand';
 import type { InvestmentFormState, InvestmentRecord, InvestmentType } from './types';
-import { CurrencyValue, formatDate, formatRate, getInitialFormState } from './utils';
+import {
+	CurrencyValue,
+	formatDate,
+	formatRate,
+	getInitialFormState,
+	getInvestmentAttentionState,
+} from './utils';
 
 export const vaultStatIcons = {
 	active: WalletCards,
@@ -150,12 +156,18 @@ export function VaultRecordsSection({
 					</TableHeader>
 					<TableBody>
 						{records.map((record) => (
+							// Highlight records that are close to maturity or already matured.
 							<TableRow
 								key={record.id}
-								className="border-[var(--omkraft-mint-100)] bg-foreground/60"
+								className={getVaultRecordRowClassName(record)}
 							>
 								<TableCell className="font-medium text-background">
-									{record.institutionName}
+									<div className="flex items-center gap-2">
+										<span>{record.institutionName}</span>
+										<MaturityAttentionBadge
+											maturityDate={record.maturityDate}
+										/>
+									</div>
 								</TableCell>
 								<TableCell className="text-background">
 									{record.holderNames.join(', ')}
@@ -605,7 +617,7 @@ function InvestmentMobileCard({
 	const logo = resolveInvestmentLogo(record.institutionName);
 
 	return (
-		<Card className="border-accent bg-foreground text-background shadow-sm">
+		<Card className={getVaultRecordCardClassName(record)}>
 			<CardHeader className="space-y-4">
 				<div className="flex items-start justify-between gap-3">
 					<div className="flex items-center gap-3">
@@ -617,6 +629,9 @@ function InvestmentMobileCard({
 							<CardDescription className="mt-1 text-background">
 								{record.holderNames.join(', ')}
 							</CardDescription>
+							<div className="mt-2">
+								<MaturityAttentionBadge maturityDate={record.maturityDate} />
+							</div>
 						</div>
 					</div>
 					<TypeBadge type={record.type} />
@@ -792,4 +807,54 @@ export function InstitutionMark({
 			)}
 		</div>
 	);
+}
+
+function getVaultRecordRowClassName(record: InvestmentRecord) {
+	const attentionState = getInvestmentAttentionState(record.maturityDate);
+
+	if (attentionState === 'matured') {
+		return 'border-[var(--omkraft-red-200)] bg-[var(--omkraft-red-50)]/60';
+	}
+
+	if (attentionState === 'maturing-soon') {
+		return 'border-[var(--omkraft-yellow-300)] bg-[var(--omkraft-yellow-50)]/70';
+	}
+
+	return 'border-[var(--omkraft-mint-100)] bg-foreground/60';
+}
+
+function getVaultRecordCardClassName(record: InvestmentRecord) {
+	const attentionState = getInvestmentAttentionState(record.maturityDate);
+
+	if (attentionState === 'matured') {
+		return 'border-[var(--omkraft-red-200)] bg-[var(--omkraft-red-50)] text-background shadow-sm';
+	}
+
+	if (attentionState === 'maturing-soon') {
+		return 'border-[var(--omkraft-yellow-300)] bg-[var(--omkraft-yellow-50)] text-background shadow-sm';
+	}
+
+	return 'border-accent bg-foreground text-background shadow-sm';
+}
+
+function MaturityAttentionBadge({ maturityDate }: { maturityDate: string }) {
+	const attentionState = getInvestmentAttentionState(maturityDate);
+
+	if (attentionState === 'matured') {
+		return (
+			<Badge className="border-transparent bg-[var(--omkraft-red-100)] text-[var(--omkraft-red-800)] shadow-none">
+				Matured
+			</Badge>
+		);
+	}
+
+	if (attentionState === 'maturing-soon') {
+		return (
+			<Badge className="border-transparent bg-[var(--omkraft-yellow-100)] text-[var(--omkraft-yellow-900)] shadow-none">
+				Maturing soon
+			</Badge>
+		);
+	}
+
+	return null;
 }

@@ -7,7 +7,13 @@ export interface Notification {
 
 	message: string;
 
-	type: 'SUBSCRIPTION_DUE' | 'SUBSCRIPTION_OVERDUE' | 'SUBSCRIPTION_PAID' | string;
+	type:
+		| 'SUBSCRIPTION_DUE'
+		| 'SUBSCRIPTION_OVERDUE'
+		| 'SUBSCRIPTION_PAID'
+		| 'INVESTMENT_MATURITY_REMINDER'
+		| 'INVESTMENT_MATURITY_DUE'
+		| string;
 
 	read: boolean;
 
@@ -16,6 +22,9 @@ export interface Notification {
 	metadata?: {
 		subscriptionId?: string;
 		subscriptionName?: string;
+		investmentId?: string;
+		institutionName?: string;
+		investmentType?: 'FD' | 'RD' | string;
 	};
 }
 
@@ -31,6 +40,6 @@ export function fetchNotifications() {
  */
 export function markNotificationRead(id: string) {
 	return apiRequest(`/api/notifications/${id}/read`, {
-		method: 'PATCH',
+		method: 'PUT',
 	});
 }

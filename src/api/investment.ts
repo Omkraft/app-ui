@@ -6,6 +6,11 @@ export interface EncryptedInvestmentPayload {
 	encryptionAlgorithm: string;
 	keyDerivation: string;
 	encryptionVersion: number;
+	reminderMetadata: {
+		maturityDate: string;
+		institutionName: string;
+		investmentType: 'FD' | 'RD';
+	};
 }
 
 export interface EncryptedInvestmentRecord extends EncryptedInvestmentPayload {

@@ -1,12 +1,13 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { fetchNotifications, type Notification } from '@/api/notification';
+import { fetchNotifications, markNotificationRead, type Notification } from '@/api/notification';
 import { reportUiError } from '@/lib/error';
 
 type NotificationContextType = {
 	notifications: Notification[];
 	unreadCount: number;
 	refreshNotifications: () => Promise<void>;
+	markAsRead: (notificationId: string) => Promise<void>;
 };
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -38,6 +39,26 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 			reportUiError('notifications:fetch', error);
 		}
 	}, []);
+
+	const markAsRead = useCallback(
+		async (notificationId: string) => {
+			setNotifications((prev) =>
+				prev.map((notification) =>
+					notification._id === notificationId
+						? { ...notification, read: true }
+						: notification
+				)
+			);
+
+			try {
+				await markNotificationRead(notificationId);
+			} catch (error) {
+				reportUiError('notifications:mark-read', error, { notificationId });
+				await refreshNotifications();
+			}
+		},
+		[refreshNotifications]
+	);
 
 	useEffect(() => {
 		refreshNotifications();
@@ -122,6 +143,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 				notifications,
 				unreadCount,
 				refreshNotifications,
+				markAsRead,
 			}}
 		>
 			{children}

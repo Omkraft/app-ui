@@ -272,8 +272,8 @@ export default function Dashboard() {
 							<div className="lg:hidden space-y-3">
 								<p>Track your fixed and recurring deposits in one secure place.</p>
 								<p>
-									Review maturity details, monitor returns, and keep both FD and
-									RD records organized with end-to-end encrypted storage.
+									Review maturity details, monitor returns, and get timely alerts
+									while your full records stay end-to-end encrypted.
 								</p>
 							</div>
 
@@ -288,8 +288,9 @@ export default function Dashboard() {
 									reference details easy to review in the same workflow.
 								</p>
 								<p>
-									Your records are encrypted before storage, so privacy is built
-									into the tracker instead of being an afterthought.
+									Your full records stay end-to-end encrypted, while only the
+									minimum reminder schedule needed for maturity alerts is kept
+									ready in the background.
 								</p>
 								<p>Simple visibility first. Better financial clarity every day.</p>
 							</div>
@@ -303,6 +304,7 @@ export default function Dashboard() {
 								<li>
 									Keep sensitive deposit data protected with end-to-end encryption
 								</li>
+								<li>Receive maturity reminders before the date arrives</li>
 							</ul>
 
 							<div className="flex flex-col lg:flex-row gap-4 pt-4">

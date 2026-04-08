@@ -140,10 +140,10 @@ export default function PersonalVault() {
 							}
 						>
 							<OmkraftAlert
-								error="Your investment details are end-to-end encrypted, which means they stay private and protected. Only you can unlock and view your records, giving you a safe place to keep important deposit information in one place."
+								error="Your investment details are end-to-end encrypted, so only you can unlock and view the full record. To send reminders at the right time, we securely store only a few basic details needed for alerts and emails."
 								severity="info"
 								fallbackTitle="Your vault is private by design"
-								fallbackMessage="Your investment details are end-to-end encrypted, which means they stay private and protected. Only you can unlock and view your records, giving you a safe place to keep important deposit information in one place."
+								fallbackMessage="Your investment details are end-to-end encrypted, so only you can unlock and view the full record. To send reminders at the right time, we securely store only a few basic details needed for alerts and emails."
 								icon={KeyRound}
 							/>
 						</div>
