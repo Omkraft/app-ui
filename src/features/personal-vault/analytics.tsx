@@ -1,6 +1,16 @@
 import { useMemo } from 'react';
 import { ChevronDown, IndianRupee } from 'lucide-react';
-import { CartesianGrid, Cell, Line, LineChart, Pie, PieChart, XAxis, YAxis } from 'recharts';
+import {
+	CartesianGrid,
+	Cell,
+	Legend,
+	Line,
+	LineChart,
+	Pie,
+	PieChart,
+	XAxis,
+	YAxis,
+} from 'recharts';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
@@ -200,13 +210,17 @@ function VaultMaturityTrendChart({
 					Track how invested value and maturity value are distributed by month.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="p-4 sm:p-6">
+			<CardContent className="p-4 sm:p-6 overflow-visible">
 				<ChartContainer config={chartConfig} className="w-full min-w-0 h-[320px]">
 					<LineChart data={data}>
 						<CartesianGrid strokeDasharray="3 3" />
-						<XAxis dataKey="month" tickLine={false} axisLine={false} />
-						<YAxis tickLine={false} axisLine={false} />
+						<XAxis dataKey="month" />
+						<YAxis />
 						<ChartTooltip
+							cursor={{
+								stroke: 'var(--omkraft-primary)',
+								strokeWidth: 2,
+							}}
 							content={
 								<ChartTooltipContent
 									formatter={(value, name) => (
@@ -223,6 +237,7 @@ function VaultMaturityTrendChart({
 								/>
 							}
 						/>
+						<Legend formatter={(value) => getChartLabel(String(value))} />
 						<Line
 							type="monotone"
 							dataKey="invested"
@@ -230,6 +245,12 @@ function VaultMaturityTrendChart({
 							strokeWidth={3}
 							dot={{
 								r: 4,
+								fill: 'var(--color-invested)',
+								stroke: 'var(--color-background)',
+								strokeWidth: 2,
+							}}
+							activeDot={{
+								r: 6,
 								fill: 'var(--color-invested)',
 								stroke: 'var(--color-background)',
 								strokeWidth: 2,
@@ -242,6 +263,12 @@ function VaultMaturityTrendChart({
 							strokeWidth={3}
 							dot={{
 								r: 4,
+								fill: 'var(--color-maturityValue)',
+								stroke: 'var(--color-background)',
+								strokeWidth: 2,
+							}}
+							activeDot={{
+								r: 6,
 								fill: 'var(--color-maturityValue)',
 								stroke: 'var(--color-background)',
 								strokeWidth: 2,
