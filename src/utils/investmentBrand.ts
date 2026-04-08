@@ -4,27 +4,32 @@ import { getCachedLogoUrl } from './logoProxy';
 const investmentBrands: { name: string; src: string; alt: string }[] = [
 	{
 		name: 'Bajaj Finance',
-		src: getCachedLogoUrl({ name: 'Bajaj Finance' }),
+		src: getCachedLogoUrl({ domain: 'bajajfinserv.in' }),
 		alt: 'Bajaj Finance logo',
 	},
 	{
+		name: 'Bajaj Finserv',
+		src: getCachedLogoUrl({ domain: 'bajajfinserv.in' }),
+		alt: 'Bajaj Finserv logo',
+	},
+	{
 		name: 'bank of india',
-		src: getCachedLogoUrl({ domain: 'Bank of India' }),
+		src: getCachedLogoUrl({ domain: 'bankofindia.com' }),
 		alt: 'Bank of India logo',
 	},
 	{
 		name: 'boi',
-		src: getCachedLogoUrl({ domain: 'Bank of India' }),
+		src: getCachedLogoUrl({ domain: 'bankofindia.com' }),
 		alt: 'Bank of India logo',
 	},
 	{
 		name: 'state bank of india',
-		src: getCachedLogoUrl({ name: 'SBI' }),
+		src: getCachedLogoUrl({ domain: 'sbi.co.in' }),
 		alt: 'State Bank of India logo',
 	},
 	{
 		name: 'sbi',
-		src: getCachedLogoUrl({ name: 'SBI' }),
+		src: getCachedLogoUrl({ domain: 'sbi.co.in' }),
 		alt: 'State Bank of India logo',
 	},
 	{
