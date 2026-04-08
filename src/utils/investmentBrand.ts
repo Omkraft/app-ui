@@ -13,16 +13,6 @@ const investmentBrands: { name: string; src: string; alt: string }[] = [
 		alt: 'Bajaj Finserv logo',
 	},
 	{
-		name: 'bank of india',
-		src: getCachedLogoUrl({ domain: 'bankofindia.com' }),
-		alt: 'Bank of India logo',
-	},
-	{
-		name: 'boi',
-		src: getCachedLogoUrl({ domain: 'bankofindia.com' }),
-		alt: 'Bank of India logo',
-	},
-	{
 		name: 'state bank of india',
 		src: getCachedLogoUrl({ domain: 'sbi.co.in' }),
 		alt: 'State Bank of India logo',
@@ -44,8 +34,23 @@ const investmentBrands: { name: string; src: string; alt: string }[] = [
 	},
 	{
 		name: 'axis',
-		src: getCachedLogoUrl({ domain: 'axisbank.com' }),
+		src: getCachedLogoUrl({ domain: 'axis.bank.in' }),
 		alt: 'Axis Bank logo',
+	},
+	{
+		name: 'mahindra finance',
+		src: getCachedLogoUrl({ domain: 'mahindrafinance.com' }),
+		alt: 'Mahindra Finance logo',
+	},
+	{
+		name: 'Shriram Finance',
+		src: getCachedLogoUrl({ domain: 'shriramfinance.in' }),
+		alt: 'Shriram Finance logo',
+	},
+	{
+		name: 'Canara Bank',
+		src: getCachedLogoUrl({ domain: 'canarabank.bank.in' }),
+		alt: 'Canara Bank logo',
 	},
 ];
 
