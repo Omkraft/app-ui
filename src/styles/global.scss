@@ -242,6 +242,47 @@ button,
 	}
 }
 
+@keyframes alert-border-ripple {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	70% {
+		opacity: 0;
+		transform: scale(1.1);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(1.14);
+	}
+}
+
+.alert-ripple-frame {
+	position: relative;
+	isolation: isolate;
+}
+
+.alert-ripple-frame::before,
+.alert-ripple-frame::after {
+	content: '';
+	position: absolute;
+	inset: -4px;
+	border-radius: inherit;
+	border: 1px solid var(--alert-ripple-color, var(--info-border));
+	pointer-events: none;
+	box-shadow: none;
+	opacity: 0;
+	transform: scale(1);
+}
+
+.alert-ripple-frame::before {
+	animation: alert-border-ripple 2.4s ease-out 5;
+}
+
+.alert-ripple-frame::after {
+	animation: alert-border-ripple 2.4s ease-out 1.2s 5;
+}
+
 .moon-phase-current-card {
 	position: relative;
 	border-color: rgba(255, 255, 255, 0.98);

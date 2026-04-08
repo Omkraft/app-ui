@@ -25,6 +25,7 @@ const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Utility = lazy(() => import('./pages/Utility'));
 const Panchang = lazy(() => import('./pages/Panchang'));
+const PersonalVault = lazy(() => import('./pages/PersonalVault'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 const EditProfile = lazy(() => import('./pages/EditProfile'));
 const ManageUsers = lazy(() => import('./pages/ManageUsers'));
@@ -190,6 +191,15 @@ export default function App() {
 							element={
 								<ProtectedRoute>
 									<Panchang />
+								</ProtectedRoute>
+							}
+						/>
+
+						<Route
+							path="/vault"
+							element={
+								<ProtectedRoute>
+									<PersonalVault />
 								</ProtectedRoute>
 							}
 						/>

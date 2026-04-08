@@ -1,6 +1,7 @@
 import { apiRequest } from './client';
 
 export interface User {
+	id?: string;
 	firstName: string;
 	lastName: string;
 	email: string;
@@ -45,5 +46,12 @@ export function resetPassword(email: string, otp: string, password: string) {
 	return apiRequest('/api/auth/reset-password', {
 		method: 'POST',
 		body: JSON.stringify({ email, otp, password }),
+	});
+}
+
+export function verifyPassword(password: string) {
+	return apiRequest<void>('/api/auth/verify-password', {
+		method: 'POST',
+		body: JSON.stringify({ password }),
 	});
 }

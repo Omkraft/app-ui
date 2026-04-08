@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/context/auth/AuthContext';
 import { login as loginApi } from '@/api/auth';
+import { storeVaultSessionKey } from '@/lib/investmentVaultCrypto';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -37,6 +38,7 @@ export default function Login() {
 		try {
 			setLoading(true);
 			const { token, user } = await loginApi(email, password);
+			await storeVaultSessionKey(password, user.id ?? user.email);
 			login(token, user);
 		} catch (err) {
 			error = err instanceof Error ? err : 'Login failed. Please try again.';

@@ -10,9 +10,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 type Props = {
 	value?: Date;
 	onChange: (date: Date) => void;
+	placeholder?: string;
 };
 
-export function StartDatePicker({ value, onChange }: Props) {
+export function StartDatePicker({ value, onChange, placeholder = 'Select start date' }: Props) {
 	const [open, setOpen] = React.useState(false);
 
 	return (
@@ -26,7 +27,7 @@ export function StartDatePicker({ value, onChange }: Props) {
 					)}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-					{value ? format(value, 'PPP') : <span>Select start date</span>}
+					{value ? format(value, 'PPP') : <span>{placeholder}</span>}
 				</Button>
 			</PopoverTrigger>
 
