@@ -15,6 +15,9 @@ type Props = {
 
 export function StartDatePicker({ value, onChange, placeholder = 'Select start date' }: Props) {
 	const [open, setOpen] = React.useState(false);
+	const currentYear = new Date().getFullYear();
+	const startMonth = new Date(currentYear - 100, 0);
+	const endMonth = new Date(currentYear + 25, 11);
 
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
@@ -39,6 +42,9 @@ export function StartDatePicker({ value, onChange, placeholder = 'Select start d
 					mode="single"
 					selected={value}
 					className="rounded-xl bg-[var(--omkraft-blue-700)]"
+					captionLayout="dropdown"
+					startMonth={startMonth}
+					endMonth={endMonth}
 					onSelect={(date) => {
 						if (!date) return;
 
