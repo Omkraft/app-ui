@@ -16,54 +16,54 @@ const brandsInCategory: Record<string, { name: string; src: string; alt: string 
 	SIM_PREPAID: [
 		{
 			name: 'jio',
-			src: getCachedLogoUrl({ domain: 'jio.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'jio.com' }),
 			alt: 'Jio logo',
 		},
 		{
 			name: 'airtel',
-			src: getCachedLogoUrl({ domain: 'airtel.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'airtel.com' }),
 			alt: 'Airtel logo',
 		},
 		{
 			name: 'vi',
-			src: getCachedLogoUrl({ domain: 'vodafone.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'vodafone.com' }),
 			alt: 'Vodafone logo',
 		},
 		{
 			name: 'vodafone',
-			src: getCachedLogoUrl({ domain: 'vodafone.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'vodafone.com' }),
 			alt: 'Vodafone logo',
 		},
 		{
 			name: 'bsnl',
-			src: getCachedLogoUrl({ domain: 'bsnl.co.in', retina: false }),
+			src: getCachedLogoUrl({ domain: 'bsnl.co.in' }),
 			alt: 'BSNL logo',
 		},
 	],
 	SIM_POSTPAID: [
 		{
 			name: 'jio',
-			src: getCachedLogoUrl({ domain: 'jio.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'jio.com' }),
 			alt: 'Jio logo',
 		},
 		{
 			name: 'airtel',
-			src: getCachedLogoUrl({ domain: 'airtel.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'airtel.com' }),
 			alt: 'Airtel logo',
 		},
 		{
 			name: 'vi',
-			src: getCachedLogoUrl({ domain: 'vodafone.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'vodafone.com' }),
 			alt: 'Vodafone logo',
 		},
 		{
 			name: 'vodafone',
-			src: getCachedLogoUrl({ domain: 'vodafone.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'vodafone.com' }),
 			alt: 'Vodafone logo',
 		},
 		{
 			name: 'bsnl',
-			src: getCachedLogoUrl({ domain: 'bsnl.co.in', retina: false }),
+			src: getCachedLogoUrl({ domain: 'bsnl.co.in' }),
 			alt: 'BSNL logo',
 		},
 	],
@@ -185,51 +185,51 @@ const brandsInCategory: Record<string, { name: string; src: string; alt: string 
 		},
 		{
 			name: 'google',
-			src: getCachedLogoUrl({ domain: 'google.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'google.com' }),
 			alt: 'Google One logo',
 		},
 		{
 			name: 'apple',
-			src: getCachedLogoUrl({ domain: 'apple.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'apple.com' }),
 			alt: 'Apple logo',
 		},
 	],
 	GAMING: [
 		{
 			name: 'xbox',
-			src: getCachedLogoUrl({ domain: 'xbox.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'xbox.com' }),
 			alt: 'Xbox logo',
 		},
 		{
 			name: 'playstation',
-			src: getCachedLogoUrl({ domain: 'playstation.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'playstation.com' }),
 			alt: 'PlayStation logo',
 		},
 		{
 			name: 'steam',
-			src: getCachedLogoUrl({ domain: 'steampowered.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'steampowered.com' }),
 			alt: 'Steam logo',
 		},
 		{
 			name: 'epic',
-			src: getCachedLogoUrl({ domain: 'epicgames.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'epicgames.com' }),
 			alt: 'Epic Games logo',
 		},
 		{
 			name: 'rockstar',
-			src: getCachedLogoUrl({ domain: 'rockstargames.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'rockstargames.com' }),
 			alt: 'Rockstar Games logo',
 		},
 	],
 	OTHER: [
 		{
 			name: 'google',
-			src: getCachedLogoUrl({ domain: 'google.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'google.com' }),
 			alt: 'Google One logo',
 		},
 		{
 			name: 'apple',
-			src: getCachedLogoUrl({ domain: 'apple.com', retina: false }),
+			src: getCachedLogoUrl({ domain: 'apple.com' }),
 			alt: 'Apple logo',
 		},
 	],
