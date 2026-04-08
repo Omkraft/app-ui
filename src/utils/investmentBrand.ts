@@ -9,12 +9,12 @@ const investmentBrands: { name: string; src: string; alt: string }[] = [
 	},
 	{
 		name: 'bank of india',
-		src: getCachedLogoUrl({ domain: 'bankofindia.com' }),
+		src: getCachedLogoUrl({ domain: 'Bank of India' }),
 		alt: 'Bank of India logo',
 	},
 	{
 		name: 'boi',
-		src: getCachedLogoUrl({ domain: 'bankofindia.com' }),
+		src: getCachedLogoUrl({ domain: 'Bank of India' }),
 		alt: 'Bank of India logo',
 	},
 	{

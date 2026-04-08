@@ -1,4 +1,4 @@
-import { type CSSProperties, useState } from 'react';
+import { type CSSProperties, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
 	Breadcrumb,
@@ -63,6 +63,7 @@ import type {
 	RdMaturityInstruction,
 } from '@/features/personal-vault/types';
 import { usePersonalVault } from '@/features/personal-vault/usePersonalVault';
+import { VaultAnalyticsSection } from '@/features/personal-vault/analytics';
 import {
 	buildRdProjection,
 	CurrencyValue,
@@ -75,6 +76,7 @@ import {
 } from '@/features/personal-vault/utils';
 
 export default function PersonalVault() {
+	const [analyticsOpen, setAnalyticsOpen] = useState(window.innerWidth >= 1024);
 	const { user } = useAuth();
 	const userVaultId = user?.id ?? user?.email ?? '';
 	const {
@@ -184,7 +186,7 @@ export default function PersonalVault() {
 				</div>
 			</section>
 
-			<section className="py-6 bg-[var(--omkraft-mint-200)]">
+			<section className="py-6 bg-[var(--omkraft-mint-700)]">
 				<div className="app-container grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
 					<StatCard
 						label="Active deposits"
@@ -216,8 +218,8 @@ export default function PersonalVault() {
 			<section className="py-6">
 				<div className="app-container grid gap-6">
 					<Tabs defaultValue="all" className="w-full">
-						<Card className="border-[var(--omkraft-blue-200)] bg-foreground text-background shadow-sm">
-							<CardHeader className="gap-4 border-b border-[var(--omkraft-blue-100)]">
+						<Card className="border-primary bg-foreground text-background shadow-sm">
+							<CardHeader className="gap-4 border-b border-[var(--omkraft-blue-200)]">
 								<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 									<div className="space-y-2">
 										<CardTitle className="text-2xl text-background">
@@ -303,6 +305,15 @@ export default function PersonalVault() {
 				</div>
 			</section>
 
+			<VaultAnalyticsSection
+				open={analyticsOpen}
+				onOpenChange={setAnalyticsOpen}
+				records={allRecords}
+				loading={loading}
+				vaultUnlocked={vaultUnlocked}
+				onUnlock={() => setUnlockDialogOpen(true)}
+			/>
+
 			<InvestmentDetailsDialog
 				record={selectedRecord}
 				open={Boolean(selectedRecord)}
@@ -375,6 +386,14 @@ function InvestmentFormDialog({
 	const setDialogOpen = onOpenChange ?? setLocalOpen;
 	const isRd = form.type === 'RD';
 	const rdProjection = isRd ? buildRdProjection(form) : null;
+
+	useEffect(() => {
+		if (!dialogOpen) {
+			return;
+		}
+
+		setForm(getInitialFormState(record));
+	}, [dialogOpen, record]);
 
 	return (
 		<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
