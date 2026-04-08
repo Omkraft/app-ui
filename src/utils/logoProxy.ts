@@ -5,18 +5,18 @@ type LogoProxyInput =
 	| { name: string; domain?: never; format?: string; retina?: boolean };
 
 export function getCachedLogoUrl(input: LogoProxyInput) {
-	const searchParams = new URLSearchParams();
+	const params: string[] = [];
 
 	if ('domain' in input && input.domain) {
-		searchParams.set('domain', input.domain);
+		params.push(`domain=${encodeURIComponent(input.domain)}`);
 	}
 
 	if ('name' in input && input.name) {
-		searchParams.set('name', input.name);
+		params.push(`name=${encodeURIComponent(input.name)}`);
 	}
 
-	searchParams.set('format', input.format ?? 'png');
-	searchParams.set('retina', String(input.retina ?? true));
+	params.push(`format=${encodeURIComponent(input.format ?? 'png')}`);
+	params.push(`retina=${encodeURIComponent(String(input.retina ?? true))}`);
 
-	return `${API_BASE_URL}/api/logo?${searchParams.toString()}`;
+	return `${API_BASE_URL}/api/logo?${params.join('&')}`;
 }

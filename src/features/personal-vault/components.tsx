@@ -1,7 +1,8 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import {
 	ArrowRight,
 	BadgeIndianRupee,
+	Building2,
 	ChartNoAxesColumn,
 	Ellipsis,
 	Eye,
@@ -84,7 +85,7 @@ export function StatCard({
 					<p className="text-xs text-[var(--omkraft-navy-700)]">{helper}</p>
 				</div>
 				<div className="rounded-2xl bg-[var(--omkraft-mint-100)] p-3 text-accent">
-					<Icon className="size-5" />
+					<Icon className="size-6" />
 				</div>
 			</CardContent>
 		</Card>
@@ -135,19 +136,19 @@ export function VaultRecordsSection({
 								Holders
 							</TableHead>
 							<TableHead className="text-[var(--omkraft-navy-700)]">
-								Deposit Dt
+								Deposit Date
 							</TableHead>
 							<TableHead className="text-[var(--omkraft-navy-700)]">
-								Maturity Dt
+								Maturity Date
 							</TableHead>
 							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
-								Amount Inv
+								Amount Invested
 							</TableHead>
 							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
 								ROI
 							</TableHead>
 							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
-								Mat Amt
+								Maturity Amount
 							</TableHead>
 							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
 								Action
@@ -248,6 +249,14 @@ export function InvestmentFormDialog({
 
 	const dialogOpen = open ?? localOpen;
 	const setDialogOpen = onOpenChange ?? setLocalOpen;
+
+	useEffect(() => {
+		if (!dialogOpen) {
+			return;
+		}
+
+		setForm(getInitialFormState(record));
+	}, [dialogOpen, record]);
 
 	return (
 		<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -448,7 +457,13 @@ export function DeleteInvestmentDialog({
 	);
 }
 
-export function LockedVaultState({ onUnlock }: { onUnlock: () => void }) {
+export function LockedVaultState({
+	onUnlock,
+	btnClassName,
+}: {
+	onUnlock: () => void;
+	btnClassName?: string;
+}) {
 	return (
 		<div className="space-y-4">
 			<OmkraftAlert
@@ -458,7 +473,7 @@ export function LockedVaultState({ onUnlock }: { onUnlock: () => void }) {
 				fallbackMessage="Your investment details are end-to-end encrypted. Enter your password to unlock and view them."
 				icon={Lock}
 			/>
-			<Button type="button" onClick={onUnlock}>
+			<Button type="button" className={btnClassName} onClick={onUnlock}>
 				Unlock vault
 			</Button>
 		</div>
@@ -638,7 +653,7 @@ function InvestmentMobileCard({
 				</div>
 			</CardHeader>
 			<CardContent className="space-y-4">
-				<div className="grid grid-cols-2 gap-3 text-sm">
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 					<DetailTile
 						label="Amount"
 						value={<CurrencyValue value={record.amountInvested} />}
@@ -784,26 +799,30 @@ export function TypeBadge({ type }: { type: InvestmentRecord['type'] }) {
 export function InstitutionMark({
 	logo,
 	institutionName,
-	className = 'h-12 w-12 rounded-xl',
+	className,
 }: {
 	logo: ReturnType<typeof resolveInvestmentLogo>;
 	institutionName: string;
 	className?: string;
 }) {
+	const [imageFailed, setImageFailed] = useState(false);
+	const FallbackIcon = institutionName.trim().toLowerCase().includes('finance')
+		? Landmark
+		: Building2;
+
 	return (
-		<div
-			className={`flex items-center border border-background rounded-lg justify-center ${className}`}
-		>
-			{logo.type === 'image' ? (
+		<div className={`flex items-center justify-center ${className}`}>
+			{logo.type === 'image' && !imageFailed ? (
 				<img
 					src={logo.src}
 					alt={logo.alt ?? `${institutionName} logo`}
 					className="h-14 w-14 object-contain"
+					onError={() => setImageFailed(true)}
 				/>
 			) : logo.Icon ? (
-				<logo.Icon className="size-6 text-[var(--omkraft-mint-900)]" />
+				<logo.Icon className="size-8 text-[var(--omkraft-mint-900)]" />
 			) : (
-				<Landmark className="size-6 text-[var(--omkraft-mint-900)]" />
+				<FallbackIcon className="size-8 text-[var(--omkraft-mint-900)]" />
 			)}
 		</div>
 	);

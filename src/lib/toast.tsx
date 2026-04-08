@@ -9,6 +9,13 @@ interface OmkraftToastOptions {
 	};
 	duration?: number | 'infinity';
 	icon?: React.ReactNode;
+	position?:
+		| 'top-left'
+		| 'top-center'
+		| 'top-right'
+		| 'bottom-left'
+		| 'bottom-center'
+		| 'bottom-right';
 }
 
 export const omkraftToast = {
@@ -22,6 +29,7 @@ export const omkraftToast = {
 				actionButton: 'bg-[var(--omkraft-mint-800)] text-foreground',
 			},
 			duration: options?.duration === 'infinity' ? Infinity : options?.duration,
+			position: options?.position,
 		});
 	},
 
@@ -35,6 +43,7 @@ export const omkraftToast = {
 				actionButton: 'bg-[var(--omkraft-red-800)] text-destructive-foreground',
 			},
 			duration: options?.duration === 'infinity' ? Infinity : options?.duration,
+			position: options?.position,
 		});
 	},
 
@@ -48,6 +57,7 @@ export const omkraftToast = {
 				actionButton: 'bg-[var(--omkraft-blue-800)] text-primary-foreground',
 			},
 			duration: options?.duration === 'infinity' ? Infinity : options?.duration,
+			position: options?.position,
 		});
 	},
 };
