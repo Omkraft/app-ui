@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
 	Breadcrumb,
@@ -133,14 +133,7 @@ export default function PersonalVault() {
 			<section className="flex items-center py-6">
 				<div className="app-container grid gap-6 items-center">
 					<header className="space-y-4">
-						<div
-							className="alert-ripple-frame overflow-visible rounded-xl"
-							style={
-								{
-									'--alert-ripple-color': 'var(--info-border)',
-								} as CSSProperties
-							}
-						>
+						<div className="rounded-xl">
 							<OmkraftAlert
 								error="Your investment details are end-to-end encrypted, so only you can unlock and view the full record. To send reminders at the right time, we securely store only a few basic details needed for alerts and emails."
 								severity="info"
@@ -1048,7 +1041,7 @@ function InvestmentDetailsDialog({
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto border-[var(--omkraft-blue-200)] bg-foreground p-6 pt-10 text-background sm:p-7 sm:pt-10">
 				<Card className="border-accent bg-[var(--omkraft-mint-50)] text-background shadow-none">
-					<CardContent className="p-5 lg:p-6">
+					<CardContent className="p-4 lg:p-6">
 						<DialogHeader className="space-y-4 text-left">
 							<div className="flex items-start gap-4">
 								<InstitutionMark
@@ -1078,7 +1071,7 @@ function InvestmentDetailsDialog({
 
 				<div
 					className={`grid grid-cols-1 gap-5 ${
-						record.rdPlan ? 'lg:grid-cols-4' : 'lg:grid-cols-3'
+						record.rdPlan ? 'lg:grid-cols-2' : 'lg:grid-cols-3'
 					}`}
 				>
 					<DetailTile
@@ -1102,7 +1095,7 @@ function InvestmentDetailsDialog({
 				</div>
 
 				<Card className="border-[var(--omkraft-blue-100)] bg-[var(--omkraft-blue-50)] text-background shadow-none">
-					<CardContent className="grid gap-x-3 gap-y-8 p-6 sm:grid-cols-2 lg:grid-cols-3">
+					<CardContent className="grid gap-x-3 gap-y-8 p-4 lg:p-6 grid-cols-2 lg:grid-cols-3">
 						<DialogField label="Holder names" value={record.holderNames.join(', ')} />
 						<DialogField label="First holder" value={record.firstHolder} />
 						<DialogField label="Nominee" value={record.nominee} />
@@ -1167,15 +1160,15 @@ function InvestmentDetailsDialog({
 
 				{record.rdPlan ? (
 					<Card className="border-[var(--omkraft-blue-100)] bg-foreground text-background shadow-none">
-						<CardHeader className="space-y-2">
+						<CardHeader className="space-y-2 p-4 lg:p-6">
 							<CardTitle className="text-lg">Installment progress</CardTitle>
 							<CardDescription className="text-[var(--omkraft-navy-700)]">
 								Expected schedule is auto-generated from the RD master record, while
 								paid installments are tracked separately.
 							</CardDescription>
 						</CardHeader>
-						<CardContent className="p-0">
-							<div className="hidden md:block">
+						<CardContent className="p-4 lg:p-6">
+							<div className="hidden lg:block">
 								<Table>
 									<TableHeader>
 										<TableRow className="hover:bg-transparent">
@@ -1215,11 +1208,11 @@ function InvestmentDetailsDialog({
 									</TableBody>
 								</Table>
 							</div>
-							<div className="grid gap-3 p-4 md:hidden">
+							<div className="grid gap-3 lg:hidden">
 								{record.rdPlan.paymentEntries.map((entry) => (
 									<Card
 										key={entry.installmentNumber}
-										className="border-[var(--omkraft-blue-100)] bg-[var(--omkraft-blue-50)] shadow-none"
+										className="border-[var(--omkraft-navy-100)] bg-[var(--omkraft-blue-50)] shadow-none text-background"
 									>
 										<CardContent className="grid gap-2 p-4">
 											<div className="flex items-center justify-between gap-3">
@@ -1229,14 +1222,14 @@ function InvestmentDetailsDialog({
 												<Badge
 													className={
 														entry.status === 'paid'
-															? 'border-transparent bg-[var(--omkraft-mint-200)] text-[var(--omkraft-mint-900)] shadow-none'
-															: 'border-transparent bg-[var(--omkraft-blue-100)] text-[var(--omkraft-blue-900)] shadow-none'
+															? 'border-accent bg-[var(--omkraft-mint-200)] text-[var(--omkraft-mint-900)]'
+															: 'border-background bg-[var(--omkraft-blue-100)] text-[var(--omkraft-blue-900)]'
 													}
 												>
 													{entry.status === 'paid' ? 'Paid' : 'Pending'}
 												</Badge>
 											</div>
-											<p className="text-sm text-[var(--omkraft-navy-700)]">
+											<p className="text-sm">
 												Due {formatDate(entry.dueDate)}
 											</p>
 											<p className="font-medium">

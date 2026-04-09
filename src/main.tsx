@@ -10,14 +10,17 @@ import { NotificationProvider } from '@/context/NotificationContext';
 import './index.scss'; // Tailwind
 import './styles/global.scss'; // Omkraft styles
 import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
 	<React.StrictMode>
 		<AuthProvider>
 			<NotificationProvider>
 				<BrowserRouter>
-					<App />
-					<Toaster />
+					<TooltipProvider delayDuration={200}>
+						<App />
+						<Toaster />
+					</TooltipProvider>
 				</BrowserRouter>
 			</NotificationProvider>
 		</AuthProvider>
