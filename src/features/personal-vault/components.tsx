@@ -832,14 +832,14 @@ function getVaultRecordRowClassName(record: InvestmentRecord) {
 	const attentionState = getInvestmentAttentionState(record.maturityDate);
 
 	if (attentionState === 'matured') {
-		return 'border-[var(--omkraft-red-200)] bg-[var(--omkraft-red-50)]/60';
+		return 'border-[var(--omkraft-red-200)] bg-[var(--omkraft-red-50)]';
 	}
 
 	if (attentionState === 'maturing-soon') {
-		return 'border-[var(--omkraft-yellow-300)] bg-[var(--omkraft-yellow-50)]/70';
+		return 'border-[var(--omkraft-yellow-300)] bg-[var(--omkraft-yellow-50)]';
 	}
 
-	return 'border-[var(--omkraft-mint-100)] bg-foreground/60';
+	return 'border-b border-[var(--omkraft-mint-100)] bg-foreground hover:bg-[var(--omkraft-blue-50)]';
 }
 
 function getVaultRecordCardClassName(record: InvestmentRecord) {
