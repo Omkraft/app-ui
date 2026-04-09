@@ -40,7 +40,26 @@ const chartConfig = {
 	},
 } satisfies ChartConfig;
 
-type VaultCompositionKey = 'invested' | 'interest';
+const OMKRAFT_COLORS = [
+	'var(--omkraft-blue-500)',
+	'var(--omkraft-mint-500)',
+	'var(--omkraft-amber-500)',
+	'var(--omkraft-indigo-500)',
+	'var(--omkraft-orange-500)',
+	'var(--omkraft-red-500)',
+	'var(--omkraft-blue-400)',
+	'var(--omkraft-mint-400)',
+	'var(--omkraft-yellow-500)',
+	'var(--omkraft-indigo-400)',
+	'var(--omkraft-blue-600)',
+	'var(--omkraft-mint-600)',
+];
+
+const getColor = (index: number) => {
+	return OMKRAFT_COLORS[index % OMKRAFT_COLORS.length];
+};
+
+type VaultCompositionKey = string;
 
 type VaultAnalyticsSectionProps = {
 	open: boolean;
@@ -82,7 +101,32 @@ export function VaultAnalyticsSection({
 		[records]
 	);
 
+	const instDonutData = useMemo(() => {
+		const map: Record<string, number> = {};
+
+		records.forEach((record) => {
+			const key = record.institutionName;
+
+			if (!map[key]) {
+				map[key] = 0;
+			}
+
+			map[key] += record.amountInvested || 0;
+		});
+
+		return Object.entries(map)
+			.map(([key, value], index) => ({
+				key,
+				label: key,
+				value,
+				fill: getColor(index), // stable color per institution
+			}))
+			.sort((a, b) => b.value - a.value);
+	}, [records]);
+
 	const maturityTrendData = useMemo(() => buildMaturityTrendData(records), [records]);
+
+	console.log(records);
 
 	return (
 		<section className="py-6 bg-primary">
@@ -128,9 +172,25 @@ export function VaultAnalyticsSection({
 								fallbackTitle="No insights yet"
 							/>
 						) : (
-							<div className="grid gap-6 lg:grid-cols-2 min-w-0">
-								<VaultCompositionChart data={donutData} />
-								<VaultMaturityTrendChart data={maturityTrendData} />
+							<div className="grid gap-6">
+								<div className="grid gap-6 lg:grid-cols-2 min-w-0">
+									<VaultCompositionChart
+										data={donutData}
+										title="Value mix"
+										description="Compare current principal against projected interest earned."
+										isDonut={true}
+									/>
+
+									<VaultCompositionChart
+										data={instDonutData}
+										title="Institution spread"
+										description="See how your total investments are distributed across institutions."
+										isDonut={false} // 👈 PIE chart
+									/>
+								</div>
+								<div className="min-w-0">
+									<VaultMaturityTrendChart data={maturityTrendData} />
+								</div>
 							</div>
 						)}
 					</CollapsibleContent>
@@ -142,17 +202,23 @@ export function VaultAnalyticsSection({
 
 function VaultCompositionChart({
 	data,
+	title,
+	description,
+	isDonut = true,
 }: {
 	data: { key: VaultCompositionKey; label?: string; value: number; fill?: string }[];
+	title?: string;
+	description?: string;
+	isDonut?: boolean;
 }) {
 	return (
 		<Card className="border-background min-w-0 bg-foreground">
 			<CardHeader>
 				<CardTitle>
-					<h4 className="text-xl font-semibold text-background">Value mix</h4>
+					<h4 className="text-xl font-semibold text-background">{title}</h4>
 				</CardTitle>
 				<CardDescription className="text-[var(--omkraft-navy-700)]">
-					Compare current principal against projected interest earned.
+					{description}
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="p-4 sm:p-6">
@@ -162,8 +228,7 @@ function VaultCompositionChart({
 							data={data}
 							dataKey="value"
 							nameKey="key"
-							innerRadius="55%"
-							outerRadius="80%"
+							innerRadius={isDonut ? 70 : 0}
 							paddingAngle={4}
 						>
 							{data.map((entry) => (
