@@ -2,7 +2,6 @@
 import { ChartContainer, ChartTooltip, ChartLegend } from '@/components/ui/chart';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { CATEGORY_COLORS, FALLBACK_COLORS } from './categoryColors';
-import { ResponsiveContainer } from 'recharts';
 import { getCategoryLabel } from './categoryLabels';
 import { IndianRupee } from 'lucide-react';
 
@@ -26,35 +25,30 @@ export default function CategoryDonutChart({ data }: Props) {
 				</CardTitle>
 			</CardHeader>
 
-			<CardContent className="p-4 sm:p-6">
+			<CardContent className="p-4 lg:p-6">
 				<ChartContainer config={{}} className="w-full min-w-0 h-[320px]">
-					<ResponsiveContainer width="100%" height={320}>
-						<PieChart>
-							<Pie
-								data={data}
-								dataKey="total"
-								nameKey="category"
-								innerRadius="55%"
-								outerRadius="80%"
-								paddingAngle={4}
-							>
-								{data.map((entry, index) => (
-									<Cell
-										key={entry.category}
-										fill={getColor(entry.category, index)}
-									/>
-								))}
-							</Pie>
+					<PieChart>
+						<Pie
+							data={data}
+							dataKey="total"
+							nameKey="category"
+							innerRadius={70}
+							paddingAngle={4}
+						>
+							{data.map((entry, index) => (
+								<Cell key={entry.category} fill={getColor(entry.category, index)} />
+							))}
+						</Pie>
 
-							<ChartTooltip
-								content={({ active, payload }) => {
-									if (!active || !payload?.length) return null;
+						<ChartTooltip
+							content={({ active, payload }) => {
+								if (!active || !payload?.length) return null;
 
-									const item = payload[0];
+								const item = payload[0];
 
-									return (
-										<div
-											className="
+								return (
+									<div
+										className="
 											bg-foreground
 											text-background
 											px-3
@@ -65,42 +59,41 @@ export default function CategoryDonutChart({ data }: Props) {
 											border-background
 											text-sm
 										"
-										>
-											<div className="font-semibold">
-												{getCategoryLabel(item.name as string)}
-											</div>
-
-											<div className="flex items-center gap-1">
-												<IndianRupee size={14} strokeWidth={2.5} />
-												{Number(item.value).toFixed(2)}
-											</div>
+									>
+										<div className="font-semibold">
+											{getCategoryLabel(item.name as string)}
 										</div>
-									);
-								}}
-							/>
 
-							<ChartLegend
-								content={({ payload }) => (
-									<div className="flex flex-wrap gap-2 mt-4 justify-center">
-										{payload?.map((entry, index) => (
-											<div
-												key={`${String(entry.value)}-${String(entry.color)}-${index}`}
-												className="flex items-center gap-2 text-foreground text-sm"
-											>
-												<div
-													className="w-3 h-3 rounded-sm"
-													style={{
-														backgroundColor: entry.color,
-													}}
-												/>
-												{getCategoryLabel(entry.value as string)}
-											</div>
-										))}
+										<div className="flex items-center gap-1">
+											<IndianRupee size={14} strokeWidth={2.5} />
+											{Number(item.value).toFixed(2)}
+										</div>
 									</div>
-								)}
-							/>
-						</PieChart>
-					</ResponsiveContainer>
+								);
+							}}
+						/>
+
+						<ChartLegend
+							content={({ payload }) => (
+								<div className="flex flex-wrap gap-2 mt-4 justify-center">
+									{payload?.map((entry, index) => (
+										<div
+											key={`${String(entry.value)}-${String(entry.color)}-${index}`}
+											className="flex items-center gap-2 text-foreground text-sm"
+										>
+											<div
+												className="w-3 h-3 rounded-sm"
+												style={{
+													backgroundColor: entry.color,
+												}}
+											/>
+											{getCategoryLabel(entry.value as string)}
+										</div>
+									))}
+								</div>
+							)}
+						/>
+					</PieChart>
 				</ChartContainer>
 			</CardContent>
 		</Card>

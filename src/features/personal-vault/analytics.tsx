@@ -221,7 +221,7 @@ function VaultCompositionChart({
 					{description}
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="p-4 sm:p-6">
+			<CardContent className="p-4 lg:p-6">
 				<ChartContainer config={chartConfig} className="w-full min-w-0 h-[320px]">
 					<PieChart>
 						<Pie

@@ -9,7 +9,9 @@ import {
 	EyeOff,
 	Landmark,
 	Lock,
+	Pencil,
 	PiggyBank,
+	Trash2,
 	WalletCards,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +25,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -57,6 +60,7 @@ import {
 	getInitialFormState,
 	getInvestmentAttentionState,
 } from './utils';
+import { TooltipArrow } from '@radix-ui/react-tooltip';
 
 export const vaultStatIcons = {
 	active: WalletCards,
@@ -126,7 +130,7 @@ export function VaultRecordsSection({
 	return (
 		<div className="space-y-4">
 			<div className="hidden lg:block">
-				<Table>
+				<Table className="min-w-full">
 					<TableHeader>
 						<TableRow className="border-[var(--omkraft-mint-100)] hover:bg-transparent">
 							<TableHead className="text-[var(--omkraft-navy-700)]">
@@ -170,8 +174,24 @@ export function VaultRecordsSection({
 										/>
 									</div>
 								</TableCell>
-								<TableCell className="text-background">
-									{record.holderNames.join(', ')}
+								<TableCell className="text-background max-w-[150px]">
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button
+												variant="link"
+												className="p-0 h-auto max-w-full overflow-hidden"
+											>
+												<span className="truncate block w-full">
+													{record.holderNames.join(', ')}
+												</span>
+											</Button>
+										</TooltipTrigger>
+
+										<TooltipContent>
+											<p>{record.holderNames.join(', ')}</p>
+											<TooltipArrow className="fill-primary" />
+										</TooltipContent>
+									</Tooltip>
 								</TableCell>
 								<TableCell className="text-background">
 									{formatDate(record.depositDate)}
@@ -196,16 +216,44 @@ export function VaultRecordsSection({
 								</TableCell>
 								<TableCell className="text-right">
 									<div className="flex items-center justify-end gap-3 text-sm">
-										<ActionLink
-											label="View"
-											onClick={() => onViewDetails(record)}
-										/>
-										<ActionLink label="Edit" onClick={() => onEdit(record)} />
-										<ActionLink
-											label="Delete"
-											onClick={() => onDelete(record)}
-											className="text-[var(--destructive)] hover:text-[var(--omkraft-red-700)]"
-										/>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<button onClick={() => onViewDetails(record)}>
+													<Eye size={18} />
+												</button>
+											</TooltipTrigger>
+											<TooltipContent>
+												View
+												<TooltipArrow className="fill-primary" />
+											</TooltipContent>
+										</Tooltip>
+
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<button onClick={() => onEdit(record)}>
+													<Pencil size={18} />
+												</button>
+											</TooltipTrigger>
+											<TooltipContent>
+												Edit
+												<TooltipArrow className="fill-primary" />
+											</TooltipContent>
+										</Tooltip>
+
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<button onClick={() => onDelete(record)}>
+													<Trash2
+														size={18}
+														className="text-[var(--destructive)]"
+													/>
+												</button>
+											</TooltipTrigger>
+											<TooltipContent className="bg-[var(--omkraft-red-500)]">
+												Delete
+												<TooltipArrow className="fill-destructive" />
+											</TooltipContent>
+										</Tooltip>
 									</div>
 								</TableCell>
 							</TableRow>
@@ -600,7 +648,7 @@ export function InvestmentDetailsDialog({
 											{record.institutionName}
 										</DialogTitle>
 										<TypeBadge type={record.type} />
-										<Badge className="border-transparent bg-[var(--omkraft-mint-200)] text-[var(--omkraft-mint-900)] shadow-none">
+										<Badge className="border-accent bg-[var(--omkraft-mint-200)] text-[var(--omkraft-mint-900)]">
 											{record.payoutType}
 										</Badge>
 									</div>
@@ -704,7 +752,7 @@ function EmptyVaultState({ title, description }: { title: string; description: s
 export function DetailTile({ label, value }: { label: string; value: ReactNode }) {
 	return (
 		<Card className="border-[var(--omkraft-mint-200)] bg-[var(--omkraft-mint-50)] text-background shadow-none">
-			<CardContent className="p-4">
+			<CardContent className="p-4 lg:p-6">
 				<p className="text-xs uppercase tracking-[0.18em] text-[var(--omkraft-navy-700)]">
 					{label}
 				</p>
@@ -787,8 +835,8 @@ export function TypeBadge({ type }: { type: InvestmentRecord['type'] }) {
 		<Badge
 			className={
 				type === 'FD'
-					? 'border-transparent bg-[var(--omkraft-blue-100)] text-[var(--omkraft-blue-900)] shadow-none'
-					: 'border-transparent bg-[var(--omkraft-indigo-100)] text-[var(--omkraft-indigo-900)] shadow-none'
+					? 'border-primary bg-[var(--omkraft-blue-100)] text-[var(--omkraft-blue-900)]'
+					: 'border-background bg-[var(--omkraft-indigo-100)] text-[var(--omkraft-indigo-900)]'
 			}
 		>
 			{type}

@@ -152,78 +152,6 @@ button,
 		pwa-update-pulse 1.2s ease-in-out 520ms infinite;
 }
 
-@keyframes weather-aurora-drift {
-	0% {
-		transform: translate3d(-3%, -2%, 0) scale(1);
-	}
-	50% {
-		transform: translate3d(4%, 3%, 0) scale(1.08);
-	}
-	100% {
-		transform: translate3d(-2%, 4%, 0) scale(0.98);
-	}
-}
-
-@keyframes weather-sheen {
-	0% {
-		transform: translate3d(0, 0, 0) rotate(0deg);
-		opacity: 0.22;
-	}
-	50% {
-		transform: translate3d(2%, -3%, 0) rotate(6deg);
-		opacity: 0.34;
-	}
-	100% {
-		transform: translate3d(-2%, 2%, 0) rotate(-4deg);
-		opacity: 0.2;
-	}
-}
-
-.weather-surface {
-	--weather-from: var(--omkraft-navy-500);
-	--weather-to: var(--omkraft-navy-700);
-	--weather-glow-primary: rgba(94, 125, 248, 0.24);
-	--weather-glow-secondary: rgba(0, 173, 151, 0.18);
-	--weather-sheen: rgba(255, 255, 255, 0.12);
-	background:
-		radial-gradient(circle at 12% 18%, var(--weather-glow-primary) 0%, transparent 34%),
-		radial-gradient(circle at 82% 16%, var(--weather-glow-secondary) 0%, transparent 32%),
-		linear-gradient(135deg, var(--weather-from) 0%, var(--weather-to) 100%);
-	isolation: isolate;
-}
-
-.weather-surface::before,
-.weather-surface::after {
-	content: '';
-	position: absolute;
-	inset: -14%;
-	pointer-events: none;
-	z-index: 0;
-}
-
-.weather-surface::before {
-	background:
-		radial-gradient(circle at 22% 28%, var(--weather-glow-primary) 0%, transparent 28%),
-		radial-gradient(circle at 78% 68%, var(--weather-glow-secondary) 0%, transparent 34%);
-	filter: blur(28px);
-	opacity: 0.9;
-	animation: weather-aurora-drift 18s ease-in-out infinite alternate;
-}
-
-.weather-surface::after {
-	background:
-		linear-gradient(120deg, transparent 14%, var(--weather-sheen) 48%, transparent 76%),
-		radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 44%);
-	mix-blend-mode: screen;
-	filter: blur(12px);
-	animation: weather-sheen 22s ease-in-out infinite alternate;
-}
-
-.weather-surface > * {
-	position: relative;
-	z-index: 1;
-}
-
 @keyframes moon-phase-border-ripple {
 	0% {
 		opacity: 1;
@@ -240,47 +168,6 @@ button,
 		transform: scale(1.14);
 		border-color: rgba(239, 246, 255, 0.18);
 	}
-}
-
-@keyframes alert-border-ripple {
-	0% {
-		opacity: 1;
-		transform: scale(1);
-	}
-	70% {
-		opacity: 0;
-		transform: scale(1.1);
-	}
-	100% {
-		opacity: 0;
-		transform: scale(1.14);
-	}
-}
-
-.alert-ripple-frame {
-	position: relative;
-	isolation: isolate;
-}
-
-.alert-ripple-frame::before,
-.alert-ripple-frame::after {
-	content: '';
-	position: absolute;
-	inset: -4px;
-	border-radius: inherit;
-	border: 1px solid var(--alert-ripple-color, var(--info-border));
-	pointer-events: none;
-	box-shadow: none;
-	opacity: 0;
-	transform: scale(1);
-}
-
-.alert-ripple-frame::before {
-	animation: alert-border-ripple 2.4s ease-out 3;
-}
-
-.alert-ripple-frame::after {
-	animation: alert-border-ripple 2.4s ease-out 1.2s 2;
 }
 
 .moon-phase-current-card {
@@ -307,71 +194,7 @@ button,
 	animation: moon-phase-border-ripple 2.4s ease-out 1.2s infinite;
 }
 
-.weather-surface--default {
-	--weather-from: var(--omkraft-navy-500);
-	--weather-to: var(--omkraft-navy-700);
-	--weather-glow-primary: rgba(94, 125, 248, 0.2);
-	--weather-glow-secondary: rgba(0, 173, 151, 0.16);
-}
-
-.weather-surface--night {
-	--weather-from: var(--omkraft-navy-700);
-	--weather-to: var(--omkraft-navy-900);
-	--weather-glow-primary: rgba(129, 140, 248, 0.18);
-	--weather-glow-secondary: rgba(4, 20, 89, 0.38);
-	--weather-sheen: rgba(224, 231, 255, 0.12);
-}
-
-.weather-surface--clear {
-	--weather-from: var(--omkraft-blue-400);
-	--weather-to: var(--omkraft-mint-600);
-	--weather-glow-primary: rgba(254, 249, 195, 0.42);
-	--weather-glow-secondary: rgba(155, 230, 216, 0.32);
-	--weather-sheen: rgba(255, 255, 255, 0.22);
-}
-
-.weather-surface--cloudy {
-	--weather-from: var(--omkraft-blue-500);
-	--weather-to: var(--omkraft-navy-400);
-	--weather-glow-primary: rgba(223, 230, 255, 0.26);
-	--weather-glow-secondary: rgba(163, 175, 216, 0.2);
-}
-
-.weather-surface--rain {
-	--weather-from: var(--omkraft-navy-400);
-	--weather-to: var(--omkraft-blue-700);
-	--weather-glow-primary: rgba(188, 201, 255, 0.18);
-	--weather-glow-secondary: rgba(47, 192, 173, 0.14);
-	--weather-sheen: rgba(223, 230, 255, 0.16);
-}
-
-.weather-surface--snow {
-	--weather-from: var(--omkraft-blue-200);
-	--weather-to: var(--omkraft-navy-300);
-	--weather-glow-primary: rgba(255, 255, 255, 0.38);
-	--weather-glow-secondary: rgba(223, 230, 255, 0.24);
-	--weather-sheen: rgba(255, 255, 255, 0.28);
-}
-
-.weather-surface--storm {
-	--weather-from: var(--omkraft-navy-600);
-	--weather-to: var(--omkraft-blue-800);
-	--weather-glow-primary: rgba(129, 140, 248, 0.24);
-	--weather-glow-secondary: rgba(250, 204, 21, 0.14);
-	--weather-sheen: rgba(255, 255, 255, 0.1);
-}
-
-.weather-surface--fog {
-	--weather-from: var(--omkraft-navy-300);
-	--weather-to: var(--omkraft-navy-500);
-	--weather-glow-primary: rgba(233, 236, 245, 0.28);
-	--weather-glow-secondary: rgba(207, 214, 234, 0.2);
-	--weather-sheen: rgba(255, 255, 255, 0.14);
-}
-
 @media (prefers-reduced-motion: reduce) {
-	.weather-surface::before,
-	.weather-surface::after,
 	.moon-phase-current-card,
 	.moon-phase-current-card::before,
 	.moon-phase-current-card::after {
