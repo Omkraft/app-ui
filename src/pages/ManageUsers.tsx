@@ -165,11 +165,11 @@ function getSubscriptionStatusBadgeClass(status: AdminSubscription['status']) {
 function getSubscriptionSurfaceClass(status: AdminSubscription['status']) {
 	switch (status) {
 		case 'DUE':
-			return 'border-[var(--warning-border)] bg-[var(--warning-bg)]/40 hover:bg-[var(--warning-bg)]/60';
+			return 'border-[var(--warning-border)] bg-[var(--omkraft-amber-50)] hover:bg-[var(--omkraft-amber-100)]';
 		case 'OVERDUE':
-			return 'border-[var(--destructive)] bg-[var(--omkraft-red-100)]/70 hover:bg-[var(--omkraft-red-100)]';
+			return 'border-[var(--destructive)] bg-[var(--omkraft-red-50)] hover:bg-[var(--omkraft-red-100)]';
 		default:
-			return 'border-background bg-[var(--omkraft-surface-0)] hover:bg-[var(--omkraft-blue-50)]';
+			return 'border-b border-[var(--omkraft-blue-100)] bg-foreground hover:bg-[var(--omkraft-blue-50)]';
 	}
 }
 
@@ -537,7 +537,7 @@ export default function ManageUsers() {
 												users.map((row) => (
 													<TableRow
 														key={row.id}
-														className={`border-b border-[var(--omkraft-border-strong)] ${
+														className={`border-b border-[var(--omkraft-blue-100)] ${
 															row.role === 'ADMIN'
 																? 'bg-background hover:bg-[var(--omkraft-navy-700)]'
 																: 'hover:bg-[var(--omkraft-blue-50)]'
@@ -800,7 +800,7 @@ export default function ManageUsers() {
 												subscriptions.map((row) => (
 													<TableRow
 														key={row._id}
-														className={`border-b border-[var(--omkraft-border-strong)] ${getSubscriptionSurfaceClass(row.status)}`}
+														className={`${getSubscriptionSurfaceClass(row.status)}`}
 													>
 														<TableCell className="font-semibold">
 															{row.name}
