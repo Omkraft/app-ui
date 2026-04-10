@@ -1,6 +1,15 @@
 export type InvestmentType = 'FD' | 'RD';
 export type RdMaturityInstruction = 'Credit to savings' | 'Renew on maturity' | 'Manual settlement';
 export type RdPaymentStatus = 'paid' | 'pending';
+export type VaultTab = 'all' | 'fd' | 'rd';
+export type VaultSortBy =
+	| 'institutionName'
+	| 'holderNames'
+	| 'depositDate'
+	| 'maturityDate'
+	| 'amountInvested'
+	| 'roi'
+	| 'maturityAmount';
 
 export interface RdPaymentEntry {
 	installmentNumber: number;

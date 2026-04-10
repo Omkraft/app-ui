@@ -1,5 +1,5 @@
 import { IndianRupee } from 'lucide-react';
-import type { InvestmentFormState, InvestmentRecord, RdPaymentEntry } from './types';
+import type { InvestmentFormState, InvestmentRecord, RdPaymentEntry, VaultSortBy } from './types';
 
 export type InvestmentAttentionState = 'default' | 'maturing-soon' | 'matured';
 
@@ -238,6 +238,102 @@ export function getInvestmentAttentionState(maturityDate: string): InvestmentAtt
 	return 'default';
 }
 
+export function getDaysUntilMaturity(maturityDate: string) {
+	const maturity = parseFormDate(maturityDate);
+	if (!maturity) return Number.POSITIVE_INFINITY;
+
+	const today = new Date();
+	const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+	const startOfMaturity = new Date(
+		maturity.getFullYear(),
+		maturity.getMonth(),
+		maturity.getDate()
+	);
+
+	return Math.ceil((startOfMaturity.getTime() - startOfToday.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+export function getUpcomingMaturityRecords(records: InvestmentRecord[], days = 30) {
+	return [...records]
+		.filter((record) => {
+			const differenceInDays = getDaysUntilMaturity(record.maturityDate);
+			return differenceInDays >= 0 && differenceInDays <= days;
+		})
+		.sort((left, right) => {
+			return (
+				getDaysUntilMaturity(left.maturityDate) - getDaysUntilMaturity(right.maturityDate)
+			);
+		});
+}
+
+export function filterInvestmentRecords(records: InvestmentRecord[], searchQuery: string) {
+	if (!searchQuery) {
+		return records;
+	}
+
+	const normalizedQuery = searchQuery.trim().toLowerCase();
+
+	return records.filter((record) => {
+		const searchableText = [
+			record.institutionName,
+			record.institutionReference,
+			record.firstHolder,
+			record.nominee,
+			record.type,
+			record.payoutType,
+			record.holderNames.join(' '),
+		]
+			.join(' ')
+			.toLowerCase();
+
+		return searchableText.includes(normalizedQuery);
+	});
+}
+
+export function sortInvestmentRecords(
+	records: InvestmentRecord[],
+	sortBy: VaultSortBy,
+	sortOrder: 'asc' | 'desc'
+) {
+	const sortedRecords = [...records].sort((left, right) => {
+		const direction = sortOrder === 'asc' ? 1 : -1;
+
+		switch (sortBy) {
+			case 'institutionName':
+				return left.institutionName.localeCompare(right.institutionName) * direction;
+			case 'holderNames':
+				return (
+					left.holderNames.join(', ').localeCompare(right.holderNames.join(', ')) *
+					direction
+				);
+			case 'depositDate':
+				return compareDates(left.depositDate, right.depositDate) * direction;
+			case 'maturityDate':
+				return compareDates(left.maturityDate, right.maturityDate) * direction;
+			case 'amountInvested':
+				return (left.amountInvested - right.amountInvested) * direction;
+			case 'roi':
+				return (left.roi - right.roi) * direction;
+			case 'maturityAmount':
+				return (left.maturityAmount - right.maturityAmount) * direction;
+			default:
+				return 0;
+		}
+	});
+
+	return sortedRecords;
+}
+
+export function paginateRecords(
+	records: InvestmentRecord[],
+	currentPage: number,
+	pageSize: number
+) {
+	const safePage = Math.max(1, currentPage);
+	const startIndex = (safePage - 1) * pageSize;
+	return records.slice(startIndex, startIndex + pageSize);
+}
+
 export function CurrencyValue({
 	value,
 	className = '',
@@ -305,4 +401,15 @@ function calculateRdProjectedMaturity(
 
 function clampNumber(value: number, min: number, max: number) {
 	return Math.min(Math.max(value, min), max);
+}
+
+function compareDates(left: string, right: string) {
+	const leftDate = parseFormDate(left);
+	const rightDate = parseFormDate(right);
+
+	if (!leftDate && !rightDate) return 0;
+	if (!leftDate) return -1;
+	if (!rightDate) return 1;
+
+	return leftDate.getTime() - rightDate.getTime();
 }
