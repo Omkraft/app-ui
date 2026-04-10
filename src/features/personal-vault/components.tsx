@@ -1,8 +1,10 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import {
+	ArrowUpDown,
 	ArrowRight,
 	BadgeIndianRupee,
 	Building2,
+	CalendarClock,
 	ChartNoAxesColumn,
 	Ellipsis,
 	Eye,
@@ -57,10 +59,13 @@ import {
 	CurrencyValue,
 	formatDate,
 	formatRate,
+	getDaysUntilMaturity,
 	getInitialFormState,
 	getInvestmentAttentionState,
+	getUpcomingMaturityRecords,
 } from './utils';
 import { TooltipArrow } from '@radix-ui/react-tooltip';
+import type { VaultSortBy } from './types';
 
 export const vaultStatIcons = {
 	active: WalletCards,
@@ -99,12 +104,34 @@ export function StatCard({
 export function VaultRecordsSection({
 	loading,
 	records,
+	searchValue,
+	onSearchChange,
+	sortBy,
+	sortOrder,
+	onSort,
+	currentPage,
+	totalPages,
+	filteredCount,
+	totalCount,
+	onPreviousPage,
+	onNextPage,
 	onViewDetails,
 	onEdit,
 	onDelete,
 }: {
 	loading: boolean;
 	records: InvestmentRecord[];
+	searchValue: string;
+	onSearchChange: (value: string) => void;
+	sortBy: VaultSortBy;
+	sortOrder: 'asc' | 'desc';
+	onSort: (column: VaultSortBy) => void;
+	currentPage: number;
+	totalPages: number;
+	filteredCount: number;
+	totalCount: number;
+	onPreviousPage: () => void;
+	onNextPage: () => void;
 	onViewDetails: (record: InvestmentRecord) => void;
 	onEdit: (record: InvestmentRecord) => void;
 	onDelete: (record: InvestmentRecord) => void;
@@ -118,7 +145,9 @@ export function VaultRecordsSection({
 		);
 	}
 
-	if (!records.length) {
+	const hasAnyRecords = totalCount > 0;
+
+	if (!hasAnyRecords) {
 		return (
 			<EmptyVaultState
 				title="No deposit records to show yet."
@@ -129,30 +158,88 @@ export function VaultRecordsSection({
 
 	return (
 		<div className="space-y-4">
-			<div className="hidden lg:block">
-				<Table className="min-w-full">
+			<div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+				<Input
+					value={searchValue}
+					onChange={(event) => onSearchChange(event.target.value)}
+					placeholder="Search by institution, holder, nominee, or type"
+					className="w-full lg:max-w-sm bg-[var(--omkraft-surface-0)] text-background border-background placeholder:text-background"
+				/>
+				<p className="text-xs text-[var(--omkraft-navy-700)]">
+					Sorted by {getSortLabel(sortBy)} ({sortOrder}) | Showing {filteredCount} of{' '}
+					{totalCount}
+				</p>
+			</div>
+
+			{!records.length ? (
+				<EmptyVaultState
+					title="No matching records found."
+					description="Try a different search or switch the deposit type tab."
+				/>
+			) : null}
+
+			<div className="hidden w-full max-w-full overflow-x-auto rounded-lg border border-background bg-[var(--omkraft-surface-0)] lg:block">
+				<Table className="min-w-full text-background [&_td]:break-words [&_td]:whitespace-normal [&_th]:whitespace-nowrap">
 					<TableHeader>
-						<TableRow className="border-[var(--omkraft-mint-100)] hover:bg-transparent">
+						<TableRow className="bg-[var(--omkraft-blue-50)] hover:bg-[var(--omkraft-blue-50)]">
 							<TableHead className="text-[var(--omkraft-navy-700)]">
-								Institution
+								<SortButton
+									label="Institution"
+									column="institutionName"
+									sortBy={sortBy}
+									onSort={onSort}
+								/>
 							</TableHead>
 							<TableHead className="text-[var(--omkraft-navy-700)]">
-								Holders
+								<SortButton
+									label="Holders"
+									column="holderNames"
+									sortBy={sortBy}
+									onSort={onSort}
+								/>
 							</TableHead>
 							<TableHead className="text-[var(--omkraft-navy-700)]">
-								Deposit Date
+								<SortButton
+									label="Deposit Date"
+									column="depositDate"
+									sortBy={sortBy}
+									onSort={onSort}
+								/>
 							</TableHead>
 							<TableHead className="text-[var(--omkraft-navy-700)]">
-								Maturity Date
+								<SortButton
+									label="Maturity Date"
+									column="maturityDate"
+									sortBy={sortBy}
+									onSort={onSort}
+								/>
 							</TableHead>
 							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
-								Amount Invested
+								<SortButton
+									label="Amount Invested"
+									column="amountInvested"
+									sortBy={sortBy}
+									onSort={onSort}
+									className="ml-auto"
+								/>
 							</TableHead>
 							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
-								ROI
+								<SortButton
+									label="ROI"
+									column="roi"
+									sortBy={sortBy}
+									onSort={onSort}
+									className="ml-auto"
+								/>
 							</TableHead>
 							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
-								Maturity Amount
+								<SortButton
+									label="Maturity Amount"
+									column="maturityAmount"
+									sortBy={sortBy}
+									onSort={onSort}
+									className="ml-auto"
+								/>
 							</TableHead>
 							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
 								Action
@@ -174,24 +261,8 @@ export function VaultRecordsSection({
 										/>
 									</div>
 								</TableCell>
-								<TableCell className="text-background max-w-[150px]">
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Button
-												variant="link"
-												className="p-0 h-auto max-w-full overflow-hidden"
-											>
-												<span className="truncate block w-full">
-													{record.holderNames.join(', ')}
-												</span>
-											</Button>
-										</TooltipTrigger>
-
-										<TooltipContent>
-											<p>{record.holderNames.join(', ')}</p>
-											<TooltipArrow className="fill-primary" />
-										</TooltipContent>
-									</Tooltip>
+								<TableCell className="max-w-[180px] text-background whitespace-normal break-words">
+									{record.holderNames.join(', ')}
 								</TableCell>
 								<TableCell className="text-background">
 									{formatDate(record.depositDate)}
@@ -272,7 +343,125 @@ export function VaultRecordsSection({
 					/>
 				))}
 			</div>
+
+			<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+				<p className="text-xs text-[var(--omkraft-navy-700)]">
+					Page {Math.min(currentPage, totalPages)} of {Math.max(totalPages, 1)}
+				</p>
+				<div className="flex gap-2">
+					<Button
+						variant="outline"
+						className="h-7 border-background px-2 text-xs text-background hover:bg-[var(--omkraft-navy-50)]"
+						disabled={currentPage <= 1}
+						onClick={onPreviousPage}
+					>
+						Previous
+					</Button>
+					<Button
+						variant="outline"
+						className="h-7 border-background px-2 text-xs text-background hover:bg-[var(--omkraft-navy-50)]"
+						disabled={currentPage >= totalPages}
+						onClick={onNextPage}
+					>
+						Next
+					</Button>
+				</div>
+			</div>
 		</div>
+	);
+}
+
+export function UpcomingMaturitySection({
+	records,
+	loading,
+	vaultUnlocked,
+	onUnlock,
+}: {
+	records: InvestmentRecord[];
+	loading: boolean;
+	vaultUnlocked: boolean;
+	onUnlock: () => void;
+}) {
+	const upcomingRecords = getUpcomingMaturityRecords(records, 30);
+
+	return (
+		<section className="py-6 bg-background">
+			<div className="app-container grid gap-6">
+				<Card className="border-primary bg-foreground text-background shadow-sm">
+					<CardHeader className="gap-2 p-4 lg:p-6">
+						<div className="flex items-start gap-3">
+							<CalendarClock className="size-8 text-primary" />
+							<div className="space-y-2">
+								<CardTitle className="text-2xl text-background">
+									Maturing soon
+								</CardTitle>
+								<CardDescription className="text-[var(--omkraft-navy-700)]">
+									Keep an eye on deposits maturing in the next 30 days so you can
+									plan renewals or withdrawals in time.
+								</CardDescription>
+							</div>
+						</div>
+					</CardHeader>
+					<CardContent className="p-4 pt-0 lg:p-6 lg:pt-0">
+						{!vaultUnlocked ? (
+							<LockedVaultState onUnlock={onUnlock} />
+						) : loading ? (
+							<EmptyVaultState
+								title="Loading upcoming maturity data..."
+								description="Your maturity reminders and soon-to-mature records will appear here."
+							/>
+						) : !records.length ? (
+							<EmptyVaultState
+								title="No deposit records available yet."
+								description="Once you add investments, upcoming maturities will be highlighted here."
+							/>
+						) : !upcomingRecords.length ? (
+							<EmptyVaultState
+								title="No deposits maturing in the next 30 days."
+								description="You're all set for now. Records close to maturity will appear here automatically."
+							/>
+						) : (
+							<ul className="space-y-3">
+								{upcomingRecords.map((record) => (
+									<li
+										key={record.id}
+										className="flex flex-col justify-between gap-4 rounded-xl border border-[var(--omkraft-yellow-200)] bg-[var(--omkraft-yellow-50)] p-4 lg:flex-row lg:items-center"
+									>
+										<div className="space-y-2">
+											<div className="flex flex-wrap items-center gap-2">
+												<p className="font-semibold text-background">
+													{record.institutionName}
+												</p>
+												<TypeBadge type={record.type} />
+												<Badge
+													className={getUpcomingBadgeClassName(
+														record.maturityDate
+													)}
+												>
+													{getUpcomingBadgeLabel(record.maturityDate)}
+												</Badge>
+											</div>
+											<p className="text-sm text-[var(--omkraft-navy-700)]">
+												{record.firstHolder} | Matures on{' '}
+												{formatDate(record.maturityDate)}
+											</p>
+										</div>
+										<div className="flex flex-col gap-1 text-sm lg:items-end">
+											<span className="font-medium text-background">
+												<CurrencyValue value={record.maturityAmount} />
+											</span>
+											<span className="text-[var(--omkraft-navy-700)]">
+												Maturity value
+											</span>
+										</div>
+									</li>
+								))}
+							</ul>
+						)}
+					</CardContent>
+				</Card>
+			</div>
+		</section>
 	);
 }
 
@@ -924,4 +1113,74 @@ function MaturityAttentionBadge({ maturityDate }: { maturityDate: string }) {
 	}
 
 	return null;
+}
+
+function SortButton({
+	label,
+	column,
+	sortBy,
+	onSort,
+	className = '',
+}: {
+	label: string;
+	column: VaultSortBy;
+	sortBy: VaultSortBy;
+	onSort: (column: VaultSortBy) => void;
+	className?: string;
+}) {
+	return (
+		<button
+			type="button"
+			className={`inline-flex items-center gap-1 text-primary ${className}`}
+			onClick={() => onSort(column)}
+		>
+			{label}
+			<ArrowUpDown size={14} className={sortBy === column ? 'opacity-100' : 'opacity-60'} />
+		</button>
+	);
+}
+
+function getSortLabel(sortBy: VaultSortBy) {
+	switch (sortBy) {
+		case 'institutionName':
+			return 'institution';
+		case 'holderNames':
+			return 'holders';
+		case 'depositDate':
+			return 'deposit date';
+		case 'maturityDate':
+			return 'maturity date';
+		case 'amountInvested':
+			return 'amount invested';
+		case 'roi':
+			return 'ROI';
+		case 'maturityAmount':
+			return 'maturity amount';
+		default:
+			return 'institution';
+	}
+}
+
+function getUpcomingBadgeLabel(maturityDate: string) {
+	const daysUntilMaturity = getDaysUntilMaturity(maturityDate);
+
+	if (daysUntilMaturity <= 0) {
+		return 'Matures today';
+	}
+
+	if (daysUntilMaturity === 1) {
+		return '1 day left';
+	}
+
+	return `${daysUntilMaturity} days left`;
+}
+
+function getUpcomingBadgeClassName(maturityDate: string) {
+	const daysUntilMaturity = getDaysUntilMaturity(maturityDate);
+
+	if (daysUntilMaturity <= 7) {
+		return 'border-transparent bg-[var(--warning-bg)] text-[var(--warning-foreground)] shadow-none';
+	}
+
+	return 'border-transparent bg-[var(--omkraft-blue-100)] text-[var(--omkraft-blue-900)] shadow-none';
 }

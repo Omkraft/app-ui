@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
 	Breadcrumb,
@@ -52,6 +52,7 @@ import {
 	LockedVaultState,
 	StatCard,
 	TypeBadge,
+	UpcomingMaturitySection,
 	UnlockVaultDialog,
 	VaultRecordsSection,
 	vaultStatIcons,
@@ -61,22 +62,36 @@ import type {
 	InvestmentRecord,
 	InvestmentType,
 	RdMaturityInstruction,
+	VaultSortBy,
+	VaultTab,
 } from '@/features/personal-vault/types';
 import { usePersonalVault } from '@/features/personal-vault/usePersonalVault';
 import { VaultAnalyticsSection } from '@/features/personal-vault/analytics';
 import {
 	buildRdProjection,
 	CurrencyValue,
+	filterInvestmentRecords,
 	formatDate,
 	formatRate,
 	getInitialFormState,
 	getMaturityDuration,
+	paginateRecords,
 	parseFormDate,
+	sortInvestmentRecords,
 	toInputDate,
 } from '@/features/personal-vault/utils';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+
+const VAULT_PAGE_SIZE = 10;
 
 export default function PersonalVault() {
 	const [analyticsOpen, setAnalyticsOpen] = useState(window.innerWidth >= 1024);
+	const [activeTab, setActiveTab] = useState<VaultTab>('all');
+	const [searchInput, setSearchInput] = useState('');
+	const searchQuery = useDebouncedValue(searchInput.trim());
+	const [currentPage, setCurrentPage] = useState(1);
+	const [sortBy, setSortBy] = useState<VaultSortBy>('maturityDate');
+	const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 	const { user } = useAuth();
 	const userVaultId = user?.id ?? user?.email ?? '';
 	const {
@@ -104,6 +119,51 @@ export default function PersonalVault() {
 		handleLockVault,
 	} = usePersonalVault(userVaultId);
 	const allRecords = records;
+
+	const activeRecords = useMemo(() => {
+		switch (activeTab) {
+			case 'fd':
+				return fdRecords;
+			case 'rd':
+				return rdRecords;
+			default:
+				return allRecords;
+		}
+	}, [activeTab, allRecords, fdRecords, rdRecords]);
+
+	const filteredRecords = useMemo(
+		() => filterInvestmentRecords(activeRecords, searchQuery),
+		[activeRecords, searchQuery]
+	);
+	const sortedRecords = useMemo(
+		() => sortInvestmentRecords(filteredRecords, sortBy, sortOrder),
+		[filteredRecords, sortBy, sortOrder]
+	);
+	const totalPages = Math.max(1, Math.ceil(sortedRecords.length / VAULT_PAGE_SIZE));
+	const paginatedRecords = useMemo(
+		() => paginateRecords(sortedRecords, currentPage, VAULT_PAGE_SIZE),
+		[currentPage, sortedRecords]
+	);
+
+	useEffect(() => {
+		setCurrentPage(1);
+	}, [activeTab, searchQuery]);
+
+	useEffect(() => {
+		if (currentPage > totalPages) {
+			setCurrentPage(totalPages);
+		}
+	}, [currentPage, totalPages]);
+
+	function handleSort(column: VaultSortBy) {
+		if (sortBy === column) {
+			setSortOrder((current) => (current === 'asc' ? 'desc' : 'asc'));
+			return;
+		}
+
+		setSortBy(column);
+		setSortOrder('asc');
+	}
 
 	return (
 		<main className="min-h-[calc(100vh-178px)] bg-[var(--omkraft-blue-50)] text-background">
@@ -208,9 +268,20 @@ export default function PersonalVault() {
 				</div>
 			</section>
 
+			<UpcomingMaturitySection
+				records={allRecords}
+				loading={loading}
+				vaultUnlocked={vaultUnlocked}
+				onUnlock={() => setUnlockDialogOpen(true)}
+			/>
+
 			<section className="py-6">
 				<div className="app-container grid gap-6">
-					<Tabs defaultValue="all" className="w-full">
+					<Tabs
+						value={activeTab}
+						onValueChange={(value) => setActiveTab(value as VaultTab)}
+						className="w-full"
+					>
 						<Card className="border-primary bg-foreground text-background shadow-sm">
 							<CardHeader className="gap-4 border-b border-[var(--omkraft-blue-200)] p-4 lg:p-6">
 								<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -251,7 +322,24 @@ export default function PersonalVault() {
 									{vaultUnlocked ? (
 										<VaultRecordsSection
 											loading={loading}
-											records={allRecords}
+											records={paginatedRecords}
+											searchValue={searchInput}
+											onSearchChange={setSearchInput}
+											sortBy={sortBy}
+											sortOrder={sortOrder}
+											onSort={handleSort}
+											currentPage={currentPage}
+											totalPages={totalPages}
+											filteredCount={sortedRecords.length}
+											totalCount={allRecords.length}
+											onPreviousPage={() =>
+												setCurrentPage((page) => Math.max(1, page - 1))
+											}
+											onNextPage={() =>
+												setCurrentPage((page) =>
+													Math.min(totalPages, page + 1)
+												)
+											}
 											onViewDetails={setSelectedRecord}
 											onEdit={setEditingRecord}
 											onDelete={setDeletingRecord}
@@ -266,7 +354,24 @@ export default function PersonalVault() {
 									{vaultUnlocked ? (
 										<VaultRecordsSection
 											loading={loading}
-											records={fdRecords}
+											records={paginatedRecords}
+											searchValue={searchInput}
+											onSearchChange={setSearchInput}
+											sortBy={sortBy}
+											sortOrder={sortOrder}
+											onSort={handleSort}
+											currentPage={currentPage}
+											totalPages={totalPages}
+											filteredCount={sortedRecords.length}
+											totalCount={fdRecords.length}
+											onPreviousPage={() =>
+												setCurrentPage((page) => Math.max(1, page - 1))
+											}
+											onNextPage={() =>
+												setCurrentPage((page) =>
+													Math.min(totalPages, page + 1)
+												)
+											}
 											onViewDetails={setSelectedRecord}
 											onEdit={setEditingRecord}
 											onDelete={setDeletingRecord}
@@ -281,7 +386,24 @@ export default function PersonalVault() {
 									{vaultUnlocked ? (
 										<VaultRecordsSection
 											loading={loading}
-											records={rdRecords}
+											records={paginatedRecords}
+											searchValue={searchInput}
+											onSearchChange={setSearchInput}
+											sortBy={sortBy}
+											sortOrder={sortOrder}
+											onSort={handleSort}
+											currentPage={currentPage}
+											totalPages={totalPages}
+											filteredCount={sortedRecords.length}
+											totalCount={rdRecords.length}
+											onPreviousPage={() =>
+												setCurrentPage((page) => Math.max(1, page - 1))
+											}
+											onNextPage={() =>
+												setCurrentPage((page) =>
+													Math.min(totalPages, page + 1)
+												)
+											}
 											onViewDetails={setSelectedRecord}
 											onEdit={setEditingRecord}
 											onDelete={setDeletingRecord}

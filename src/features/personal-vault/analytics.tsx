@@ -1,16 +1,6 @@
 import { useMemo } from 'react';
 import { ChevronDown, IndianRupee } from 'lucide-react';
-import {
-	CartesianGrid,
-	Cell,
-	Legend,
-	Line,
-	LineChart,
-	Pie,
-	PieChart,
-	XAxis,
-	YAxis,
-} from 'recharts';
+import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, XAxis, YAxis } from 'recharts';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
@@ -37,6 +27,14 @@ const chartConfig = {
 	maturityValue: {
 		label: 'Maturity value',
 		color: 'var(--omkraft-blue-700)',
+	},
+	fd: {
+		label: 'FD',
+		color: 'var(--omkraft-blue-700)',
+	},
+	rd: {
+		label: 'RD',
+		color: 'var(--omkraft-red-500)',
 	},
 } satisfies ChartConfig;
 
@@ -125,8 +123,8 @@ export function VaultAnalyticsSection({
 	}, [records]);
 
 	const maturityTrendData = useMemo(() => buildMaturityTrendData(records), [records]);
-
-	console.log(records);
+	const typeBreakdownData = useMemo(() => buildInvestmentTypeData(records), [records]);
+	const firstHolderData = useMemo(() => buildFirstHolderData(records), [records]);
 
 	return (
 		<section className="py-6 bg-primary">
@@ -137,7 +135,7 @@ export function VaultAnalyticsSection({
 					className="w-full text-foreground"
 				>
 					<CollapsibleTrigger asChild>
-						<button className="w-full flex items-center justify-between rounded-xl border border-background bg-foreground p-6 gap-2 text-left transition-colors hover:bg-[var(--omkraft-blue-50)]">
+						<button className="w-full flex items-center justify-between rounded-xl border border-background bg-foreground p-4 lg:p-6 gap-2 text-left transition-colors hover:bg-[var(--omkraft-blue-50)]">
 							<div className="flex flex-col gap-2">
 								<h2 className="text-2xl font-semibold text-background">
 									Vault insights
@@ -185,11 +183,24 @@ export function VaultAnalyticsSection({
 										data={instDonutData}
 										title="Institution spread"
 										description="See how your total investments are distributed across institutions."
-										isDonut={false} // 👈 PIE chart
+										isDonut={false}
+									/>
+									<VaultCompositionChart
+										data={typeBreakdownData}
+										title="FD and RD split"
+										description="Compare the total invested amount across fixed and recurring deposits."
+										isDonut={true}
+										legendLabelTransform="uppercase"
+									/>
+									<VaultCompositionChart
+										data={firstHolderData}
+										title="First holder split"
+										description="See how invested amounts are distributed across first holders. Names are grouped in uppercase to avoid duplicates from casing."
+										isDonut={false}
 									/>
 								</div>
 								<div className="min-w-0">
-									<VaultMaturityTrendChart data={maturityTrendData} />
+									<VaultMaturityScheduleChart data={maturityTrendData} />
 								</div>
 							</div>
 						)}
@@ -205,15 +216,29 @@ function VaultCompositionChart({
 	title,
 	description,
 	isDonut = true,
+	legendLabelTransform = 'none',
 }: {
 	data: { key: VaultCompositionKey; label?: string; value: number; fill?: string }[];
 	title?: string;
 	description?: string;
 	isDonut?: boolean;
+	legendLabelTransform?: 'none' | 'uppercase';
 }) {
+	const localChartConfig = useMemo(
+		() =>
+			data.reduce((config, item) => {
+				config[item.key] = {
+					label: item.label ?? item.key,
+					color: item.fill ?? getColor(0),
+				};
+				return config;
+			}, {} as ChartConfig),
+		[data]
+	);
+
 	return (
 		<Card className="border-background min-w-0 bg-foreground">
-			<CardHeader>
+			<CardHeader className="p-4 lg:p-6">
 				<CardTitle>
 					<h4 className="text-xl font-semibold text-background">{title}</h4>
 				</CardTitle>
@@ -222,19 +247,16 @@ function VaultCompositionChart({
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="p-4 lg:p-6">
-				<ChartContainer config={chartConfig} className="w-full min-w-0 h-[320px]">
+				<ChartContainer config={localChartConfig} className="w-full min-w-0 h-[320px]">
 					<PieChart>
 						<Pie
 							data={data}
 							dataKey="value"
 							nameKey="key"
+							fill="fill"
 							innerRadius={isDonut ? 70 : 0}
 							paddingAngle={4}
-						>
-							{data.map((entry) => (
-								<Cell key={entry.key} fill={entry.fill} />
-							))}
-						</Pie>
+						/>
 						<ChartTooltip
 							content={
 								<ChartTooltipContent
@@ -252,7 +274,16 @@ function VaultCompositionChart({
 								/>
 							}
 						/>
-						<ChartLegend />
+						<ChartLegend
+							formatter={(value) => {
+								const label = String(
+									getChartLabel(String(value), localChartConfig)
+								);
+								return legendLabelTransform === 'uppercase'
+									? label.toUpperCase()
+									: label;
+							}}
+						/>
 					</PieChart>
 				</ChartContainer>
 			</CardContent>
@@ -260,24 +291,25 @@ function VaultCompositionChart({
 	);
 }
 
-function VaultMaturityTrendChart({
+function VaultMaturityScheduleChart({
 	data,
 }: {
 	data: { month: string; maturityValue: number; invested: number }[];
 }) {
 	return (
 		<Card className="border-background min-w-0 bg-foreground">
-			<CardHeader>
+			<CardHeader className="p-4 lg:p-6">
 				<CardTitle>
-					<h4 className="text-xl font-semibold text-background">Maturity outlook</h4>
+					<h4 className="text-xl font-semibold text-background">Maturity schedule</h4>
 				</CardTitle>
 				<CardDescription className="text-[var(--omkraft-navy-700)]">
-					Track how invested value and maturity value are distributed by month.
+					For each maturity month, compare the total invested amount and the total
+					maturity value of deposits closing in that month.
 				</CardDescription>
 			</CardHeader>
-			<CardContent className="p-4 sm:p-6 overflow-visible">
+			<CardContent className="p-4 lg:p-6 overflow-visible">
 				<ChartContainer config={chartConfig} className="w-full min-w-0 h-[320px]">
-					<LineChart data={data}>
+					<BarChart data={data} barGap={10}>
 						<CartesianGrid strokeDasharray="3 3" />
 						<XAxis dataKey="month" />
 						<YAxis />
@@ -303,43 +335,19 @@ function VaultMaturityTrendChart({
 							}
 						/>
 						<Legend formatter={(value) => getChartLabel(String(value))} />
-						<Line
-							type="monotone"
+						<Bar
 							dataKey="invested"
 							stroke="var(--color-invested)"
-							strokeWidth={3}
-							dot={{
-								r: 4,
-								fill: 'var(--color-invested)',
-								stroke: 'var(--color-background)',
-								strokeWidth: 2,
-							}}
-							activeDot={{
-								r: 6,
-								fill: 'var(--color-invested)',
-								stroke: 'var(--color-background)',
-								strokeWidth: 2,
-							}}
+							fill="var(--color-invested)"
+							radius={[6, 6, 0, 0]}
 						/>
-						<Line
-							type="monotone"
+						<Bar
 							dataKey="maturityValue"
 							stroke="var(--color-maturityValue)"
-							strokeWidth={3}
-							dot={{
-								r: 4,
-								fill: 'var(--color-maturityValue)',
-								stroke: 'var(--color-background)',
-								strokeWidth: 2,
-							}}
-							activeDot={{
-								r: 6,
-								fill: 'var(--color-maturityValue)',
-								stroke: 'var(--color-background)',
-								strokeWidth: 2,
-							}}
+							fill="var(--color-maturityValue)"
+							radius={[6, 6, 0, 0]}
 						/>
-					</LineChart>
+					</BarChart>
 				</ChartContainer>
 			</CardContent>
 		</Card>
@@ -384,9 +392,61 @@ function buildMaturityTrendData(records: InvestmentRecord[]) {
 		}));
 }
 
-function getChartLabel(name: string) {
-	if (name in chartConfig) {
-		return chartConfig[name as keyof typeof chartConfig].label ?? name;
+function buildInvestmentTypeData(records: InvestmentRecord[]) {
+	const totals = records.reduce(
+		(accumulator, record) => {
+			if (record.type === 'FD') {
+				accumulator.fd += record.amountInvested;
+			} else {
+				accumulator.rd += record.amountInvested;
+			}
+
+			return accumulator;
+		},
+		{ fd: 0, rd: 0 }
+	);
+
+	return [
+		{
+			key: 'fd',
+			label: 'FD',
+			value: totals.fd,
+			fill: chartConfig.fd.color,
+		},
+		{
+			key: 'rd',
+			label: 'RD',
+			value: totals.rd,
+			fill: chartConfig.rd.color,
+		},
+	].filter((item) => item.value > 0);
+}
+
+function buildFirstHolderData(records: InvestmentRecord[]) {
+	const grouped = new Map<string, number>();
+
+	for (const record of records) {
+		const normalizedHolder = record.firstHolder.trim().toUpperCase();
+		if (!normalizedHolder) {
+			continue;
+		}
+
+		grouped.set(normalizedHolder, (grouped.get(normalizedHolder) ?? 0) + record.amountInvested);
+	}
+
+	return Array.from(grouped.entries())
+		.sort((left, right) => right[1] - left[1])
+		.map(([key, value], index) => ({
+			key,
+			label: key,
+			value,
+			fill: getColor(index),
+		}));
+}
+
+function getChartLabel(name: string, config: ChartConfig = chartConfig) {
+	if (name in config) {
+		return config[name as keyof typeof config].label ?? name;
 	}
 
 	return name;
