@@ -39,7 +39,7 @@ import {
 } from '@/components/ui/table';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
 import { StartDatePicker } from '@/components/subscription/StartDatePicker';
-import { IndianRupee, LockKeyhole } from 'lucide-react';
+import { Files, IndianRupee, LockKeyhole } from 'lucide-react';
 import { resolveInvestmentLogo } from '@/utils/investmentBrand';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/auth/AuthContext';
@@ -286,7 +286,8 @@ export default function PersonalVault() {
 							<CardHeader className="gap-4 border-b border-[var(--omkraft-blue-200)] p-4 lg:p-6">
 								<div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 									<div className="space-y-2">
-										<CardTitle className="text-2xl text-background">
+										<CardTitle className="flex gap-2 text-2xl text-background">
+											<Files className="size-8 text-primary" />
 											Deposit records
 										</CardTitle>
 										<CardDescription className="text-[var(--omkraft-navy-700)]">

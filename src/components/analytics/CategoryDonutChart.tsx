@@ -19,13 +19,13 @@ function getColor(category: string, index: number) {
 export default function CategoryDonutChart({ data }: Props) {
 	return (
 		<Card className="border-foreground min-w-0">
-			<CardHeader>
+			<CardHeader className="gap-2 p-4 lg:p-6">
 				<CardTitle>
 					<h4 className="text-xl font-semibold">Spending by Category</h4>
 				</CardTitle>
 			</CardHeader>
 
-			<CardContent className="p-4 lg:p-6">
+			<CardContent className="p-4 pt-0 lg:p-6 lg:pt-0">
 				<ChartContainer config={{}} className="w-full min-w-0 h-[320px]">
 					<PieChart>
 						<Pie

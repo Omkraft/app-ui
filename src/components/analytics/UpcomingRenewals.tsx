@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Dot, IndianRupee } from 'lucide-react';
+import { CalendarClock, Dot, IndianRupee } from 'lucide-react';
 import React from 'react';
 
 type Props = {
@@ -55,14 +55,15 @@ function getRenewalBadge(status: Props['data'][number]['status'], nextBillingDat
 export default function UpcomingRenewals({ data }: Props) {
 	return (
 		<Card className="border-foreground">
-			<CardHeader>
-				<CardTitle>
+			<CardHeader className="gap-2 p-4 lg:p-6">
+				<CardTitle className="flex gap-2 items-center">
+					<CalendarClock className="size-8 text-accent" />
 					<h3 className="text-2xl font-semibold flex flex-col lg:flex-row gap-2 items-start lg:items-center">
-						Upcoming Renewals<p className="text-xl">(Next 7 Days)</p>
+						Upcoming Renewals<p className="text-lg">(Next 7 Days)</p>
 					</h3>
 				</CardTitle>
 			</CardHeader>
-			<CardContent>
+			<CardContent className="p-4 lg:p-6 pt-0 lg:pt-0">
 				{data && data.length > 0 ? (
 					<ul className="space-y-3">
 						{data.map((item, index) => (

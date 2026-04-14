@@ -79,7 +79,7 @@ export default function OmkraftAlert({
 					: 'border-[var(--omkraft-red-800)]';
 
 	return (
-		<Alert variant={variant} className={cn('flex flex-col gap-2', borderClass)}>
+		<Alert variant={variant} className={cn('flex flex-col gap-2 p-4 lg:p-6', borderClass)}>
 			<AlertTitle className="flex gap-2 items-center">
 				{icon}
 				{details.title}

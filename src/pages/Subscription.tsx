@@ -18,7 +18,7 @@ import EditSubscriptionDialog from '@/components/subscription/EditSubscriptionDi
 import DeleteSubscriptionDialog from '@/components/subscription/DeleteSubscriptionDialog';
 import ConfirmPaymentPopover from '@/components/subscription/ConfirmPaymentPopover';
 import { getSubscriptions, type Subscription } from '@/api/subscription';
-import { ChevronDown, IndianRupee } from 'lucide-react';
+import { ChartNoAxesCombined, ChevronDown, IndianRupee } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { resolveLogo } from '@/utils/subscriptionBrand';
 
@@ -178,7 +178,8 @@ export default function Subscription() {
 										border
 										border-foreground
 										rounded-xl
-										p-6
+										p-4
+										lg:p-6
 										gap-2
 										text-left
 										hover:bg-[var(--omkraft-navy-600)]
@@ -186,7 +187,8 @@ export default function Subscription() {
 									"
 								>
 									<div className="flex flex-col gap-6">
-										<h3 className="text-2xl font-semibold">
+										<h3 className="flex gap-2 text-2xl font-semibold">
+											<ChartNoAxesCombined className="size-8 text-accent" />
 											Spending Insights
 										</h3>
 
@@ -211,7 +213,6 @@ export default function Subscription() {
 							<CollapsibleContent className="mt-2 border-t border-muted-foreground pt-4">
 								<div className="grid lg:grid-cols-2 gap-6 min-w-0">
 									<CategoryDonutChart data={analytics.categoryBreakdown} />
-
 									<MonthlyTrendChart data={analytics.monthlyTrend} />
 								</div>
 							</CollapsibleContent>
@@ -255,7 +256,7 @@ export default function Subscription() {
 										key={sub._id}
 										className="bg-foreground border-background text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
 									>
-										<CardHeader>
+										<CardHeader className="gap-2 p-4 lg:p-6">
 											<div className="flex justify-between items-start gap-4">
 												{/* LEFT SIDE */}
 												<div className="flex items-center gap-4">
@@ -292,7 +293,7 @@ export default function Subscription() {
 											</div>
 										</CardHeader>
 
-										<CardFooter>
+										<CardFooter className="gap-2 p-4 pt-0 lg:p-6 lg:pt-0">
 											<div className="flex w-full justify-between items-center">
 												<div className="font-semibold flex flex-col gap-2">
 													<p className="flex items-center gap-1">
@@ -403,7 +404,7 @@ export default function Subscription() {
 												key={sub._id}
 												className="bg-foreground border-background text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
 											>
-												<CardHeader>
+												<CardHeader className="gap-2 p-4 lg:p-6">
 													<div className="flex justify-between items-start gap-4">
 														<div className="flex items-center gap-4">
 															{logo.type === 'image' ? (
@@ -442,7 +443,7 @@ export default function Subscription() {
 													</div>
 												</CardHeader>
 
-												<CardFooter>
+												<CardFooter className="gap-2 p-4 pt-0 lg:p-6 lg:pt-0">
 													<div className="font-semibold flex flex-col gap-2">
 														<p className="flex items-center gap-1">
 															<IndianRupee
