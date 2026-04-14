@@ -404,7 +404,7 @@ export default function Subscription() {
 												key={sub._id}
 												className="bg-foreground border-background text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
 											>
-												<CardHeader>
+												<CardHeader className="gap-2 p-4 lg:p-6">
 													<div className="flex justify-between items-start gap-4">
 														<div className="flex items-center gap-4">
 															{logo.type === 'image' ? (
@@ -443,7 +443,7 @@ export default function Subscription() {
 													</div>
 												</CardHeader>
 
-												<CardFooter>
+												<CardFooter className="gap-2 p-4 pt-0 lg:p-6 lg:pt-0">
 													<div className="font-semibold flex flex-col gap-2">
 														<p className="flex items-center gap-1">
 															<IndianRupee
