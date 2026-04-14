@@ -87,7 +87,7 @@ export function StatCard({
 }) {
 	return (
 		<Card className="border-accent bg-foreground text-background">
-			<CardContent className="flex items-start justify-between gap-4 p-5">
+			<CardContent className="flex items-start justify-between gap-4 p-4 lg:p-6">
 				<div className="space-y-2">
 					<p className="text-sm text-[var(--omkraft-navy-700)]">{label}</p>
 					<p className="text-2xl font-semibold text-background">{value}</p>
@@ -214,7 +214,7 @@ export function VaultRecordsSection({
 									onSort={onSort}
 								/>
 							</TableHead>
-							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
+							<TableHead className="text-[var(--omkraft-navy-700)]">
 								<SortButton
 									label="Amount Invested"
 									column="amountInvested"
@@ -232,7 +232,7 @@ export function VaultRecordsSection({
 									className="ml-auto"
 								/>
 							</TableHead>
-							<TableHead className="text-right text-[var(--omkraft-navy-700)]">
+							<TableHead className="text-[var(--omkraft-navy-700)]">
 								<SortButton
 									label="Maturity Amount"
 									column="maturityAmount"
@@ -270,7 +270,7 @@ export function VaultRecordsSection({
 								<TableCell className="text-background">
 									{formatDate(record.maturityDate)}
 								</TableCell>
-								<TableCell className="text-right font-medium text-background">
+								<TableCell className="font-medium text-background">
 									<CurrencyValue
 										value={record.amountInvested}
 										className="justify-end"
@@ -279,7 +279,7 @@ export function VaultRecordsSection({
 								<TableCell className="text-right text-background">
 									{formatRate(record.roi)}
 								</TableCell>
-								<TableCell className="text-right font-medium text-background">
+								<TableCell className="font-medium text-background">
 									<CurrencyValue
 										value={record.maturityAmount}
 										className="justify-end"
@@ -390,9 +390,9 @@ export function UpcomingMaturitySection({
 				<Card className="border-primary bg-foreground text-background shadow-sm">
 					<CardHeader className="gap-2 p-4 lg:p-6">
 						<div className="flex items-start gap-3">
-							<CalendarClock className="size-8 text-primary" />
 							<div className="space-y-2">
-								<CardTitle className="text-2xl text-background">
+								<CardTitle className="flex gap-2 text-2xl text-background">
+									<CalendarClock className="size-8 text-primary" />
 									Maturing soon
 								</CardTitle>
 								<CardDescription className="text-[var(--omkraft-navy-700)]">

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ChevronDown, IndianRupee } from 'lucide-react';
+import { ChartNoAxesCombined, ChevronDown, IndianRupee } from 'lucide-react';
 import { Bar, BarChart, CartesianGrid, Legend, Pie, PieChart, XAxis, YAxis } from 'recharts';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -137,8 +137,9 @@ export function VaultAnalyticsSection({
 					<CollapsibleTrigger asChild>
 						<button className="w-full flex items-center justify-between rounded-xl border border-background bg-foreground p-4 lg:p-6 gap-2 text-left transition-colors hover:bg-[var(--omkraft-blue-50)]">
 							<div className="flex flex-col gap-2">
-								<h2 className="text-2xl font-semibold text-background">
-									Vault insights
+								<h2 className="flex gap-2 text-2xl font-semibold text-background">
+									<ChartNoAxesCombined className="size-8 text-primary" /> Vault
+									insights
 								</h2>
 								<span className="text-[var(--omkraft-navy-700)]">
 									See invested vs earned value and how maturities are spread over
