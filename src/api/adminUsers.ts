@@ -11,6 +11,7 @@ export interface AdminUser {
 	role: UserRole;
 	lastActiveAt: string | null;
 	online: boolean;
+	emailVerified: boolean;
 }
 
 interface ListUsersResponse {

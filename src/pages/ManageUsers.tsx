@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
 	Dialog,
 	DialogContent,
@@ -109,6 +110,20 @@ function OnlineStatus({ online }: { online: boolean }) {
 	);
 }
 
+function EmailVerificationStatus({
+	verified,
+	className = '',
+}: {
+	verified: boolean;
+	className?: string;
+}) {
+	return (
+		<span className={`text-sm font-medium text-current ${className}`}>
+			{verified ? 'Verified' : 'Not verified'}
+		</span>
+	);
+}
+
 function subtractMonthsSafe(date: Date, months: number) {
 	const d = new Date(date);
 	const originalDay = d.getDate();
@@ -153,6 +168,8 @@ function calculateLastChargedDate(nextBillingDate: Date, cycleInDays: number) {
 
 function getSubscriptionStatusBadgeClass(status: AdminSubscription['status']) {
 	switch (status) {
+		case 'INACTIVE':
+			return 'border-[var(--omkraft-navy-300)] bg-[var(--omkraft-navy-100)] text-background';
 		case 'DUE':
 			return 'border-[var(--warning-border)] bg-[var(--warning-bg)] text-[var(--warning-foreground)]';
 		case 'OVERDUE':
@@ -164,6 +181,8 @@ function getSubscriptionStatusBadgeClass(status: AdminSubscription['status']) {
 
 function getSubscriptionSurfaceClass(status: AdminSubscription['status']) {
 	switch (status) {
+		case 'INACTIVE':
+			return 'border-[var(--omkraft-navy-300)] bg-[var(--omkraft-navy-50)] hover:bg-[var(--omkraft-navy-100)]';
 		case 'DUE':
 			return 'border-[var(--warning-border)] bg-[var(--omkraft-amber-50)] hover:bg-[var(--omkraft-amber-100)]';
 		case 'OVERDUE':
@@ -401,7 +420,7 @@ export default function ManageUsers() {
 											/* mobile card: admin users get elevated dark treatment */
 											<Card
 												key={row.id}
-												className={`space-y-2 border-background p-3 text-background shadow-none transition-colors ${
+												className={`space-y-2 border-background p-4 text-background shadow-none transition-colors ${
 													row.role === 'ADMIN'
 														? 'bg-background hover:bg-[var(--omkraft-navy-700)]'
 														: 'bg-[var(--omkraft-surface-0)] hover:bg-[var(--omkraft-blue-50)]'
@@ -411,7 +430,7 @@ export default function ManageUsers() {
 													<p
 														className={`font-semibold ${
 															row.role === 'ADMIN'
-																? 'text-[var(--omkraft-white)]'
+																? 'text-foreground'
 																: ''
 														}`}
 													>
@@ -427,6 +446,14 @@ export default function ManageUsers() {
 														Role: {row.role}
 													</p>
 													<OnlineStatus online={row.online} />
+													<EmailVerificationStatus
+														verified={row.emailVerified}
+														className={
+															row.role === 'ADMIN'
+																? 'text-foreground'
+																: ''
+														}
+													/>
 													<p
 														className={`break-all text-sm ${
 															row.role === 'ADMIN'
@@ -508,6 +535,7 @@ export default function ManageUsers() {
 													</button>
 												</TableHead>
 												<TableHead>Status</TableHead>
+												<TableHead>Email verification</TableHead>
 												<TableHead>
 													<button
 														type="button"
@@ -526,7 +554,7 @@ export default function ManageUsers() {
 											{usersLoading ? (
 												<TableRow>
 													<TableCell
-														colSpan={7}
+														colSpan={8}
 														className="text-center py-6"
 													>
 														<Spinner className="inline size-5 mr-2" />
@@ -546,7 +574,7 @@ export default function ManageUsers() {
 														<TableCell
 															className={`font-semibold ${
 																row.role === 'ADMIN'
-																	? 'text-[var(--omkraft-white)]'
+																	? 'text-foreground'
 																	: ''
 															}`}
 														>
@@ -582,6 +610,16 @@ export default function ManageUsers() {
 														<TableCell>
 															<OnlineStatus online={row.online} />
 														</TableCell>
+														<TableCell>
+															<EmailVerificationStatus
+																verified={row.emailVerified}
+																className={
+																	row.role === 'ADMIN'
+																		? 'text-muted-foreground'
+																		: ''
+																}
+															/>
+														</TableCell>
 														<TableCell
 															className={
 																row.role === 'ADMIN'
@@ -596,6 +634,7 @@ export default function ManageUsers() {
 																<EditUserDialog
 																	user={row}
 																	onSuccess={fetchUsers}
+																	compact
 																/>
 																<DeleteUserDialog
 																	user={row}
@@ -603,6 +642,7 @@ export default function ManageUsers() {
 																	disableDelete={
 																		row.id === user.id
 																	}
+																	compact
 																/>
 															</div>
 														</TableCell>
@@ -611,7 +651,7 @@ export default function ManageUsers() {
 											) : (
 												<TableRow className="border-b border-[var(--omkraft-border-strong)]">
 													<TableCell
-														colSpan={7}
+														colSpan={8}
 														className="text-center py-6"
 													>
 														No users found
@@ -674,7 +714,7 @@ export default function ManageUsers() {
 										subscriptions.map((row) => (
 											<Card
 												key={row._id}
-												className={`space-y-2 p-3 text-background shadow-none transition-colors ${getSubscriptionSurfaceClass(row.status)}`}
+												className={`space-y-2 p-4 text-background shadow-none transition-colors ${getSubscriptionSurfaceClass(row.status)}`}
 											>
 												<div className="space-y-1">
 													<p className="font-semibold">{row.name}</p>
@@ -832,10 +872,12 @@ export default function ManageUsers() {
 																<EditSubscriptionDialog
 																	subscription={row}
 																	onSuccess={fetchSubscriptions}
+																	compact
 																/>
 																<DeleteSubscriptionDialog
 																	subscription={row}
 																	onSuccess={fetchSubscriptions}
+																	compact
 																/>
 															</div>
 														</TableCell>
@@ -886,7 +928,15 @@ export default function ManageUsers() {
 	);
 }
 
-function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () => Promise<void> }) {
+function EditUserDialog({
+	user,
+	onSuccess,
+	compact = false,
+}: {
+	user: AdminUser;
+	onSuccess: () => Promise<void>;
+	compact?: boolean;
+}) {
 	const [open, setOpen] = useState(false);
 	const [firstName, setFirstName] = useState(user.firstName);
 	const [lastName, setLastName] = useState(user.lastName);
@@ -934,13 +984,30 @@ function EditUserDialog({ user, onSuccess }: { user: AdminUser; onSuccess: () =>
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button
-					size="sm"
-					className="flex items-center gap-1 border border-primary bg-transparent text-sm text-primary hover:bg-[var(--omkraft-blue-100)]"
-				>
-					<Pencil size={16} />
-					<span className="hidden text-sm lg:inline">Edit</span>
-				</Button>
+				{compact ? (
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								type="button"
+								variant="ghost"
+								size="icon"
+								className="h-8 w-8 text-primary hover:bg-[var(--omkraft-blue-100)]"
+							>
+								<Pencil size={16} />
+								<span className="sr-only">Edit user</span>
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>Edit</TooltipContent>
+					</Tooltip>
+				) : (
+					<Button
+						size="sm"
+						className="flex items-center gap-1 border border-primary bg-transparent text-sm text-primary hover:bg-[var(--omkraft-blue-100)]"
+					>
+						<Pencil size={16} />
+						<span className="hidden text-sm lg:inline">Edit</span>
+					</Button>
+				)}
 			</DialogTrigger>
 			<DialogContent className="text-foreground">
 				<DialogHeader>
@@ -1039,10 +1106,12 @@ function DeleteUserDialog({
 	user,
 	onSuccess,
 	disableDelete,
+	compact = false,
 }: {
 	user: AdminUser;
 	onSuccess: () => Promise<void>;
 	disableDelete: boolean;
+	compact?: boolean;
 }) {
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -1065,15 +1134,33 @@ function DeleteUserDialog({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button
-					variant="destructive"
-					size="sm"
-					className="flex items-center gap-1 text-sm"
-					disabled={disableDelete}
-				>
-					<Trash size={16} />
-					<span className="hidden text-sm lg:inline">Delete</span>
-				</Button>
+				{compact ? (
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								type="button"
+								variant="ghost"
+								size="icon"
+								className="h-8 w-8 text-destructive hover:bg-[var(--omkraft-red-100)]"
+								disabled={disableDelete}
+							>
+								<Trash size={16} />
+								<span className="sr-only">Delete user</span>
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>Delete</TooltipContent>
+					</Tooltip>
+				) : (
+					<Button
+						variant="destructive"
+						size="sm"
+						className="flex items-center gap-1 text-sm"
+						disabled={disableDelete}
+					>
+						<Trash size={16} />
+						<span className="hidden text-sm lg:inline">Delete</span>
+					</Button>
+				)}
 			</DialogTrigger>
 			<DialogContent className="text-foreground">
 				<DialogHeader>
@@ -1107,9 +1194,11 @@ function DeleteUserDialog({
 function EditSubscriptionDialog({
 	subscription,
 	onSuccess,
+	compact = false,
 }: {
 	subscription: AdminSubscription;
 	onSuccess: () => Promise<void>;
+	compact?: boolean;
 }) {
 	const [open, setOpen] = useState(false);
 	const [name, setName] = useState(subscription.name);
@@ -1187,13 +1276,30 @@ function EditSubscriptionDialog({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button
-					size="sm"
-					className="flex items-center gap-1 border border-primary bg-transparent text-sm text-primary hover:bg-[var(--omkraft-blue-100)]"
-				>
-					<Pencil size={16} />
-					<span className="hidden text-sm lg:inline">Edit</span>
-				</Button>
+				{compact ? (
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								type="button"
+								variant="ghost"
+								size="icon"
+								className="h-8 w-8 text-primary hover:bg-[var(--omkraft-blue-100)]"
+							>
+								<Pencil size={16} />
+								<span className="sr-only">Edit subscription</span>
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>Edit</TooltipContent>
+					</Tooltip>
+				) : (
+					<Button
+						size="sm"
+						className="flex items-center gap-1 border border-primary bg-transparent text-sm text-primary hover:bg-[var(--omkraft-blue-100)]"
+					>
+						<Pencil size={16} />
+						<span className="hidden text-sm lg:inline">Edit</span>
+					</Button>
+				)}
 			</DialogTrigger>
 			<DialogContent className="text-foreground">
 				<DialogHeader>
@@ -1358,9 +1464,11 @@ function EditSubscriptionDialog({
 function DeleteSubscriptionDialog({
 	subscription,
 	onSuccess,
+	compact = false,
 }: {
 	subscription: AdminSubscription;
 	onSuccess: () => Promise<void>;
+	compact?: boolean;
 }) {
 	const [open, setOpen] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -1388,10 +1496,31 @@ function DeleteSubscriptionDialog({
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button variant="destructive" size="sm" className="flex items-center gap-1 text-sm">
-					<Trash size={16} />
-					<span className="hidden text-sm lg:inline">Remove</span>
-				</Button>
+				{compact ? (
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								type="button"
+								variant="ghost"
+								size="icon"
+								className="h-8 w-8 text-destructive hover:bg-[var(--omkraft-red-100)]"
+							>
+								<Trash size={16} />
+								<span className="sr-only">Remove subscription</span>
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>Delete</TooltipContent>
+					</Tooltip>
+				) : (
+					<Button
+						variant="destructive"
+						size="sm"
+						className="flex items-center gap-1 text-sm"
+					>
+						<Trash size={16} />
+						<span className="hidden text-sm lg:inline">Remove</span>
+					</Button>
+				)}
 			</DialogTrigger>
 			<DialogContent className="text-foreground">
 				<DialogHeader>

@@ -42,7 +42,7 @@ export default function NotificationBell() {
 				</button>
 			</PopoverTrigger>
 
-			<PopoverContent className="bg-primary border-muted-foreground">
+			<PopoverContent className="border-muted-foreground bg-primary p-4 lg:p-6">
 				<div className="space-y-2">
 					{notifications.length === 0 ? (
 						<p>No notifications</p>
@@ -53,7 +53,12 @@ export default function NotificationBell() {
 									className={`flex items-start justify-between gap-3${n.read ? ' text-muted-foreground' : ''}`}
 								>
 									<div className="flex flex-col gap-1">
-										<p className="font-semibold">{n.title}</p>
+										<p className="flex items-center gap-2 font-semibold">
+											{!n.read ? (
+												<span className="inline-block h-2 w-2 rounded-full bg-primary-foreground" />
+											) : null}
+											{n.title}
+										</p>
 										<p className="text-sm">{n.message}</p>
 									</div>
 									{!n.read ? (

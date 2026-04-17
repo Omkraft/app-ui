@@ -676,8 +676,8 @@ export default function Panchang() {
 							Daily <span className="text-primary">Panchang</span>
 						</h1>
 						<p className="text-foreground/80">
-							A local, calculation-based Panchang and daily horoscope view for the
-							selected day and your location.
+							A local, calculation-based Panchang for the selected day, plus
+							today&apos;s horoscope for your location.
 						</p>
 					</header>
 				</div>
