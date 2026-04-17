@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { ArrowUpDown, IndianRupee, Pencil, Trash } from 'lucide-react';
+import { ArrowUpDown, IndianRupee, MailCheck, MailX, Pencil, Trash } from 'lucide-react';
 import { io, type Socket } from 'socket.io-client';
 import { useAuth } from '@/context/auth/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -119,7 +119,11 @@ function EmailVerificationStatus({
 }) {
 	return (
 		<span className={`text-sm font-medium text-current ${className}`}>
-			{verified ? 'Verified' : 'Not verified'}
+			{verified ? (
+				<MailCheck className="size-4 text-accent" />
+			) : (
+				<MailX className="size-4 text-destructive" />
+			)}
 		</span>
 	);
 }
@@ -445,15 +449,9 @@ export default function ManageUsers() {
 													>
 														Role: {row.role}
 													</p>
-													<OnlineStatus online={row.online} />
-													<EmailVerificationStatus
-														verified={row.emailVerified}
-														className={
-															row.role === 'ADMIN'
-																? 'text-foreground'
-																: ''
-														}
-													/>
+													<p>
+														<OnlineStatus online={row.online} />
+													</p>
 													<p
 														className={`break-all text-sm ${
 															row.role === 'ADMIN'
@@ -461,7 +459,10 @@ export default function ManageUsers() {
 																: ''
 														}`}
 													>
-														{row.email}
+														{row.email}{' '}
+														<EmailVerificationStatus
+															verified={row.emailVerified}
+														/>
 													</p>
 													<p
 														className={`text-sm ${
@@ -535,7 +536,6 @@ export default function ManageUsers() {
 													</button>
 												</TableHead>
 												<TableHead>Status</TableHead>
-												<TableHead>Email verification</TableHead>
 												<TableHead>
 													<button
 														type="button"
@@ -581,13 +581,23 @@ export default function ManageUsers() {
 															{row.firstName} {row.lastName}
 														</TableCell>
 														<TableCell
-															className={`break-all ${
+															className={`break-all${
 																row.role === 'ADMIN'
-																	? 'text-muted-foreground'
+																	? ' text-muted-foreground'
 																	: ''
 															}`}
 														>
-															{row.email}
+															<div className="flex gap-1 items-center">
+																{row.email}
+																<EmailVerificationStatus
+																	verified={row.emailVerified}
+																	className={
+																		row.role === 'ADMIN'
+																			? 'text-muted-foreground'
+																			: ''
+																	}
+																/>
+															</div>
 														</TableCell>
 														<TableCell
 															className={
@@ -610,16 +620,6 @@ export default function ManageUsers() {
 														<TableCell>
 															<OnlineStatus online={row.online} />
 														</TableCell>
-														<TableCell>
-															<EmailVerificationStatus
-																verified={row.emailVerified}
-																className={
-																	row.role === 'ADMIN'
-																		? 'text-muted-foreground'
-																		: ''
-																}
-															/>
-														</TableCell>
 														<TableCell
 															className={
 																row.role === 'ADMIN'
@@ -630,7 +630,7 @@ export default function ManageUsers() {
 															{formatDateTime(row.lastActiveAt)}
 														</TableCell>
 														<TableCell>
-															<div className="flex flex-wrap justify-end gap-2">
+															<div className="flex justify-end gap-1">
 																<EditUserDialog
 																	user={row}
 																	onSuccess={fetchUsers}
