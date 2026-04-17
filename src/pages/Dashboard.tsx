@@ -201,7 +201,10 @@ export default function Dashboard() {
 								<ScrollText className="h-12 w-12 shrink-0 text-background lg:hidden" />
 							</div>
 							<div className="lg:hidden space-y-3">
-								<p>Daily Panchang and horoscope, grounded in local calculations.</p>
+								<p>
+									Daily Panchang and today&apos;s horoscope, grounded in local
+									calculations.
+								</p>
 								<p>
 									View the day&apos;s Tithi, Nakshatra, Yoga, Karana, daily
 									horoscope, and key auspicious or avoidable time windows in one
@@ -210,7 +213,10 @@ export default function Dashboard() {
 							</div>
 
 							<div className="hidden lg:block space-y-4">
-								<p>Daily Panchang and horoscope, grounded in local calculations.</p>
+								<p>
+									Daily Panchang and today&apos;s horoscope, grounded in local
+									calculations.
+								</p>
 								<p>
 									Panchang brings together the essential daily elements you
 									actually look for &mdash; Tithi, Nakshatra, Yoga, Karana,
@@ -227,7 +233,7 @@ export default function Dashboard() {
 								<li>Tithi, Nakshatra, Yoga, Karana, and Moon Rashi</li>
 								<li>Sunrise and sunset for your date and coordinates</li>
 								<li>Auspicious and inauspicious time windows</li>
-								<li>Daily horoscope for all 12 zodiac signs</li>
+								<li>Today&apos;s horoscope for all 12 zodiac signs</li>
 								<li>Short daily guidance for planning the day</li>
 							</ul>
 
@@ -289,8 +295,8 @@ export default function Dashboard() {
 								</p>
 								<p>
 									Your full records stay end-to-end encrypted, while only the
-									minimum reminder schedule needed for maturity alerts is kept
-									ready in the background.
+									minimum reminder schedule needed for maturity and installment
+									alerts is kept ready in the background.
 								</p>
 								<p>Simple visibility first. Better financial clarity every day.</p>
 							</div>
@@ -304,7 +310,7 @@ export default function Dashboard() {
 								<li>
 									Keep sensitive deposit data protected with end-to-end encryption
 								</li>
-								<li>Receive maturity reminders before the date arrives</li>
+								<li>Receive maturity and RD installment reminders on time</li>
 							</ul>
 
 							<div className="flex flex-col lg:flex-row gap-4 pt-4">

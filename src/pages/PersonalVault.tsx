@@ -195,10 +195,10 @@ export default function PersonalVault() {
 					<header className="space-y-4">
 						<div className="rounded-xl">
 							<OmkraftAlert
-								error="Your investment details are end-to-end encrypted, so only you can unlock and view the full record. To send reminders at the right time, we securely store only a few basic details needed for alerts and emails."
+								error="Your investment details are end-to-end encrypted, so only you can unlock and view the full record. To send maturity reminders and RD due-date alerts at the right time, we securely store only a few basic details needed for notifications and emails."
 								severity="info"
 								fallbackTitle="Your vault is private by design"
-								fallbackMessage="Your investment details are end-to-end encrypted, so only you can unlock and view the full record. To send reminders at the right time, we securely store only a few basic details needed for alerts and emails."
+								fallbackMessage="Your investment details are end-to-end encrypted, so only you can unlock and view the full record. To send maturity reminders and RD due-date alerts at the right time, we securely store only a few basic details needed for notifications and emails."
 								icon={LockKeyhole}
 							/>
 						</div>

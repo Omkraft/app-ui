@@ -10,6 +10,8 @@ export interface EncryptedInvestmentPayload {
 		maturityDate: string;
 		institutionName: string;
 		investmentType: 'FD' | 'RD';
+		rdInstallmentDueDate?: string | null;
+		rdInstallmentDayOfMonth?: number | null;
 	};
 }
 

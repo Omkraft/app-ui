@@ -166,6 +166,8 @@ export function buildInvestmentReminderMetadata(record: InvestmentRecord) {
 		maturityDate: record.maturityDate,
 		institutionName: record.institutionName,
 		investmentType: record.type,
+		rdInstallmentDueDate: record.rdPlan?.nextDueDate ?? null,
+		rdInstallmentDayOfMonth: record.rdPlan?.dueDayOfMonth ?? null,
 	};
 }
 

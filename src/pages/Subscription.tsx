@@ -402,7 +402,7 @@ export default function Subscription() {
 										return (
 											<Card
 												key={sub._id}
-												className="bg-foreground border-background text-background transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
+												className="border-[var(--omkraft-navy-300)] bg-[var(--omkraft-navy-50)] text-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
 											>
 												<CardHeader className="gap-2 p-4 lg:p-6">
 													<div className="flex justify-between items-start gap-4">

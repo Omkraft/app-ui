@@ -810,7 +810,7 @@ export default function Utility() {
 								className={`${(!weather.current.weather_code || [71, 73, 75, 85, 86, 51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather.current.weather_code)) && weather.current.is_day ? 'bg-[var(--omkraft-blue-700)] ' : 'bg-muted '}border border-foreground`}
 							>
 								<CardContent className="p-0">
-									<div className="flex items-center justify-between p-6">
+									<div className="flex items-center justify-between p-4 lg:p-6">
 										<div className="flex flex-col gap-2">
 											<div>
 												<p className="text-lg font-medium">
@@ -843,7 +843,7 @@ export default function Utility() {
 										</div>
 									</div>
 
-									<div className="grid grid-cols-1 lg:grid-cols-5 gap-4 p-6">
+									<div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-5 lg:p-6">
 										{nextFiveHours.map((hour, index) => (
 											<React.Fragment key={hour.time.toISOString()}>
 												<div className="flex justify-around lg:block space-y-2 text-center justify-items-center items-center">
@@ -884,19 +884,19 @@ export default function Utility() {
 							>
 								<AccordionItem
 									value="forecast"
-									className="border-b px-6 last:border-b-0"
+									className="border-b px-4 lg:px-6 last:border-b-0"
 								>
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">
 										5-Day Forecast
 									</AccordionTrigger>
-									<AccordionContent className="pb-6">
+									<AccordionContent className="pb-4 lg:pb-6">
 										<div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
 											{weather.daily.time
 												.slice(1, 6)
 												.map((day: string, index: number) => (
 													<Card
 														key={day}
-														className="flex justify-around lg:block p-4 space-y-2 text-center bg-muted items-center"
+														className="flex items-center justify-around space-y-2 bg-muted p-4 text-center lg:block lg:p-6"
 													>
 														<p className="text-sm font-semibold lg:text-lg">
 															{new Date(day).toLocaleDateString(
@@ -946,14 +946,14 @@ export default function Utility() {
 								</AccordionItem>
 								<AccordionItem
 									value="metrix"
-									className="border-b px-6 last:border-b-0"
+									className="border-b px-4 lg:px-6 last:border-b-0"
 								>
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">
 										Weather Details
 									</AccordionTrigger>
-									<AccordionContent className="pb-6">
+									<AccordionContent className="pb-4 lg:pb-6">
 										<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Droplets className="w-7 h-7 text-accent" />
 												<div>
 													<p
@@ -967,7 +967,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Umbrella className="w-7 h-7 text-accent" />
 												<div>
 													<p
@@ -981,7 +981,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Wind className="w-7 h-7 text-accent" />
 												<div>
 													<p
@@ -995,7 +995,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Gauge className="w-7 h-7 text-accent" />
 												<div>
 													<p
@@ -1025,14 +1025,14 @@ export default function Utility() {
 
 								<AccordionItem
 									value="sunriseset"
-									className="border-b px-6 last:border-b-0"
+									className="border-b px-4 lg:px-6 last:border-b-0"
 								>
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">
 										Sunrise &amp; Sunset
 									</AccordionTrigger>
-									<AccordionContent className="pb-6">
+									<AccordionContent className="pb-4 lg:pb-6">
 										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Sunrise className="w-7 h-7 text-[var(--omkraft-yellow-500)]" />
 												<div>
 													<p
@@ -1049,7 +1049,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Sunset className="w-7 h-7 text-[var(--omkraft-orange-500)]" />
 												<div>
 													<p
@@ -1071,14 +1071,14 @@ export default function Utility() {
 
 								<AccordionItem
 									value="airquality"
-									className="border-b px-6 last:border-b-0"
+									className="border-b px-4 lg:px-6 last:border-b-0"
 								>
 									<AccordionTrigger className="text-2xl font-semibold hover:no-underline">
 										Air Quality
 									</AccordionTrigger>
-									<AccordionContent className="pb-6">
+									<AccordionContent className="pb-4 lg:pb-6">
 										<div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted lg:col-span-2">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:col-span-2 lg:p-6">
 												<Gauge className="w-7 h-7 text-accent" />
 												<div>
 													<p
@@ -1103,7 +1103,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Wind className="w-7 h-7 text-accent" />
 												<div>
 													<p
@@ -1120,7 +1120,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Droplets className="w-7 h-7 text-accent" />
 												<div>
 													<p
@@ -1137,7 +1137,7 @@ export default function Utility() {
 												</div>
 											</Card>
 
-											<Card className="p-4 flex flex-row justify-center items-center gap-2 text-center bg-muted">
+											<Card className="flex flex-row items-center justify-center gap-2 bg-muted p-4 text-center lg:p-6">
 												<Sun className="w-7 h-7 text-[var(--omkraft-orange-500)]" />
 												<div>
 													<p
@@ -1156,7 +1156,7 @@ export default function Utility() {
 										</div>
 
 										<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-											<Card className="p-4 text-center bg-muted">
+											<Card className="bg-muted p-4 text-center lg:p-6">
 												<p
 													className={`text-sm ${weatherSecondaryTextClass}`}
 												>
@@ -1170,7 +1170,7 @@ export default function Utility() {
 												</p>
 											</Card>
 
-											<Card className="p-4 text-center bg-muted">
+											<Card className="bg-muted p-4 text-center lg:p-6">
 												<p
 													className={`text-sm ${weatherSecondaryTextClass}`}
 												>
@@ -1184,7 +1184,7 @@ export default function Utility() {
 												</p>
 											</Card>
 
-											<Card className="p-4 text-center bg-muted">
+											<Card className="bg-muted p-4 text-center lg:p-6">
 												<p
 													className={`text-sm ${weatherSecondaryTextClass}`}
 												>

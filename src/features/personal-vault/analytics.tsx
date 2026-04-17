@@ -125,6 +125,17 @@ export function VaultAnalyticsSection({
 	const maturityTrendData = useMemo(() => buildMaturityTrendData(records), [records]);
 	const typeBreakdownData = useMemo(() => buildInvestmentTypeData(records), [records]);
 	const firstHolderData = useMemo(() => buildFirstHolderData(records), [records]);
+	const visibleCharts = useMemo(
+		() => ({
+			valueMix: donutData.filter((item) => item.value > 0).length >= 2,
+			institutionSpread: instDonutData.length >= 2,
+			fdRdSplit: typeBreakdownData.length >= 2,
+			firstHolderSplit: firstHolderData.length >= 2,
+			maturitySchedule: maturityTrendData.length >= 2,
+		}),
+		[donutData, firstHolderData, instDonutData, maturityTrendData, typeBreakdownData]
+	);
+	const hasAnyVisibleChart = Object.values(visibleCharts).some(Boolean);
 
 	return (
 		<section className="py-6 bg-primary">
@@ -170,39 +181,55 @@ export function VaultAnalyticsSection({
 								severity="info"
 								fallbackTitle="No insights yet"
 							/>
+						) : !hasAnyVisibleChart ? (
+							<OmkraftAlert
+								error="More variety in your records will unlock richer vault insights here. Add another holder, institution, type, or maturity month to see charts."
+								severity="info"
+								fallbackTitle="Not enough data for charts yet"
+							/>
 						) : (
 							<div className="grid gap-6">
 								<div className="grid gap-6 lg:grid-cols-2 min-w-0">
-									<VaultCompositionChart
-										data={donutData}
-										title="Value mix"
-										description="Compare current principal against projected interest earned."
-										isDonut={true}
-									/>
+									{visibleCharts.valueMix ? (
+										<VaultCompositionChart
+											data={donutData}
+											title="Value mix"
+											description="Compare current principal against projected interest earned."
+											isDonut={true}
+										/>
+									) : null}
 
-									<VaultCompositionChart
-										data={instDonutData}
-										title="Institution spread"
-										description="See how your total investments are distributed across institutions."
-										isDonut={false}
-									/>
-									<VaultCompositionChart
-										data={typeBreakdownData}
-										title="FD and RD split"
-										description="Compare the total invested amount across fixed and recurring deposits."
-										isDonut={true}
-										legendLabelTransform="uppercase"
-									/>
-									<VaultCompositionChart
-										data={firstHolderData}
-										title="First holder split"
-										description="See how invested amounts are distributed across first holders. Names are grouped in uppercase to avoid duplicates from casing."
-										isDonut={false}
-									/>
+									{visibleCharts.institutionSpread ? (
+										<VaultCompositionChart
+											data={instDonutData}
+											title="Institution spread"
+											description="See how your total investments are distributed across institutions."
+											isDonut={false}
+										/>
+									) : null}
+									{visibleCharts.fdRdSplit ? (
+										<VaultCompositionChart
+											data={typeBreakdownData}
+											title="FD and RD split"
+											description="Compare the total invested amount across fixed and recurring deposits."
+											isDonut={true}
+											legendLabelTransform="uppercase"
+										/>
+									) : null}
+									{visibleCharts.firstHolderSplit ? (
+										<VaultCompositionChart
+											data={firstHolderData}
+											title="First holder split"
+											description="See how invested amounts are distributed across first holders. Names are grouped in uppercase to avoid duplicates from casing."
+											isDonut={false}
+										/>
+									) : null}
 								</div>
-								<div className="min-w-0">
-									<VaultMaturityScheduleChart data={maturityTrendData} />
-								</div>
+								{visibleCharts.maturitySchedule ? (
+									<div className="min-w-0">
+										<VaultMaturityScheduleChart data={maturityTrendData} />
+									</div>
+								) : null}
 							</div>
 						)}
 					</CollapsibleContent>

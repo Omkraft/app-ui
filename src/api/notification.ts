@@ -13,6 +13,7 @@ export interface Notification {
 		| 'SUBSCRIPTION_PAID'
 		| 'INVESTMENT_MATURITY_REMINDER'
 		| 'INVESTMENT_MATURITY_DUE'
+		| 'INVESTMENT_RD_INSTALLMENT_DUE'
 		| string;
 
 	read: boolean;
