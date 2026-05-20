@@ -38,8 +38,9 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import OmkraftAlert from '@/components/ui/omkraft-alert';
+import { Spinner } from '@/components/ui/spinner';
 import { StartDatePicker } from '@/components/subscription/StartDatePicker';
-import { Files, IndianRupee, LockKeyhole } from 'lucide-react';
+import { CircleCheckBig, Files, IndianRupee, LockKeyhole } from 'lucide-react';
 import { resolveInvestmentLogo } from '@/utils/investmentBrand';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/auth/AuthContext';
@@ -61,6 +62,7 @@ import type {
 	InvestmentFormState,
 	InvestmentRecord,
 	InvestmentType,
+	RdPaymentEntry,
 	RdMaturityInstruction,
 	VaultSortBy,
 	VaultTab,
@@ -68,6 +70,7 @@ import type {
 import { usePersonalVault } from '@/features/personal-vault/usePersonalVault';
 import { VaultAnalyticsSection } from '@/features/personal-vault/analytics';
 import {
+	buildInvestmentRecord,
 	buildRdProjection,
 	CurrencyValue,
 	filterInvestmentRecords,
@@ -147,7 +150,7 @@ export default function PersonalVault() {
 
 	useEffect(() => {
 		setCurrentPage(1);
-	}, [activeTab, searchQuery]);
+	}, [activeTab, searchQuery, sortBy, sortOrder]);
 
 	useEffect(() => {
 		if (currentPage > totalPages) {
@@ -163,6 +166,21 @@ export default function PersonalVault() {
 
 		setSortBy(column);
 		setSortOrder('asc');
+	}
+
+	async function handleMarkRdInstallmentPaid(record: InvestmentRecord) {
+		if (!record.rdPlan || record.rdPlan.actualInstallmentsPaid >= record.rdPlan.tenureMonths) {
+			return;
+		}
+
+		const nextForm = {
+			...getInitialFormState(record),
+			actualInstallmentsPaid: String(record.rdPlan.actualInstallmentsPaid + 1),
+		};
+		const updatedRecord = buildInvestmentRecord(nextForm, record.id);
+
+		await handleUpdateInvestment(record.id, nextForm);
+		setSelectedRecord(updatedRecord);
 	}
 
 	return (
@@ -438,6 +456,7 @@ export default function PersonalVault() {
 						setSelectedRecord(null);
 					}
 				}}
+				onMarkRdInstallmentPaid={handleMarkRdInstallmentPaid}
 			/>
 			<InvestmentFormDialog
 				mode="edit"
@@ -1149,16 +1168,45 @@ function InvestmentDetailsDialog({
 	record,
 	open,
 	onOpenChange,
+	onMarkRdInstallmentPaid,
 }: {
 	record: InvestmentRecord | null;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	onMarkRdInstallmentPaid: (record: InvestmentRecord) => Promise<void> | void;
 }) {
+	const [markingInstallmentPaid, setMarkingInstallmentPaid] = useState(false);
+
 	if (!record) {
 		return null;
 	}
 
 	const logo = resolveInvestmentLogo(record.institutionName);
+	const nextPendingInstallment = record.rdPlan?.paymentEntries.find(
+		(entry) => entry.status === 'pending'
+	);
+
+	async function markNextInstallmentPaid() {
+		if (!record || !nextPendingInstallment) {
+			return;
+		}
+
+		try {
+			setMarkingInstallmentPaid(true);
+			await onMarkRdInstallmentPaid(record);
+		} finally {
+			setMarkingInstallmentPaid(false);
+		}
+	}
+
+	const confirmInstallmentPaymentDialog = nextPendingInstallment ? (
+		<ConfirmRdInstallmentPaymentDialog
+			record={record}
+			installment={nextPendingInstallment}
+			loading={markingInstallmentPaid}
+			onConfirm={markNextInstallmentPaid}
+		/>
+	) : null;
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -1284,10 +1332,19 @@ function InvestmentDetailsDialog({
 				{record.rdPlan ? (
 					<Card className="border-[var(--omkraft-blue-100)] bg-foreground text-background shadow-none">
 						<CardHeader className="space-y-2 p-4 lg:p-6">
-							<CardTitle className="text-lg">Installment progress</CardTitle>
+							<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+								<div className="space-y-2">
+									<CardTitle className="text-lg">Installment progress</CardTitle>
+									<CardDescription className="text-[var(--omkraft-navy-700)]">
+										Expected schedule is auto-generated from the RD master
+										record, while paid installments are tracked separately.
+									</CardDescription>
+								</div>
+								{confirmInstallmentPaymentDialog}
+							</div>
 							<CardDescription className="text-[var(--omkraft-navy-700)]">
-								Expected schedule is auto-generated from the RD master record, while
-								paid installments are tracked separately.
+								RD reminder emails and push notifications arrive at 9:00 AM on the
+								installment due date.
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="p-4 lg:p-6">
@@ -1299,6 +1356,7 @@ function InvestmentDetailsDialog({
 											<TableHead>Due date</TableHead>
 											<TableHead className="text-right">Amount</TableHead>
 											<TableHead>Status</TableHead>
+											<TableHead className="text-right">Action</TableHead>
 										</TableRow>
 									</TableHeader>
 									<TableBody>
@@ -1325,6 +1383,18 @@ function InvestmentDetailsDialog({
 															? 'Paid'
 															: 'Pending'}
 													</Badge>
+												</TableCell>
+												<TableCell className="text-right">
+													{nextPendingInstallment?.installmentNumber ===
+													entry.installmentNumber ? (
+														<ConfirmRdInstallmentPaymentDialog
+															record={record}
+															installment={entry}
+															loading={markingInstallmentPaid}
+															onConfirm={markNextInstallmentPaid}
+															triggerVariant="compact"
+														/>
+													) : null}
 												</TableCell>
 											</TableRow>
 										))}
@@ -1361,6 +1431,18 @@ function InvestmentDetailsDialog({
 													iconClassName="size-3.5"
 												/>
 											</p>
+											{nextPendingInstallment?.installmentNumber ===
+											entry.installmentNumber ? (
+												<div className="mt-2">
+													<ConfirmRdInstallmentPaymentDialog
+														record={record}
+														installment={entry}
+														loading={markingInstallmentPaid}
+														onConfirm={markNextInstallmentPaid}
+														triggerVariant="compact"
+													/>
+												</div>
+											) : null}
 										</CardContent>
 									</Card>
 								))}
@@ -1368,6 +1450,104 @@ function InvestmentDetailsDialog({
 						</CardContent>
 					</Card>
 				) : null}
+			</DialogContent>
+		</Dialog>
+	);
+}
+
+function ConfirmRdInstallmentPaymentDialog({
+	record,
+	installment,
+	loading,
+	onConfirm,
+	triggerVariant = 'primary',
+}: {
+	record: InvestmentRecord;
+	installment: RdPaymentEntry;
+	loading: boolean;
+	onConfirm: () => Promise<void> | void;
+	triggerVariant?: 'primary' | 'compact';
+}) {
+	const [open, setOpen] = useState(false);
+	const [error, setError] = useState<unknown | null>(null);
+	const isCompact = triggerVariant === 'compact';
+
+	async function handleSubmit() {
+		setError(null);
+
+		try {
+			await onConfirm();
+			setOpen(false);
+		} catch (err) {
+			setError(err instanceof Error ? err : 'Failed to confirm payment');
+		}
+	}
+
+	return (
+		<Dialog open={open} onOpenChange={setOpen}>
+			<DialogTrigger asChild>
+				<Button
+					type="button"
+					size={isCompact ? 'sm' : undefined}
+					variant={isCompact ? 'outline' : undefined}
+					className={
+						isCompact
+							? 'h-8 border-background px-2 text-xs text-background hover:bg-[var(--omkraft-navy-50)]'
+							: 'btn-primary flex shrink-0 gap-2'
+					}
+					disabled={loading}
+				>
+					{isCompact ? null : <CircleCheckBig size={20} />}
+					{isCompact ? 'Mark paid' : 'Mark as Paid'}
+				</Button>
+			</DialogTrigger>
+			<DialogContent className="max-w-md space-y-4 text-foreground">
+				<DialogHeader>
+					<DialogTitle>Confirm Payment</DialogTitle>
+				</DialogHeader>
+
+				<div className="space-y-1">
+					<p className="text-sm font-medium">
+						Installment {installment.installmentNumber} for {record.institutionName}
+					</p>
+					<p className="text-xs text-muted-foreground">
+						Confirm this RD installment was paid. This will update the encrypted vault
+						record and move the next pending installment forward.
+					</p>
+				</div>
+
+				<div className="space-y-2">
+					<p className="text-xs text-muted-foreground">Amount paid</p>
+					<div className="relative">
+						<IndianRupee
+							size={14}
+							strokeWidth={2.5}
+							className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+						/>
+						<Input value={installment.amount.toFixed(2)} readOnly className="pl-8" />
+					</div>
+					<p className="text-xs text-muted-foreground">
+						Due date: {formatDate(installment.dueDate)}
+					</p>
+				</div>
+
+				<OmkraftAlert error={error} fallbackTitle="Could not save payment" />
+
+				<div className="flex justify-end gap-2">
+					<Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+						Cancel
+					</Button>
+					{loading ? (
+						<Button className="btn-primary flex gap-1" disabled>
+							<Spinner data-icon="inline-start" />
+							Saving...
+						</Button>
+					) : (
+						<Button className="btn-primary" onClick={handleSubmit}>
+							Submit
+						</Button>
+					)}
+				</div>
 			</DialogContent>
 		</Dialog>
 	);
