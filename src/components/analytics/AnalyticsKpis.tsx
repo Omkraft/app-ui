@@ -9,7 +9,7 @@ type Props = {
 export default function AnalyticsKpis({ totalMonthly, yearlyProjection }: Props) {
 	return (
 		<>
-			<Card className="border-foreground min-w-0 bg-foreground text-background">
+			<Card className="border-background min-w-0 bg-foreground text-background">
 				<CardContent className="flex items-start justify-between gap-4 p-4 lg:p-6">
 					<div className="space-y-2">
 						<p className="text-sm text-[var(--omkraft-navy-700)]">
@@ -20,7 +20,7 @@ export default function AnalyticsKpis({ totalMonthly, yearlyProjection }: Props)
 							{totalMonthly.toFixed(2)}
 						</p>
 						<p className="text-xs text-[var(--omkraft-navy-700)]">
-							Recurring spend due across active subscriptions
+							Monthly spend across active subscriptions
 						</p>
 					</div>
 					<div className="rounded-2xl bg-[var(--omkraft-mint-100)] p-3 text-accent">
@@ -29,7 +29,7 @@ export default function AnalyticsKpis({ totalMonthly, yearlyProjection }: Props)
 				</CardContent>
 			</Card>
 
-			<Card className="border-foreground min-w-0 bg-foreground text-background">
+			<Card className="border-background min-w-0 bg-foreground text-background">
 				<CardContent className="flex items-start justify-between gap-4 p-4 lg:p-6">
 					<div className="space-y-2">
 						<p className="text-sm text-[var(--omkraft-navy-700)]">Yearly projection</p>
