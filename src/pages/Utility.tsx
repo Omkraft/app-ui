@@ -962,7 +962,11 @@ export default function Utility() {
 														Humidity
 													</p>
 													<p className="text-xl font-semibold">
-														{weather.current.relative_humidity_2m}%
+														{round(
+															weather.current.relative_humidity_2m,
+															0
+														)}
+														%
 													</p>
 												</div>
 											</Card>
